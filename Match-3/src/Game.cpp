@@ -4,6 +4,8 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
+#include "Entities/Gem.hpp"
+
 #include "Game.hpp"
 #include "RenderWindow.hpp"
 #include "ECS/Manager.hpp"
@@ -13,6 +15,7 @@
 #include "Components/Sprite.hpp"
 
 #include "Systems/Gravity.hpp"
+#include "Systems/Render.hpp"
 
 ECS_Manager ecsManager;
 
@@ -32,40 +35,42 @@ void Game::Run()
 
     SDL_Texture* background = window.LoadTexture("res/Backdrop13.jpg");
 
-    /*
-    -------------------------------- INIT ECS ------------------------------------
-    */
-
     ecsManager.Init();
 
+
+    /* ------------------------------ Register Components ------------------------------ */
+    
     ecsManager.RegisterComponent<Position>();
     ecsManager.RegisterComponent<Body>();
     ecsManager.RegisterComponent<Sprite>();
 
-    auto gravitySystem = ecsManager.RegisterSystem<GravitySystem>();
-	{
-		Signature signature;
-		signature.set(ecsManager.GetComponentType<Position>());
-		signature.set(ecsManager.GetComponentType<Body>());
-		ecsManager.SetSystemSignature<GravitySystem>(signature);
-	}
- 
-	gravitySystem->Init();
 
-    /* 
-    ------------------------------ SET SCENE START ---------------------------------------    
-    */
+    /* -------------------------------- Register Systems -------------------------------- */
 
-    Entity entity_1 = ecsManager.CreateEntity();
-	ecsManager.AddComponent(entity_1, Position{1.0f, 1.0f});
-    ecsManager.AddComponent(entity_1, Body{});
+    std::shared_ptr<GravitySystem> gravitySystem = ecsManager.RegisterSystem<GravitySystem>();
+    std::shared_ptr<RenderSystem> renderSystem = ecsManager.RegisterSystem<RenderSystem>();
+
+
+
+    /* ---------------------------------- Create Scene ---------------------------------- */
+    
+    SDL_Texture* gemBlackTexture = window.LoadTexture("res/Color-1.png");
+    SDL_Texture* gemWhiteTexture = window.LoadTexture("res/Color-2.png");
+    SDL_Texture* gemPinkTexture = window.LoadTexture("res/Color-3.png");
+    SDL_Texture* gemBlueTexture = window.LoadTexture("res/Color-4.png");
+    SDL_Texture* gemOrangeTexture = window.LoadTexture("res/Color-5.png");
+
+    Gem::CreateEntity(480.0f, 0.0f, gemBlackTexture);
+    Gem::CreateEntity(540.0f, 0.0f, gemWhiteTexture);
+    Gem::CreateEntity(600.0f, 0.0f, gemPinkTexture);
+    Gem::CreateEntity(660.0f, 0.0f, gemBlueTexture);
+    Gem::CreateEntity(720.0f, 0.0f, gemOrangeTexture);
+
+    
+
+    /* ----------------------------------- Game Loop ------------------------------------ */
 
     float dt = 0.0f;
-
-    /* 
-    ------------------------------ SET SCENE END ----------------------------------------    
-    */
-
     bool running = true;
     SDL_Event event;
 
@@ -78,11 +83,18 @@ void Game::Run()
             if (event.type == SDL_QUIT) running = false;
         }
 
-        window.Clear();
-        window.Render(background);
-        window.Display();
-
+        Gem::CreateEntity(480.0f, 0.0f, gemBlackTexture);
+        Gem::CreateEntity(540.0f, 0.0f, gemWhiteTexture);
+        Gem::CreateEntity(600.0f, 0.0f, gemPinkTexture);
+        Gem::CreateEntity(660.0f, 0.0f, gemBlueTexture);
+        Gem::CreateEntity(720.0f, 0.0f, gemOrangeTexture);
+        
         gravitySystem->Update(dt);
+
+        window.Clear();
+        window.Render(background, .0f, .0f, 1280, 720);
+        renderSystem->Update(window);
+        window.Display();
 
         auto stopTime = std::chrono::high_resolution_clock::now();
 

@@ -11,7 +11,8 @@ public:
     SDL_Texture* LoadTexture(const char* p_filePath);
     void CleanUp();
     void Clear();
-    void Render(SDL_Texture* p_texture);
+    void Render(SDL_Texture* p_texture, float p_X, float p_y);
+    void Render(SDL_Texture* p_texture, float p_X, float p_y, float p_w, float p_h);
     void Display();
     
 private:

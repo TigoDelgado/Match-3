@@ -6,10 +6,10 @@
 class GravitySystem : public System
 {
 public:
-    void Init();
+    void Init() override;
 	void Update(float dt);
 private:
-    float gravityForce = 0.1f;
+    float gravityForce = 20.0f;
 };
 
 

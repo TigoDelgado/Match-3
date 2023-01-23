@@ -12,7 +12,7 @@ RenderWindow::RenderWindow(const char* p_title, int p_width, int p_height)
     if (window == NULL)
         std::cout << "Failed to create WINDOW. SDL_Error: " << SDL_GetError() << std::endl;
 
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (renderer == NULL)
         std::cout << "Failed to create RENDERER. SDL_Error: " << SDL_GetError() << std::endl;
@@ -39,9 +39,44 @@ void RenderWindow::Clear()
     SDL_RenderClear(renderer);
 }
 
-void RenderWindow::Render(SDL_Texture* p_texture)
+void RenderWindow::Render(SDL_Texture* p_texture, float p_x, float p_y)
 {
-    SDL_RenderCopy(renderer, p_texture, NULL, NULL);
+    int textureWidth, textureHeight;
+    SDL_QueryTexture(p_texture, NULL, NULL, &textureWidth, &textureHeight);
+
+    SDL_Rect src;
+    src.x = 0;
+    src.y = 0;
+    src.w = textureWidth;
+    src.h = textureHeight;
+
+    SDL_Rect dst;
+    dst.x = p_x;
+    dst.y = p_y;
+    dst.w = 45;
+    dst.h = 45;
+
+    SDL_RenderCopy(renderer, p_texture, &src, &dst);
+}
+
+void RenderWindow::Render(SDL_Texture* p_texture, float p_x, float p_y, float p_w, float p_h)
+{
+    int textureWidth, textureHeight;
+    SDL_QueryTexture(p_texture, NULL, NULL, &textureWidth, &textureHeight);
+
+    SDL_Rect src;
+    src.x = 0;
+    src.y = 0;
+    src.w = textureWidth;
+    src.h = textureHeight;
+
+    SDL_Rect dst;
+    dst.x = p_x;
+    dst.y = p_y;
+    dst.w = p_w;
+    dst.h = p_h;
+
+    SDL_RenderCopy(renderer, p_texture, &src, &dst);
 }
 
 void RenderWindow::Display()

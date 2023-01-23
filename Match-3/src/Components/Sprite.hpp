@@ -3,7 +3,7 @@
 
 struct Sprite
 {
-    const char* filePath;
+    SDL_Texture* texture;
 };
 
 #endif //__Match3_Component_Sprite_h__
