@@ -6,12 +6,15 @@
 
 #include "Game.hpp"
 #include "RenderWindow.hpp"
-#include "ECS/Manager.hpp"
+#include "Timer.hpp"
 
 #include "GameScene.hpp"
 #include "Scenes/Level.hpp"
 
 ECS_Manager ecsManager;
+
+#define TIME_STEP 0.01f         // fixed dt for updates
+#define STEPS_PER_FRAME 2       // max steps allowed in a single frame
 
 Game::Game()
 {
@@ -35,28 +38,54 @@ void Game::Run()
 
     /* ----------------------------------- Main Loop ------------------------------------ */
 
-    float dt = 0.0f;
+    float timeAccumulator = 0.0f;
+    float endTime = Timer::CurrentTime();      
+
+    float fpsTimer = endTime;
+    int fpsCounter = 0;
+
     bool running = true;
     SDL_Event event;
 
     while (running) 
     {
-        auto startTime = std::chrono::high_resolution_clock::now();
+        float startTime = Timer::CurrentTime();
+        float deltaTime = startTime - endTime;
+        
+        endTime = Timer::CurrentTime();
 
-        while (SDL_PollEvent(&event))
+        timeAccumulator += deltaTime;
+
+        if ( startTime > fpsTimer + 1.0f) // count fps in 1 sec (1000 ms)
         {
-            if (event.type == SDL_QUIT) running = false;
+            // std::cout << "FPS: " << (fpsCounter) << std::endl;
+            fpsTimer = Timer::CurrentTime(); 
+            fpsCounter = 0;
+        }
+        fpsCounter++;
+
+        int stepsCount = 0;
+        while (timeAccumulator >= TIME_STEP && stepsCount < STEPS_PER_FRAME)
+        {
+            while (SDL_PollEvent(&event))
+            {
+            switch(event.type) {
+            case SDL_QUIT:
+                // Handles Alt-F4 on Windows and Command-Q on OSX
+                running = false;
+            default:
+                break;
+            }
 
             currentScene->HandleEvent(event);
+            }
+
+            currentScene->Update(TIME_STEP);
+            timeAccumulator -= TIME_STEP;
+            stepsCount++;
         }
 
-        currentScene->Update(dt);
-        
         currentScene->Render();
-
-        auto stopTime = std::chrono::high_resolution_clock::now();
-
-		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
     }
 
     window.CleanUp();
