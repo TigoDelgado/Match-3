@@ -4,18 +4,12 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 
-#include "Entities/Gem.hpp"
-
 #include "Game.hpp"
 #include "RenderWindow.hpp"
 #include "ECS/Manager.hpp"
 
-#include "Components/Body.hpp"
-#include "Components/Position.hpp"
-#include "Components/Sprite.hpp"
-
-#include "Systems/Gravity.hpp"
-#include "Systems/Render.hpp"
+#include "GameScene.hpp"
+#include "Scenes/Level.hpp"
 
 ECS_Manager ecsManager;
 
@@ -33,42 +27,13 @@ void Game::Run()
 {
     RenderWindow window("Match 3", 1280, 720);
 
-    SDL_Texture* background = window.LoadTexture("res/Backdrop13.jpg");
-
     ecsManager.Init();
 
-
-    /* ------------------------------ Register Components ------------------------------ */
-    
-    ecsManager.RegisterComponent<Position>();
-    ecsManager.RegisterComponent<Body>();
-    ecsManager.RegisterComponent<Sprite>();
+    // TODO create scene manager
+    GameScene* currentScene = new Level(window, 8, 8, "res/Backdrop13.jpg");
 
 
-    /* -------------------------------- Register Systems -------------------------------- */
-
-    std::shared_ptr<GravitySystem> gravitySystem = ecsManager.RegisterSystem<GravitySystem>();
-    std::shared_ptr<RenderSystem> renderSystem = ecsManager.RegisterSystem<RenderSystem>();
-
-
-
-    /* ---------------------------------- Create Scene ---------------------------------- */
-    
-    SDL_Texture* gemBlackTexture = window.LoadTexture("res/Color-1.png");
-    SDL_Texture* gemWhiteTexture = window.LoadTexture("res/Color-2.png");
-    SDL_Texture* gemPinkTexture = window.LoadTexture("res/Color-3.png");
-    SDL_Texture* gemBlueTexture = window.LoadTexture("res/Color-4.png");
-    SDL_Texture* gemOrangeTexture = window.LoadTexture("res/Color-5.png");
-
-    Gem::CreateEntity(480.0f, 0.0f, gemBlackTexture);
-    Gem::CreateEntity(540.0f, 0.0f, gemWhiteTexture);
-    Gem::CreateEntity(600.0f, 0.0f, gemPinkTexture);
-    Gem::CreateEntity(660.0f, 0.0f, gemBlueTexture);
-    Gem::CreateEntity(720.0f, 0.0f, gemOrangeTexture);
-
-    
-
-    /* ----------------------------------- Game Loop ------------------------------------ */
+    /* ----------------------------------- Main Loop ------------------------------------ */
 
     float dt = 0.0f;
     bool running = true;
@@ -81,20 +46,13 @@ void Game::Run()
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT) running = false;
+
+            currentScene->HandleEvent(event);
         }
 
-        Gem::CreateEntity(480.0f, 0.0f, gemBlackTexture);
-        Gem::CreateEntity(540.0f, 0.0f, gemWhiteTexture);
-        Gem::CreateEntity(600.0f, 0.0f, gemPinkTexture);
-        Gem::CreateEntity(660.0f, 0.0f, gemBlueTexture);
-        Gem::CreateEntity(720.0f, 0.0f, gemOrangeTexture);
+        currentScene->Update(dt);
         
-        gravitySystem->Update(dt);
-
-        window.Clear();
-        window.Render(background, .0f, .0f, 1280, 720);
-        renderSystem->Update(window);
-        window.Display();
+        currentScene->Render();
 
         auto stopTime = std::chrono::high_resolution_clock::now();
 

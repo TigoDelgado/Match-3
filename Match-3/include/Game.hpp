@@ -11,7 +11,6 @@ public:
     void Run();
 
 private:
-
 };
 
 #endif //__Match3_Game_h__
