@@ -11,8 +11,24 @@
 #include "ECS/Manager.hpp"
 #include "Systems/Gravity.hpp"
 #include "Systems/Render.hpp"
+#include "Systems/ClickTile.hpp"
 
-// GameScene interface
+
+enum LevelState
+{
+    INITIALIZING,
+    WAITING,
+    SWAPPING_TILES,
+    SWAPPING_BACK,      // FIXME may not be necessary
+    CLEARING_MATCHES,
+    ACTIVATING_SPECIAL,
+    CREATING_SPECIAL,
+    SPAWNING_TILES,
+    GRAVITATING_ROWS,
+    GAME_OVER
+};
+
+
 class Level : public GameScene
 {
 public:
@@ -36,6 +52,7 @@ private:
 
     std::shared_ptr<GravitySystem> gravitySystem;
     std::shared_ptr<RenderSystem> renderSystem;
+    std::shared_ptr<ClickTileSystem> clickTileSystem;
 };
 
 #endif //__Match3_Scene_Level_h__

@@ -1,5 +1,7 @@
 #include "Scenes/Level.hpp"
 
+#include <iostream>
+
 extern ECS_Manager ecsManager;
 
 Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background)
@@ -17,15 +19,17 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
 
     /* ------------------------------ Register Components ------------------------------ */
     
-    ecsManager.RegisterComponent<Position>();
+    ecsManager.RegisterComponent<Transform>();
     ecsManager.RegisterComponent<Sprite>();
     ecsManager.RegisterComponent<TileObject>();
+    ecsManager.RegisterComponent<Swappable>();
 
 
     /* -------------------------------- Register Systems -------------------------------- */
 
     // gravitySystem = ecsManager.RegisterSystem<GravitySystem>();
     renderSystem = ecsManager.RegisterSystem<RenderSystem>();
+    clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
     // FIXME Don't allow systems to register without required components
 
 
@@ -48,7 +52,20 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
 
 void Level::HandleEvent(SDL_Event& event)
 {
-
+    switch(event.type) {
+        case SDL_MOUSEBUTTONDOWN:
+            if(event.button.button == SDL_BUTTON_LEFT)
+            {
+                //handle a left-click
+                Entity entity;
+                if ( clickTileSystem->ClickedEntity(Vector2f{float(event.button.x), float(event.button.y)}, entity) )
+                    std::cout << "Clicked on entity: " << (entity) << std::endl;
+                else std::cout << "Clicked on NOTHING!" << std::endl;
+            }
+            break;
+        default:
+            break;
+        }
 }
 
 void Level::Update(float dt)

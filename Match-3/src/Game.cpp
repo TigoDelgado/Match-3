@@ -67,15 +67,16 @@ void Game::Run()
         {
             while (SDL_PollEvent(&event))
             {
-            switch(event.type) {
-            case SDL_QUIT:
-                // Handles Alt-F4 on Windows and Command-Q on OSX
-                running = false;
-            default:
-                break;
-            }
+                switch(event.type) 
+                {
+                case SDL_QUIT:
+                    // Handles Alt-F4 on Windows and Command-Q on OSX
+                    running = false;
+                default:
+                    break;
+                }
 
-            currentScene->HandleEvent(event);
+                currentScene->HandleEvent(event);
             }
 
             currentScene->Update(TIME_STEP);
