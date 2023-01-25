@@ -6,7 +6,7 @@
 
 #include "Components/Position.hpp"
 #include "Components/Sprite.hpp"
-#include "Components/Body.hpp"
+#include "Components/TileObject.hpp"
 
 #include "RenderWindow.hpp"
 
@@ -21,8 +21,6 @@ namespace Gem
 	    ecsManager.AddComponent(gem, Position{p_position});
 
         ecsManager.AddComponent(gem, Sprite{p_texture});
-
-        ecsManager.AddComponent(gem, Body{});
 
         return gem;
     }

@@ -4,15 +4,15 @@
 #include <vector>
 
 #include "ECS/Definitions.hpp"
-#include "TileCreator.hpp"
+#include "EntityCreator.hpp"
 #include "Math2D.hpp"
 
 class Board
 {
 public:
-    Board(Vector2f p_position, int p_rows, int p_cols, std::vector<TileType> p_tileTypes);
+    Board(Vector2f p_position, int p_rows, int p_cols, EntityCreator& p_entityCreator);
 
-    void PopulateBoard(TileCreator& tileCreator);      // generates populates board with random Tile Entities of desired Tile Types 
+    void PopulateBoard(std::vector<TileObject> p_tileObjects);      // generates populates board with random Tile Entities of desired Tile Types 
     void InsertTile(Entity p_tile, Coordinates p_coords);
 
     void SwapTiles(Coordinates p_firstTile, Coordinates p_secondTile);
@@ -29,7 +29,7 @@ private:
     Vector2f position;
     int rows;
     int cols;    
-    std::vector<TileType> tileTypes;
+    EntityCreator entityCreator;
     std::vector<Entity> grid;
     int size; // TODO remove if not necessary
 };

@@ -20,6 +20,7 @@ void GravitySystem::Update(float dt)
 {
 	for (auto const& entity : entities)
 	{
+		std::cout << (entity) << std::endl;
 		auto& position = ecsManager.GetComponent<Position>(entity);
 		auto& body = ecsManager.GetComponent<Body>(entity);
 

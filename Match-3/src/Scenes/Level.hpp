@@ -6,7 +6,7 @@
 #include "GameScene.hpp"
 #include "RenderWindow.hpp"
 #include "Board.hpp"
-#include "TileCreator.hpp"
+#include "EntityCreator.hpp"
 
 #include "ECS/Manager.hpp"
 #include "Systems/Gravity.hpp"
@@ -30,7 +30,7 @@ private:
     int rows;
     int cols;
 
-    TileCreator tileCreator;
+    EntityCreator entityCreator;
     SDL_Texture* background;
     Board* board;
 

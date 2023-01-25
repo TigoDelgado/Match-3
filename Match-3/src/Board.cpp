@@ -1,23 +1,23 @@
 #include "Board.hpp"
 
-Board::Board(Vector2f p_position, int p_rows, int p_cols, std::vector<TileType> p_tileTypes)
-    :position(p_position), rows(p_rows), cols(p_cols), tileTypes(p_tileTypes)
+Board::Board(Vector2f p_position, int p_rows, int p_cols, EntityCreator& p_entityCreator)
+    :position(p_position), rows(p_rows), cols(p_cols), entityCreator(p_entityCreator)
 {
     size = rows * cols;
     grid.reserve(size);
 }
 
-void Board::PopulateBoard(TileCreator& tileCreator)
+void Board::PopulateBoard(std::vector<TileObject> p_tileObjects)
 {
-    int size = tileTypes.size();
+    int size = p_tileObjects.size();
     for (int x = 0; x < rows; x++)
     {
         for (int y = 0; y < cols; y++)
         {
-            TileType randomType = tileTypes[rand() % size];
+            TileObject randomTileObject = p_tileObjects[rand() % size];
             float pos_x = position.x + x * 50;
             float pos_y = position.y + y * 50;;
-            tileCreator.CreateTileEntity(Vector2f{pos_x, pos_y}, randomType);
+            entityCreator.CreateTileEntity(Vector2f{pos_x, pos_y}, randomTileObject);
         }
     }
 };
