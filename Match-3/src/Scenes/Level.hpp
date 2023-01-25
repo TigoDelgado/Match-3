@@ -5,10 +5,12 @@
 
 #include "GameScene.hpp"
 #include "RenderWindow.hpp"
+#include "Board.hpp"
+#include "TileCreator.hpp"
 
 #include "ECS/Manager.hpp"
-#include "../Systems/Gravity.hpp"
-#include "../Systems/Render.hpp"
+#include "Systems/Gravity.hpp"
+#include "Systems/Render.hpp"
 
 // GameScene interface
 class Level : public GameScene
@@ -28,7 +30,9 @@ private:
     int rows;
     int cols;
 
+    TileCreator tileCreator;
     SDL_Texture* background;
+    Board* board;
 
     std::shared_ptr<GravitySystem> gravitySystem;
     std::shared_ptr<RenderSystem> renderSystem;

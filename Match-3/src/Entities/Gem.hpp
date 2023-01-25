@@ -14,11 +14,11 @@ extern ECS_Manager ecsManager;
 
 namespace Gem 
 {
-    Entity CreateEntity(float p_x, float p_y, SDL_Texture* p_texture)
+    Entity CreateEntity(Vector2f p_position, SDL_Texture* p_texture)
     {
         Entity gem = ecsManager.CreateEntity();
 
-	    ecsManager.AddComponent(gem, Position{p_x, p_y});
+	    ecsManager.AddComponent(gem, Position{p_position});
 
         ecsManager.AddComponent(gem, Sprite{p_texture});
 

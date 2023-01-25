@@ -1,6 +1,6 @@
 #include "Scenes/Level.hpp"
 
-#include "Entities/Gem.hpp"
+#include "TileCreator.hpp"
 
 #include "Components/Position.hpp"
 #include "Components/Body.hpp"
@@ -11,16 +11,15 @@ extern ECS_Manager ecsManager;
 Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background)
     :window(p_window), rows(p_rows), cols(p_cols)
 {
+
+    
+
     /* ------------------------------- Setup Resources  ------------------------------- */
 
     background = window.LoadTexture(p_background);
-    
-    SDL_Texture* gemBlackTexture = window.LoadTexture("res/Color-1.png");
-    SDL_Texture* gemWhiteTexture = window.LoadTexture("res/Color-2.png");
-    SDL_Texture* gemPinkTexture = window.LoadTexture("res/Color-3.png");
-    SDL_Texture* gemBlueTexture = window.LoadTexture("res/Color-4.png");
-    SDL_Texture* gemOrangeTexture = window.LoadTexture("res/Color-5.png");
 
+    // Load Tile object textures
+    tileCreator.LoadTextures(window);
 
     /* ------------------------------ Register Components ------------------------------ */
     
@@ -35,18 +34,27 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     renderSystem = ecsManager.RegisterSystem<RenderSystem>();
 
 
-    /* ------------------------------- Register Entities -------------------------------- */
 
-    Gem::CreateEntity(480.0f, 0.0f, gemBlackTexture);
-    Gem::CreateEntity(540.0f, 0.0f, gemWhiteTexture);
-    Gem::CreateEntity(600.0f, 0.0f, gemPinkTexture);
-    Gem::CreateEntity(660.0f, 0.0f, gemBlueTexture);
-    Gem::CreateEntity(720.0f, 0.0f, gemOrangeTexture);
+    /* ------------------------------ Create Scene Objects ------------------------------ */
+
+    // TODO pass this through a level manager?
+    std::vector<TileType> tileTypes
+    {
+        TileType::BlackGem,
+        TileType::WhiteGem, 
+        TileType::PinkGem, 
+        TileType::BlueGem, 
+        TileType::OrangeGem
+    };
+    
+    board = new Board(Vector2f{400.0f, 100.0f}, p_rows, p_cols, tileTypes);
+    board->PopulateBoard(tileCreator);
+
 }
 
 void Level::HandleEvent(SDL_Event& event)
 {
-    
+
 }
 
 void Level::Update(float dt)
@@ -57,7 +65,7 @@ void Level::Update(float dt)
 void Level::Render()
 {
     window.Clear();
-    window.Render(background, .0f, .0f, 1280, 720);
+    window.Render(background, Vector2f{0.0f, 0.0f}, Vector2f{1280.0f,720.0f});
     renderSystem->Update(window);
     window.Display();
 }
