@@ -23,6 +23,11 @@ struct Coordinates
     int x, y;
     Coordinates() : x(0), y(0) {}
     Coordinates(int p_x, int p_y) : x(p_x), y(p_y) {}
+
+    bool operator == (Coordinates coords)
+    {
+        return (x == coords.x && y == coords.y);
+    }
 };
 
 #endif //__Match3_Math_2D_h__

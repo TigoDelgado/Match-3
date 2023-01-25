@@ -3,24 +3,24 @@
 
 extern ECS_Manager ecsManager;
 
-Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileObject p_tileObject)
+Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, Coordinates p_coords, TileType p_type)
 {
     Entity entity = ecsManager.CreateEntity();
 
 	ecsManager.AddComponent(entity, Transform{p_position, Vector2f{1.0f, 1.0f}, 0.0f});
 
-    ecsManager.AddComponent(entity, Sprite{GetTexture(p_tileObject), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
+    ecsManager.AddComponent(entity, Sprite{GetTileTexture(p_color, p_type), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
 
-    ecsManager.AddComponent(entity, TileObject{p_tileObject});
+    ecsManager.AddComponent(entity, TileObject{p_color, p_coords});
 
-    if (p_tileObject.isMovable) ecsManager.AddComponent(entity, Swappable{});
+    ecsManager.AddComponent(entity, Swappable{});
 
     return entity;
 }
 
-SDL_Texture* EntityCreator::GetTexture(TileObject p_tileObject)
+SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)
 {
-    switch (p_tileObject.color)     // TODO check isMovable too?
+    switch (p_color)     // TODO check isMovable too?
     {
     case TileColor::Black:
         return blackGemTexture;

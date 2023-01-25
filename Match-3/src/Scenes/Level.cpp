@@ -8,8 +8,6 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     :window(p_window), rows(p_rows), cols(p_cols)
 {
 
-    
-
     /* ------------------------------- Setup Resources  ------------------------------- */
 
     background = window.LoadTexture(p_background);
@@ -17,13 +15,13 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     // Load Tile object textures
     entityCreator.LoadTextures(window);
 
+
     /* ------------------------------ Register Components ------------------------------ */
     
     ecsManager.RegisterComponent<Transform>();
     ecsManager.RegisterComponent<Sprite>();
     ecsManager.RegisterComponent<TileObject>();
     ecsManager.RegisterComponent<Swappable>();
-
 
     /* -------------------------------- Register Systems -------------------------------- */
 
@@ -36,32 +34,71 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     /* ------------------------------ Create Scene Objects ------------------------------ */
 
     // TODO pass this through a level manager?
-    std::vector<TileObject> tileObjects
+    std::vector<TileColor> tileColors
     {
-        {TileColor::Black, true},
-        {TileColor::White, true},
-        {TileColor::Pink, true},
-        {TileColor::Blue, true},
-        {TileColor::Orange, true}
+        TileColor::Black,
+        TileColor::White,
+        TileColor::Pink,
+        TileColor::Blue,
+        TileColor::Orange,
     };
     
     board = new Board(Vector2f{400.0f, 200.0f}, p_rows, p_cols, entityCreator);
-    board->PopulateBoard(tileObjects);
 
+    board->PopulateBoard(tileColors);
+
+    state = WAITING_ONE;
 }
 
 void Level::HandleEvent(SDL_Event& event)
 {
-    switch(event.type) {
+    switch(event.type) 
+    {
         case SDL_MOUSEBUTTONDOWN:
             if(event.button.button == SDL_BUTTON_LEFT)
             {
-                //handle a left-click
-                Entity entity;
-                if ( clickTileSystem->ClickedEntity(Vector2f{float(event.button.x), float(event.button.y)}, entity) )
-                    std::cout << "Clicked on entity: " << (entity) << std::endl;
-                else std::cout << "Clicked on NOTHING!" << std::endl;
+                if (state == WAITING_ONE)
+                {
+                    Entity entity;
+                    Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
+
+                    if (clickTileSystem->ClickedEntity(mousePosition, entity))
+                    {
+                        tileOne = board->GetEntityCoords(entity);
+                    }
+
+                    state = WAITING_TWO;
+                }
+                else if (state == WAITING_TWO)
+                {
+                    Entity entity;
+                    Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
+
+                    if (clickTileSystem->ClickedEntity(mousePosition, entity))
+                    {
+                        Coordinates coords = board->GetEntityCoords(entity);
+                        if (tileOne == coords)
+                        {
+                            state = WAITING_ONE;
+                        }
+
+                        else if (board->CanSwap(tileOne, coords))
+                        {
+                            tileTwo = coords;
+                            // board->SwapTiles(tileOne, tileTwo);
+
+                            state = SWAPPING_TILES;
+                        }
+
+                        else
+                        {
+                            tileOne = coords;
+                        }
+                    }
+                }
+                
             }
+            std::cout << "Click. | Tile: " << board->GetEntityFromCoords(tileOne) << std::endl;
             break;
         default:
             break;
@@ -70,7 +107,7 @@ void Level::HandleEvent(SDL_Event& event)
 
 void Level::Update(float dt)
 {
-    // gravitySystem->Update(dt);
+
 }
 
 void Level::Render()

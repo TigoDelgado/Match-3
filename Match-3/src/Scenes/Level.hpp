@@ -17,7 +17,8 @@
 enum LevelState
 {
     INITIALIZING,
-    WAITING,
+    WAITING_ONE,
+    WAITING_TWO,
     SWAPPING_TILES,
     SWAPPING_BACK,      // FIXME may not be necessary
     CLEARING_MATCHES,
@@ -53,6 +54,11 @@ private:
     std::shared_ptr<GravitySystem> gravitySystem;
     std::shared_ptr<RenderSystem> renderSystem;
     std::shared_ptr<ClickTileSystem> clickTileSystem;
+
+    LevelState state = INITIALIZING;
+
+    Coordinates tileOne = {-1, -1};
+    Coordinates tileTwo = {-1, -1};
 };
 
 #endif //__Match3_Scene_Level_h__

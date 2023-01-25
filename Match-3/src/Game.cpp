@@ -32,7 +32,7 @@ void Game::Run()
 
     // TODO create scene manager
     GameScene* currentScene = new Level(window, 8, 8, "res/Backdrop13.jpg");
-
+    
 
     /* ----------------------------------- Main Loop ------------------------------------ */
 

@@ -15,9 +15,9 @@
 class EntityCreator
 {
 public: 
-    Entity CreateTileEntity(Vector2f p_position, TileObject p_tileObject);
+    Entity CreateTileEntity(Vector2f p_position, TileColor p_color, Coordinates p_coords, TileType p_type);
     void LoadTextures(RenderWindow& window);
-    SDL_Texture* GetTexture(TileObject p_tileObject);
+    SDL_Texture* GetTileTexture(TileColor p_color, TileType p_type);
 
 private:
     SDL_Texture* blackGemTexture;
