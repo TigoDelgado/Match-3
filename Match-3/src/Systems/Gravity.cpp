@@ -23,6 +23,6 @@ void GravitySystem::Update(float dt)
 		auto& position = ecsManager.GetComponent<Position>(entity);
 		auto& body = ecsManager.GetComponent<Body>(entity);
 
-		position.y += body.gravityForce * dt;
+		position.vector.y += body.gravityForce * dt;
 	}
 }

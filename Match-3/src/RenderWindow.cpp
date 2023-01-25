@@ -39,7 +39,7 @@ void RenderWindow::Clear()
     SDL_RenderClear(renderer);
 }
 
-void RenderWindow::Render(SDL_Texture* p_texture, float p_x, float p_y)
+void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position)
 {
     int textureWidth, textureHeight;
     SDL_QueryTexture(p_texture, NULL, NULL, &textureWidth, &textureHeight);
@@ -51,15 +51,15 @@ void RenderWindow::Render(SDL_Texture* p_texture, float p_x, float p_y)
     src.h = textureHeight;
 
     SDL_Rect dst;
-    dst.x = p_x;
-    dst.y = p_y;
+    dst.x = p_position.x;
+    dst.y = p_position.y;
     dst.w = 45;
     dst.h = 45;
 
     SDL_RenderCopy(renderer, p_texture, &src, &dst);
 }
 
-void RenderWindow::Render(SDL_Texture* p_texture, float p_x, float p_y, float p_w, float p_h)
+void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_dimensions)
 {
     int textureWidth, textureHeight;
     SDL_QueryTexture(p_texture, NULL, NULL, &textureWidth, &textureHeight);
@@ -71,10 +71,10 @@ void RenderWindow::Render(SDL_Texture* p_texture, float p_x, float p_y, float p_
     src.h = textureHeight;
 
     SDL_Rect dst;
-    dst.x = p_x;
-    dst.y = p_y;
-    dst.w = p_w;
-    dst.h = p_h;
+    dst.x = p_position.x;
+    dst.y = p_position.y;
+    dst.w = p_dimensions.x;
+    dst.h = p_dimensions.y;
 
     SDL_RenderCopy(renderer, p_texture, &src, &dst);
 }

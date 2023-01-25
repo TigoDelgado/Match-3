@@ -23,6 +23,6 @@ void RenderSystem::Update(RenderWindow& window)
 		auto& position = ecsManager.GetComponent<Position>(entity);
         auto& sprite = ecsManager.GetComponent<Sprite>(entity);
 
-        window.Render(sprite.texture, position.x, position.y);
+        window.Render(sprite.texture, position.vector);
     }
 }

@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "Math2D.hpp"
+
 class RenderWindow
 {
 public:
@@ -11,8 +13,8 @@ public:
     SDL_Texture* LoadTexture(const char* p_filePath);
     void CleanUp();
     void Clear();
-    void Render(SDL_Texture* p_texture, float p_X, float p_y);
-    void Render(SDL_Texture* p_texture, float p_X, float p_y, float p_w, float p_h);
+    void Render(SDL_Texture* p_texture, Vector2f p_position);
+    void Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_dimensions);
     void Display();
     
 private:
