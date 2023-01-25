@@ -8,8 +8,9 @@
 #include "ECS/Definitions.hpp"
 
 #include "Components/TileObject.hpp"
-#include "Components/Position.hpp"
+#include "Components/Transform.hpp"
 #include "Components/Sprite.hpp"
+#include "Components/Swappable.hpp"
 
 class EntityCreator
 {

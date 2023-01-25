@@ -4,7 +4,7 @@
 #include "ECS/Manager.hpp"
 #include "ECS/Definitions.hpp"
 
-#include "Components/Position.hpp"
+#include "Components/Transform.hpp"
 #include "Components/Sprite.hpp"
 #include "Components/TileObject.hpp"
 
@@ -18,7 +18,7 @@ namespace Gem
     {
         Entity gem = ecsManager.CreateEntity();
 
-	    ecsManager.AddComponent(gem, Position{p_position});
+	    ecsManager.AddComponent(gem, Transform{p_position,{1.0f, 1.0f,}, 0.0f});
 
         ecsManager.AddComponent(gem, Sprite{p_texture});
 

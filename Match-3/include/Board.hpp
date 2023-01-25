@@ -21,6 +21,7 @@ public:
     void SpawnTiles();
     void GravitateTiles();
 
+    int GetIndexFromPosition(Vector2f p_position);
     int GetIndexFromCoords(Coordinates p_coords);
 
     std::vector<Entity> getGrid() {return grid;}

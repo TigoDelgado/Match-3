@@ -1,4 +1,5 @@
 #include "EntityCreator.hpp"
+#include "GameDefinitions.hpp"
 
 extern ECS_Manager ecsManager;
 
@@ -6,11 +7,13 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileObject p_tileObj
 {
     Entity entity = ecsManager.CreateEntity();
 
-	ecsManager.AddComponent(entity, Position{p_position});
+	ecsManager.AddComponent(entity, Transform{p_position, Vector2f{1.0f, 1.0f}, 0.0f});
 
-    ecsManager.AddComponent(entity, Sprite{GetTexture(p_tileObject)});
+    ecsManager.AddComponent(entity, Sprite{GetTexture(p_tileObject), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
 
     ecsManager.AddComponent(entity, TileObject{p_tileObject});
+
+    if (p_tileObject.isMovable) ecsManager.AddComponent(entity, Swappable{});
 
     return entity;
 }
