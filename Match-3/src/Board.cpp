@@ -1,6 +1,8 @@
 #include "Board.hpp"
 #include "GameDefinitions.hpp"
 
+#include "Components/Translate.hpp"
+
 #include <iostream>
 
 extern ECS_Manager ecsManager;
@@ -32,6 +34,8 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
 
 void Board::SwapTiles(Coordinates p_1, Coordinates p_2)
 {
+    std::cout << "Swapping Tiles" << std::endl; 
+
     Entity tempEntity = grid[p_1.x][p_1.y];
     grid[p_1.x][p_1.y] = grid[p_2.x][p_2.y];
     grid[p_2.x][p_2.y] = tempEntity;
@@ -42,11 +46,9 @@ void Board::SwapTiles(Coordinates p_1, Coordinates p_2)
     TileObject& tileObject2 = ecsManager.GetComponent<TileObject>(grid[p_2.x][p_2.y]);
     tileObject2.coords = p_2;
 
-    Transform& transform1 = ecsManager.GetComponent<Transform>(grid[p_1.x][p_1.y]);
-    transform1.position = GetPositionFromCoords(p_1);
+    ecsManager.AddComponent(grid[p_1.x][p_1.y], Translate{GetPositionFromCoords(p_1), 500.0f});
+    ecsManager.AddComponent(grid[p_2.x][p_2.y], Translate{GetPositionFromCoords(p_2), 500.0f});
 
-    Transform& transform2 = ecsManager.GetComponent<Transform>(grid[p_2.x][p_2.y]);
-    transform2.position = GetPositionFromCoords(p_2);
 }
 
 Coordinates Board::GetEntityCoords(Entity p_entity)

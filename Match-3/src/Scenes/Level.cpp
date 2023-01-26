@@ -1,5 +1,12 @@
 #include "Scenes/Level.hpp"
 
+#include "ECS/Manager.hpp"
+#include "Components/Transform.hpp"
+#include "Components/Sprite.hpp"
+#include "Components/TileObject.hpp"
+#include "Components/Swappable.hpp"
+#include "Components/Translate.hpp"
+
 #include <iostream>
 
 extern ECS_Manager ecsManager;
@@ -22,12 +29,14 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     ecsManager.RegisterComponent<Sprite>();
     ecsManager.RegisterComponent<TileObject>();
     ecsManager.RegisterComponent<Swappable>();
+    ecsManager.RegisterComponent<Translate>();
 
     /* -------------------------------- Register Systems -------------------------------- */
 
     // gravitySystem = ecsManager.RegisterSystem<GravitySystem>();
     renderSystem = ecsManager.RegisterSystem<RenderSystem>();
     clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
+    moveTileSystem = ecsManager.RegisterSystem<MoveTileSystem>();
     // FIXME Don't allow systems to register without required components
 
 
@@ -89,9 +98,10 @@ void Level::HandleEvent(SDL_Event& event)
                         else if (Board::CanSwap(tileOne, coords))
                         {
                             tileTwo = coords;
+
                             board->SwapTiles(tileOne, tileTwo);
 
-                            state = WAITING_ONE;
+                            state = SWAPPING_TILES;
 
                             // FIXME remove print
                             std::cout << "Swapping tiles [" << tileOne.x << " ," << tileOne.y << "] and [" << tileTwo.x << " ," << tileTwo.y << "]" << std::endl;
@@ -121,7 +131,27 @@ void Level::HandleEvent(SDL_Event& event)
 
 void Level::Update(float dt)
 {
+    switch (state)
+    {
+    case WAITING_ONE:
+        /* code */
+        break;
 
+    case WAITING_TWO:
+        /* code */
+        break;
+
+    case SWAPPING_TILES:
+        if (!moveTileSystem->Update(dt))
+        {
+            // FIXME not the correct state
+            state = WAITING_ONE;
+        }
+        break;
+    
+    default:
+        break;
+    }
 }
 
 void Level::Render()

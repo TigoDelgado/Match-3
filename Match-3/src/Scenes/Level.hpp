@@ -12,6 +12,7 @@
 #include "Systems/Gravity.hpp"
 #include "Systems/Render.hpp"
 #include "Systems/ClickTile.hpp"
+#include "Systems/MoveTile.hpp"
 
 
 enum LevelState
@@ -54,6 +55,7 @@ private:
     std::shared_ptr<GravitySystem> gravitySystem;
     std::shared_ptr<RenderSystem> renderSystem;
     std::shared_ptr<ClickTileSystem> clickTileSystem;
+    std::shared_ptr<MoveTileSystem> moveTileSystem;
 
     LevelState state = INITIALIZING;
 
