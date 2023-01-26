@@ -28,7 +28,7 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
             TileColor randColor = p_tileColors[rand() % size];
             Coordinates coords{x,y};
             Vector2f tilePosition = GetPositionFromCoords(coords);
-            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal);
+            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal, TileState::Idle);
 
             grid[x][y] = entity;
         }
@@ -44,10 +44,9 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
             TileColor randColor = p_tileColors[rand() % size];
             Coordinates coords{x,y};
             Vector2f tilePosition = GetPositionFromCoords(coords);
-            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal);
+            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal, TileState::Idle);
 
             ecsManager.DestroyEntity(grid[x][y]);
-            
             grid[x][y] = entity;
         }
     }
@@ -127,7 +126,10 @@ bool Board::CanSwap(Coordinates p_tileOne, Coordinates p_tileTwo)
         (p_tileOne.x == p_tileTwo.x - 1 && p_tileOne.y == p_tileTwo.y) ||
         (p_tileOne.x == p_tileTwo.x + 1 && p_tileOne.y == p_tileTwo.y) )
         {
-            return true;
+            TileObject& tileOne = ecsManager.GetComponent<TileObject>(grid[p_tileOne.x][p_tileOne.y]);
+            TileObject& tileTwo = ecsManager.GetComponent<TileObject>(grid[p_tileTwo.x][p_tileTwo.y]);
+
+            return (tileOne.state == TileState::Idle && tileTwo.state == TileState::Idle);
         }
     else return false;
 }

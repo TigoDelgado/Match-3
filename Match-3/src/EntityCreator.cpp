@@ -5,7 +5,7 @@
 
 extern ECS_Manager ecsManager;
 
-Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, Coordinates p_coords, TileType p_type)
+Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, Coordinates p_coords, TileType p_type, TileState p_state)
 {
     Entity entity = ecsManager.CreateEntity();
 
@@ -13,7 +13,7 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, C
 
     ecsManager.AddComponent(entity, Sprite{GetTileTexture(p_color, p_type), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
 
-    ecsManager.AddComponent(entity, TileObject{p_color, p_coords});
+    ecsManager.AddComponent(entity, TileObject{p_color, p_coords, p_state});
 
     ecsManager.AddComponent(entity, Swappable{});
 

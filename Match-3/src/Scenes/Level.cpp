@@ -95,7 +95,7 @@ void Level::HandleEvent(SDL_Event& event)
                             std::cout << "De-selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
                         }
 
-                        else if (Board::CanSwap(tileOne, coords))
+                        else if (board->CanSwap(tileOne, coords))
                         {
                             tileTwo = coords;
 

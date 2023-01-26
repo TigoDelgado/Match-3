@@ -22,10 +22,19 @@ enum TileType
     Consuming
 };
 
+enum TileState
+{
+    Idle,
+    Swapping,
+    Gravitating,
+    Clearing
+};
+
 struct TileObject
 {
     TileColor color;
     Coordinates coords;
+    TileState state;
 };
 
 #endif //__Match3_Component_Tile_Object_h__

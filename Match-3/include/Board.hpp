@@ -46,7 +46,7 @@ public:
 
     Coordinates GetEntityCoords(Entity p_entity);
 
-    static bool CanSwap(Coordinates p_tileOne, Coordinates p_tileTwo);
+    bool CanSwap(Coordinates p_tileOne, Coordinates p_tileTwo);
 
 private:
     Vector2f position;
