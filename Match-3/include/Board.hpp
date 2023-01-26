@@ -7,6 +7,27 @@
 #include "EntityCreator.hpp"
 #include "Math2D.hpp"
 
+enum MatchType
+{
+    VerticalMatch,
+    HorizontalMatch,
+    MixedMatch
+};
+
+struct Match
+{
+    MatchType type;
+    int count;
+    std::vector<Entity> entities;
+    Coordinates start;
+    Coordinates end;
+
+    void print() 
+    {
+        std::cout << "Match type: " << type << " | count: " << count << " | start : [" << start.x << ", " << start.y << "] | end: [" << end.x << ", " << end.y << "]" << std::endl;
+    }
+};
+
 class Board
 {
 public:
@@ -16,6 +37,8 @@ public:
     void InsertTile(Entity p_tile, Coordinates p_coords);
 
     void SwapTiles(Coordinates p_1, Coordinates p_2);
+
+    bool CheckMatches();
 
     Entity GetEntityFromCoords(Coordinates p_coords);
 
@@ -32,6 +55,11 @@ private:
     EntityCreator entityCreator;
     std::vector<std::vector<Entity>> grid;
     int size; // TODO remove if not necessary
+
+    std::vector<Match> GetVerticalMatches();
+    std::vector<Match> GetHorizontalMatches();
+    void SetMatches(std::vector<Match>& p_verticalMatches, std::vector<Match>& p_horizontalMatches);
+    std::vector<Match> currentMatches;
 };
 
 #endif //__Match3_Board_h__

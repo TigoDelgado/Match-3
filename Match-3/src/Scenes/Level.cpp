@@ -145,9 +145,27 @@ void Level::Update(float dt)
         if (!moveTileSystem->Update(dt))
         {
             // FIXME not the correct state
-            state = WAITING_ONE;
+
+            if (board->CheckMatches())
+            {
+                std::cout << "FOUND MATCHES!" << std::endl;
+                // board->ClearMatches();
+                state = WAITING_ONE;
+            }
+            else
+            {
+                std::cout << "did not find matches..." << std::endl;
+                board->SwapTiles(tileOne, tileTwo);
+                state = SWAPPING_BACK;
+            }
         }
         break;
+    
+    case SWAPPING_BACK:
+        if (!moveTileSystem->Update(dt))
+        {
+            state = WAITING_ONE;
+        } 
     
     default:
         break;
