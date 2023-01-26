@@ -6,6 +6,8 @@
 #include "ECS/ComponentManager.hpp"
 #include "ECS/SystemManager.hpp"
 
+#include <iostream>
+
 class ECS_Manager 
 {
 public:
@@ -38,10 +40,10 @@ public:
 	}
 
 	template<typename T> void AddComponent(Entity entity, T component)
-	{
+	{	
 		componentManager->AddComponent<T>(entity, component);
 
-		auto signature = entityManager->GetSignature(entity);
+		Signature signature = entityManager->GetSignature(entity);
 		signature.set(componentManager->GetComponentType<T>(), true);
 		entityManager->SetSignature(entity, signature);
 

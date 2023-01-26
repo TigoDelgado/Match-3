@@ -10,6 +10,8 @@
 #ifndef __ECS_Component_Array_h__
 #define __ECS_Component_Array_h__
 
+#include <iostream>
+
 #include "ECS/Definitions.hpp"
 
 class IComponentArray
@@ -32,6 +34,7 @@ public:
 		entityToIndexMap[entity] = newIndex;
 		indexToEntityMap[newIndex] = entity;
 		componentArray[newIndex] = component;
+
 		++arraySize;
     }
 

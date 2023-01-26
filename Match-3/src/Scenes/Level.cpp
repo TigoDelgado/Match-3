@@ -42,7 +42,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
         TileColor::Blue,
         TileColor::Orange,
     };
-    
+
     board = new Board(Vector2f{400.0f, 200.0f}, p_rows, p_cols, entityCreator);
 
     board->PopulateBoard(tileColors);
@@ -59,46 +59,60 @@ void Level::HandleEvent(SDL_Event& event)
             {
                 if (state == WAITING_ONE)
                 {
-                    Entity entity;
+                    Coordinates coords;
                     Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
 
-                    if (clickTileSystem->ClickedEntity(mousePosition, entity))
+                    if (clickTileSystem->ClickedEntity(mousePosition, coords))
                     {
-                        tileOne = board->GetEntityCoords(entity);
+                        tileOne = coords;
+
+                        // FIXME remove print
+                        std::cout << "Selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
                     }
 
                     state = WAITING_TWO;
                 }
                 else if (state == WAITING_TWO)
                 {
-                    Entity entity;
+                    Coordinates coords;
                     Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
 
-                    if (clickTileSystem->ClickedEntity(mousePosition, entity))
+                    if (clickTileSystem->ClickedEntity(mousePosition, coords))
                     {
-                        Coordinates coords = board->GetEntityCoords(entity);
                         if (tileOne == coords)
                         {
                             state = WAITING_ONE;
+                            // FIXME remove print
+                            std::cout << "De-selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
                         }
 
-                        else if (board->CanSwap(tileOne, coords))
+                        else if (Board::CanSwap(tileOne, coords))
                         {
                             tileTwo = coords;
-                            // board->SwapTiles(tileOne, tileTwo);
+                            board->SwapTiles(tileOne, tileTwo);
 
-                            state = SWAPPING_TILES;
+                            state = WAITING_ONE;
+
+                            // FIXME remove print
+                            std::cout << "Swapping tiles [" << tileOne.x << " ," << tileOne.y << "] and [" << tileTwo.x << " ," << tileTwo.y << "]" << std::endl;
                         }
 
                         else
                         {
                             tileOne = coords;
+
+                            // FIXME remove print
+                            std::cout << "Selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
                         }
                     }
+                    else
+                    {
+                        state = WAITING_ONE;
+                        // FIXME remove print
+                        std::cout << "De-selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
+                    }
                 }
-                
             }
-            std::cout << "Click. | Tile: " << board->GetEntityFromCoords(tileOne) << std::endl;
             break;
         default:
             break;

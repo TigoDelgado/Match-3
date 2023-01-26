@@ -8,7 +8,7 @@ class ClickTileSystem : public System
 {
 public:
     void Init() override;
-	bool ClickedEntity(Vector2f p_point, Entity& p_entity);
+	bool ClickedEntity(Vector2f p_point, Coordinates& p_coords);
 };
 
 

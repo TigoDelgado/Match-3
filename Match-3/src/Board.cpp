@@ -8,17 +8,13 @@ extern ECS_Manager ecsManager;
 Board::Board(Vector2f p_position, int p_rows, int p_cols, EntityCreator& p_entityCreator)
     :position(p_position), rows(p_rows), cols(p_cols), entityCreator(p_entityCreator)
 {
-    size = rows * cols;
-    grid.reserve(p_rows);
-    for(int x = 0; x < p_rows; x++)
-    {
-        grid[x].reserve(p_cols);
-    }
+    grid = std::vector<std::vector<Entity>> (rows, std::vector<Entity>(cols));
 }
 
 void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
 {
     int size = p_tileColors.size();
+    
     for (int x = 0; x < rows; x++)
     {
         for (int y = 0; y < cols; y++)
@@ -39,6 +35,18 @@ void Board::SwapTiles(Coordinates p_1, Coordinates p_2)
     Entity tempEntity = grid[p_1.x][p_1.y];
     grid[p_1.x][p_1.y] = grid[p_2.x][p_2.y];
     grid[p_2.x][p_2.y] = tempEntity;
+
+    TileObject& tileObject1 = ecsManager.GetComponent<TileObject>(grid[p_1.x][p_1.y]);
+    tileObject1.coords = p_1;
+
+    TileObject& tileObject2 = ecsManager.GetComponent<TileObject>(grid[p_2.x][p_2.y]);
+    tileObject2.coords = p_2;
+
+    Transform& transform1 = ecsManager.GetComponent<Transform>(grid[p_1.x][p_1.y]);
+    transform1.position = GetPositionFromCoords(p_1);
+
+    Transform& transform2 = ecsManager.GetComponent<Transform>(grid[p_2.x][p_2.y]);
+    transform2.position = GetPositionFromCoords(p_2);
 }
 
 Coordinates Board::GetEntityCoords(Entity p_entity)

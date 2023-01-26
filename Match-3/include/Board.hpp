@@ -12,7 +12,7 @@ class Board
 public:
     Board(Vector2f p_position, int p_rows, int p_cols, EntityCreator& p_entityCreator);
 
-    void PopulateBoard(std::vector<TileColor> p_tileColors);      // generates populates board with random Tile Entities of desired Tile Types 
+    void PopulateBoard(std::vector<TileColor> p_tileColors);      // populates board with random Tile Entities of desired Tile Types 
     void InsertTile(Entity p_tile, Coordinates p_coords);
 
     void SwapTiles(Coordinates p_1, Coordinates p_2);

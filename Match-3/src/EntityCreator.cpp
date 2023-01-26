@@ -1,6 +1,8 @@
 #include "EntityCreator.hpp"
 #include "GameDefinitions.hpp"
 
+#include <iostream>
+
 extern ECS_Manager ecsManager;
 
 Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, Coordinates p_coords, TileType p_type)

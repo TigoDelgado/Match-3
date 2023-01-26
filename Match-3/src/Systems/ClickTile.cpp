@@ -22,16 +22,17 @@ void ClickTileSystem::Init()
 }
 
 
-bool ClickTileSystem::ClickedEntity(Vector2f p_point, Entity& p_entity)
+bool ClickTileSystem::ClickedEntity(Vector2f p_point, Coordinates& p_coords)
 {
     for (Entity const& entity : entities)
 	{
 		Transform& transform = ecsManager.GetComponent<Transform>(entity);
+        TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
 
         if (transform.position.x < p_point.x && p_point.x < transform.position.x + TILE_WIDTH &&
             transform.position.y < p_point.y && p_point.y < transform.position.y + TILE_HEIGHT)
         {
-            p_entity = entity;
+            p_coords = tileObject.coords;
             return true;
         }
 	}
