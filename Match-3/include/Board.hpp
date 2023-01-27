@@ -51,6 +51,9 @@ public:
 
     void ClearMatches();
 
+    void AddSelected(Entity entity);
+    void RemoveSelected(Entity entity);
+
 private:
     Vector2f position;
     int cols;    

@@ -59,7 +59,7 @@ void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position)
     SDL_RenderCopy(renderer, p_texture, &src, &dst);
 }
 
-void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_dimensions)
+void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_dimensions, double p_rotation, SDL_Point* p_center, SDL_RendererFlip p_flip)
 {
     int textureWidth, textureHeight;
     SDL_QueryTexture(p_texture, NULL, NULL, &textureWidth, &textureHeight);
@@ -76,7 +76,7 @@ void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f 
     dst.w = p_dimensions.x;
     dst.h = p_dimensions.y;
 
-    SDL_RenderCopy(renderer, p_texture, &src, &dst);
+    SDL_RenderCopyEx(renderer, p_texture, &src, &dst, p_rotation, p_center, p_flip);
 }
 
 void RenderWindow::Display()

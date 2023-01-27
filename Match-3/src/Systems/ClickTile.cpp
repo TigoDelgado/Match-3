@@ -29,9 +29,10 @@ bool ClickTileSystem::ClickedTile(Vector2f p_point, Entity& p_entity)
 		Transform& transform = ecsManager.GetComponent<Transform>(entity);
         // TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
 
+        float offset = (TILE_WIDTH / 2) + (TILE_MARGIN / 2);
 
-        if (transform.position.x - TILE_WIDTH / 2 < p_point.x && p_point.x < transform.position.x + TILE_WIDTH / 2 &&
-            transform.position.y - TILE_HEIGHT / 2 < p_point.y && p_point.y < transform.position.y + TILE_HEIGHT / 2)
+        if (transform.position.x - offset < p_point.x && p_point.x < transform.position.x + offset &&
+            transform.position.y - offset < p_point.y && p_point.y < transform.position.y + offset)
         {
             p_entity = entity;
             return true;

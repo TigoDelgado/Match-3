@@ -1,13 +1,5 @@
 #include "Scenes/Level.hpp"
 
-#include "ECS/Manager.hpp"
-#include "Components/Transform.hpp"
-#include "Components/Sprite.hpp"
-#include "Components/TileObject.hpp"
-#include "Components/Swappable.hpp"
-#include "Components/Translate.hpp"
-#include "Components/Destruction.hpp"
-
 #include <iostream>
 
 extern ECS_Manager ecsManager;
@@ -32,6 +24,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     ecsManager.RegisterComponent<Swappable>();
     ecsManager.RegisterComponent<Translate>();
     ecsManager.RegisterComponent<Destruction>();
+    ecsManager.RegisterComponent<Selected>();
 
     /* -------------------------------- Register Systems -------------------------------- */
 
@@ -40,6 +33,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
     moveTileSystem = ecsManager.RegisterSystem<MoveTileSystem>();
     clearTileSystem = ecsManager.RegisterSystem<ClearTileSystem>();
+    animateSelectedSystem = ecsManager.RegisterSystem<AnimateSelectedSystem>();
 
     // FIXME Don't allow systems to register without required components
 
@@ -76,12 +70,12 @@ void Level::HandleEvent(SDL_Event& event)
             
             Entity entity;
 
-            if (selectedOne == NULL_ENTITY) // Select first tile
+            if (selectedOne == NULL_ENTITY) 
             {
-                if (clickTileSystem->ClickedTile(mousePosition, entity))
+                if (clickTileSystem->ClickedTile(mousePosition, entity))    // Select first tile
                 {
                     selectedOne = entity;
-                    // TODO add selected component?
+                    changedSelected = true;
                 }
             }
             else // First tile already selected
@@ -90,8 +84,11 @@ void Level::HandleEvent(SDL_Event& event)
                 {
                     if (entity == selectedOne)  // De-select tile
                     {
+                        lastSelected = selectedOne;
                         selectedOne = NULL_ENTITY;
                         selectedTwo = NULL_ENTITY;
+
+                        changedSelected = true;
                     }
                     else    
                     {
@@ -101,13 +98,24 @@ void Level::HandleEvent(SDL_Event& event)
                         }
                         else    // Select new first tile
                         {
+                            lastSelected = selectedOne;
                             selectedOne = entity;
+
+                            changedSelected = true;
                         }
                     }
                 }
+                else   // if clicked outside grid, de-select current tile
+                {
+                    lastSelected = selectedOne;
+                    selectedOne = NULL_ENTITY;
+                    selectedTwo = NULL_ENTITY;
+
+                    changedSelected = true;
+                }
             }
         }
-        std::cout << "Mouse DOWN | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
+        // std::cout << "Mouse DOWN | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
         break;
 
     case SDL_MOUSEBUTTONUP:
@@ -115,28 +123,34 @@ void Level::HandleEvent(SDL_Event& event)
         {
             mouseDown = false;
 
-            if (selectedOne != NULL_ENTITY && selectedTwo == NULL_ENTITY)
-            {
-                Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
+            // if (selectedOne != NULL_ENTITY && selectedTwo == NULL_ENTITY)
+            // {
+            //     Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
             
-                Entity entity;
+            //     Entity entity;
 
-                if (clickTileSystem->ClickedTile(mousePosition, entity))
-                {
-                    if (selectedOne != entity)      // If mouse is dropped over other tile
-                    {
-                        selectedOne = NULL_ENTITY;
-                        selectedTwo = NULL_ENTITY;
-                    }
-                }
-                else                                // if mouse dropped somewhere else FIXME
-                {
-                    selectedOne = NULL_ENTITY;
-                    selectedTwo = NULL_ENTITY;
-                }
-            }
+            //     if (clickTileSystem->ClickedTile(mousePosition, entity))
+            //     {
+            //         if (selectedOne != entity)      // If mouse is dropped over other tile
+            //         {
+            //             lastSelected = selectedOne;
+            //             selectedOne = NULL_ENTITY;
+            //             selectedTwo = NULL_ENTITY;
+
+            //             changedSelected = true;
+            //         }
+            //     }
+            //     else                                // if mouse dropped somewhere else FIXME
+            //     {
+            //         lastSelected = selectedOne;
+            //         selectedOne = NULL_ENTITY;
+            //         selectedTwo = NULL_ENTITY;
+
+            //         changedSelected = true;
+            //     }
+            // }
         }
-        std::cout << "Mouse UP | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
+        // std::cout << "Mouse UP | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
         break;
 
     case SDL_MOUSEMOTION:
@@ -171,6 +185,7 @@ void Level::Update(float dt)
         if (selectedOne != NULL_ENTITY && selectedTwo != NULL_ENTITY)
         {
             board->SwapTiles(selectedOne, selectedTwo);
+            board->RemoveSelected(selectedOne);
             state = SWAPPING_TILES;
         }
         break;
@@ -229,12 +244,30 @@ void Level::Update(float dt)
     default:
         break;
     }
+
+    if (changedSelected)
+    {
+        // std::cout << "Changed selected from " << lastSelected  << " to " << selectedOne << std::endl;
+        if (lastSelected != NULL_ENTITY)
+        {
+            // std::cout << "Removing Selected to entity " << lastSelected << std::endl;
+            board->RemoveSelected(lastSelected);
+        }
+        if (selectedOne != NULL_ENTITY)
+        {
+            // std::cout << "Adding Selected to entity " << selectedOne << std::endl;
+            board->AddSelected(selectedOne);
+        }
+        changedSelected = false;
+    }
+
+    animateSelectedSystem->Update(dt);
 }
 
 void Level::Render()
 {
     window.Clear();
-    window.Render(background, Vector2f{0.0f, 0.0f}, Vector2f{1280.0f,720.0f});
+    window.Render(background, Vector2f{0.0f, 0.0f}, Vector2f{1280.0f,720.0f}, 0, NULL, SDL_FLIP_NONE);
     renderSystem->Update(window);
     window.Display();
 }

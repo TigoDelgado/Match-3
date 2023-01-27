@@ -8,5 +8,6 @@
 #define TILE_FALL_SPEED 450
 #define TILE_CLEAR_SPEED 10
 #define TILE_CLEAR_SCALE 0.1
+#define TILE_ROTATE_SPEED 100
 
 #endif //__Match3_Game_Definitions_h__

@@ -3,6 +3,7 @@
 
 #include "Components/Translate.hpp"
 #include "Components/Destruction.hpp"
+#include "Components/Selected.hpp"
 
 #include <iostream>
 
@@ -51,7 +52,7 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
 
             entityCreator.UpdateTileSprite(entity);
 
-            std::cout << "Changed color of entity " << entity << " on tile [" << centerTile.x << ", " << centerTile.y << "]" << std::endl;
+            // std::cout << "Changed color of entity " << entity << " on tile [" << centerTile.x << ", " << centerTile.y << "]" << std::endl;
         }
     }
 };
@@ -218,6 +219,23 @@ void Board::ClearMatches()
         }
     }
     currentMatches.clear();
+}
+
+void Board::AddSelected(Entity entity)
+{
+    ecsManager.AddComponent<Selected>(entity, Selected{});
+    Transform& transform = ecsManager.GetComponent<Transform>(entity);
+    transform.rotation = 0.0f;
+    transform.scale = 0.95f;
+}
+
+
+void Board::RemoveSelected(Entity entity)
+{
+    ecsManager.RemoveComponent<Selected>(entity);
+    Transform& transform = ecsManager.GetComponent<Transform>(entity);
+    transform.rotation = 0.0f;
+    transform.scale = 1.0f;
 }
 
 

@@ -27,7 +27,8 @@ void RenderSystem::Update(RenderWindow& window)
 
 		// Images are rendered starting from the top-left point
 		Vector2f topLeft = transform.position - (sprite.dimensions * transform.scale) / 2;
+		Vector2f dimensions = sprite.dimensions * transform.scale;
 
-        window.Render(sprite.texture, topLeft, sprite.dimensions * transform.scale);
+        window.Render(sprite.texture, topLeft, dimensions, transform.rotation, NULL, SDL_FLIP_NONE);
     }
 }
