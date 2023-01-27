@@ -198,7 +198,6 @@ void Level::Update(float dt)
             }
             else    // Prevents invalid moves selected during clearance loop
             {
-                std::cout << "I PREVENTED AN INVALID MOVE" << std::endl;
                 board->RemoveSelected(selectedTwo);
                 selectedTwo = NULL_ENTITY;
             }
