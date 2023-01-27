@@ -33,6 +33,7 @@ enum TileState
 struct TileObject
 {
     TileColor color;
+    TileType type;
     Coordinates coords;
     TileState state;
 };

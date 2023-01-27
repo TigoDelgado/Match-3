@@ -11,13 +11,21 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, C
 
 	ecsManager.AddComponent(entity, Transform{p_position, 1.0f, 0.0f});
 
-    ecsManager.AddComponent(entity, Sprite{GetTileTexture(p_color, p_type), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
+    ecsManager.AddComponent(entity, TileObject{p_color, p_type, p_coords, p_state});
 
-    ecsManager.AddComponent(entity, TileObject{p_color, p_coords, p_state});
+    ecsManager.AddComponent(entity, Sprite{GetTileTexture(p_color, p_type), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
 
     ecsManager.AddComponent(entity, Swappable{});
 
     return entity;
+}
+
+void EntityCreator::UpdateTileSprite(Entity p_entity)
+{
+    TileObject& tileObject = ecsManager.GetComponent<TileObject>(p_entity);
+    Sprite& sprite = ecsManager.GetComponent<Sprite>(p_entity);
+
+    sprite.texture = GetTileTexture(tileObject.color, tileObject.type);
 }
 
 SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)

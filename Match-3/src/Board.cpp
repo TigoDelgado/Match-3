@@ -32,18 +32,26 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
     // FIXME NOT IMPLEMENTED YET --> DO NOT LEAVE LIKE THIS
     while (CheckMatches())
     {
-        for (int x = 0; x < cols; x++)
+        for (Match match : currentMatches)
         {
-            for (int y = 0; y < rows; y++)
-            {
-                TileColor randColor = p_tileColors[rand() % p_tileColors.size()];
-                Coordinates coords{x,y};
-                Vector2f tilePosition = GetPositionFromCoords(coords);
-                Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal, TileState::Idle);
+            Coordinates centerTile = match.tiles[match.count / 2];
 
-                ecsManager.DestroyEntity(grid[x][y]);
-                grid[x][y] = entity;
+            Entity entity = grid[centerTile.x][centerTile.y];
+
+            TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+
+            TileColor newColor = p_tileColors[rand() % p_tileColors.size()];
+            
+            while (tileObject.color == newColor)
+            {
+                newColor = p_tileColors[rand() % p_tileColors.size()];
             }
+
+            tileObject.color = newColor;
+
+            entityCreator.UpdateTileSprite(entity);
+
+            std::cout << "Changed color of entity " << entity << " on tile [" << centerTile.x << ", " << centerTile.y << "]" << std::endl;
         }
     }
 };
