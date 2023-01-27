@@ -70,6 +70,8 @@ void Level::HandleEvent(SDL_Event& event)
     case SDL_MOUSEBUTTONDOWN:
         if(event.button.button == SDL_BUTTON_LEFT)
         {
+            mouseDown = true;
+
             Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
             
             Entity entity;
@@ -89,6 +91,7 @@ void Level::HandleEvent(SDL_Event& event)
                     if (entity == selectedOne)  // De-select tile
                     {
                         selectedOne = NULL_ENTITY;
+                        selectedTwo = NULL_ENTITY;
                     }
                     else    
                     {
@@ -104,6 +107,55 @@ void Level::HandleEvent(SDL_Event& event)
                 }
             }
         }
+        std::cout << "Mouse DOWN | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
+        break;
+
+    case SDL_MOUSEBUTTONUP:
+        if(event.button.button == SDL_BUTTON_LEFT)
+        {
+            mouseDown = false;
+
+            if (selectedOne != NULL_ENTITY && selectedTwo == NULL_ENTITY)
+            {
+                Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
+            
+                Entity entity;
+
+                if (clickTileSystem->ClickedTile(mousePosition, entity))
+                {
+                    if (selectedOne != entity)      // If mouse is dropped over other tile
+                    {
+                        selectedOne = NULL_ENTITY;
+                        selectedTwo = NULL_ENTITY;
+                    }
+                }
+                else                                // if mouse dropped somewhere else FIXME
+                {
+                    selectedOne = NULL_ENTITY;
+                    selectedTwo = NULL_ENTITY;
+                }
+            }
+        }
+        std::cout << "Mouse UP | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
+        break;
+
+    case SDL_MOUSEMOTION:
+        if (mouseDown && selectedOne != NULL_ENTITY && selectedTwo == NULL_ENTITY)  // Clicked tile and dragged to other tile
+        {
+            Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
+            
+            Entity entity;
+
+            if (clickTileSystem->ClickedTile(mousePosition, entity))
+                {
+                    if (board->CanSwap(selectedOne, entity))     // Select second tile
+                        {
+                            selectedTwo = entity;
+                        }
+                }
+        }
+
+        break;
 
     default:
         break;
@@ -153,10 +205,8 @@ void Level::Update(float dt)
     case CLEARING_MATCHES:
         if (!clearTileSystem->Update(dt))
         {
-            std::cout << "board->SpawnTiles()" << std::endl;
             board->SpawnTiles(tileColors);
             
-            std::cout << "GRAVITATING_ROWS" << std::endl;
             state = GRAVITATING_ROWS;
         }
         break;
@@ -164,17 +214,13 @@ void Level::Update(float dt)
     case GRAVITATING_ROWS:
         if (!moveTileSystem->Update(dt))    // TODO create gravitate system?
         {
-            std::cout << "board->CheckMatches()" << std::endl;
             if (board->CheckMatches())
             {
-                std::cout << "board->ClearMatches()" << std::endl;
                 board->ClearMatches();
-                std::cout << "CLEARING_MATCHES" << std::endl;
                 state = CLEARING_MATCHES;
             }
             else
             {
-                std::cout << "WAITING" << std::endl;
                 state = WAITING;
             }
         }

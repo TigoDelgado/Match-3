@@ -64,6 +64,7 @@ private:
 
     Entity selectedOne = NULL_ENTITY;
     Entity selectedTwo = NULL_ENTITY;
+    bool mouseDown = false;
 };
 
 #endif //__Match3_Scene_Level_h__
