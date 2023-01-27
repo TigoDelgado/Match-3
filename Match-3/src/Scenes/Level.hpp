@@ -13,20 +13,21 @@
 #include "Systems/Render.hpp"
 #include "Systems/ClickTile.hpp"
 #include "Systems/MoveTile.hpp"
+#include "Systems/ClearTile.hpp"
 
 
 enum LevelState
 {
     INITIALIZING,
-    WAITING_ONE,
-    WAITING_TWO,
+    WAITING,
     SWAPPING_TILES,
-    SWAPPING_BACK,      // FIXME may not be necessary
+    SWAPPING_BACK,
     CLEARING_MATCHES,
     ACTIVATING_SPECIAL,
     CREATING_SPECIAL,
     SPAWNING_TILES,
     GRAVITATING_ROWS,
+    CLEARING_LOOP,
     GAME_OVER
 };
 
@@ -51,16 +52,18 @@ private:
     EntityCreator entityCreator;
     SDL_Texture* background;
     Board* board;
+    std::vector<TileColor> tileColors;
 
     std::shared_ptr<GravitySystem> gravitySystem;
     std::shared_ptr<RenderSystem> renderSystem;
     std::shared_ptr<ClickTileSystem> clickTileSystem;
     std::shared_ptr<MoveTileSystem> moveTileSystem;
+    std::shared_ptr<ClearTileSystem> clearTileSystem;
 
     LevelState state = INITIALIZING;
 
-    Coordinates tileOne = {-1, -1};
-    Coordinates tileTwo = {-1, -1};
+    Entity selectedOne = NULL_ENTITY;
+    Entity selectedTwo = NULL_ENTITY;
 };
 
 #endif //__Match3_Scene_Level_h__

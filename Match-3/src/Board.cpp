@@ -2,30 +2,25 @@
 #include "GameDefinitions.hpp"
 
 #include "Components/Translate.hpp"
+#include "Components/Destruction.hpp"
 
 #include <iostream>
 
 extern ECS_Manager ecsManager;
 
-Board::Board(Vector2f p_position, int p_rows, int p_cols, EntityCreator& p_entityCreator)
-    :position(p_position), rows(p_rows), cols(p_cols), entityCreator(p_entityCreator)
+Board::Board(Vector2f p_position, int p_cols, int p_rows, EntityCreator& p_entityCreator)
+    :position(p_position), cols(p_cols), rows(p_rows), entityCreator(p_entityCreator)
 {
-    grid = std::vector<std::vector<Entity>> (rows, std::vector<Entity>(cols, NULL_ENTITY));
-
-    std::cout << "grid[0][0] --> " << grid[0][0] << std::endl;
-    std::cout << "grid[2][2] --> " << grid[2][2] << std::endl;
-    std::cout << "grid[3][4] --> " << grid[3][4] << std::endl;
+    grid = std::vector<std::vector<Entity>> (cols, std::vector<Entity>(rows, NULL_ENTITY));
 }
 
 void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
 {
-    int size = p_tileColors.size();
-    
-    for (int x = 0; x < rows; x++)
+    for (int x = 0; x < cols; x++)
     {
-        for (int y = 0; y < cols; y++)
+        for (int y = 0; y < rows; y++)
         {
-            TileColor randColor = p_tileColors[rand() % size];
+            TileColor randColor = p_tileColors[rand() % p_tileColors.size()];
             Coordinates coords{x,y};
             Vector2f tilePosition = GetPositionFromCoords(coords);
             Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal, TileState::Idle);
@@ -37,39 +32,87 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
     // FIXME NOT IMPLEMENTED YET --> DO NOT LEAVE LIKE THIS
     while (CheckMatches())
     {
-        for (int x = 0; x < rows; x++)
+        for (int x = 0; x < cols; x++)
         {
-        for (int y = 0; y < cols; y++)
-        {
-            TileColor randColor = p_tileColors[rand() % size];
-            Coordinates coords{x,y};
-            Vector2f tilePosition = GetPositionFromCoords(coords);
-            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal, TileState::Idle);
+            for (int y = 0; y < rows; y++)
+            {
+                TileColor randColor = p_tileColors[rand() % p_tileColors.size()];
+                Coordinates coords{x,y};
+                Vector2f tilePosition = GetPositionFromCoords(coords);
+                Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal, TileState::Idle);
 
-            ecsManager.DestroyEntity(grid[x][y]);
-            grid[x][y] = entity;
+                ecsManager.DestroyEntity(grid[x][y]);
+                grid[x][y] = entity;
+            }
         }
-    }
     }
 };
 
-
-void Board::SwapTiles(Coordinates p_1, Coordinates p_2)
+void Board::SpawnTiles(std::vector<TileColor> p_tileColors)
 {
-    std::cout << "Swapping Tiles" << std::endl; 
+    for (int x = 0; x < cols; x++)              // For each column
+    {
+        int count = 0;                          // Amount of tile spaces to drop
 
-    Entity tempEntity = grid[p_1.x][p_1.y];
-    grid[p_1.x][p_1.y] = grid[p_2.x][p_2.y];
-    grid[p_2.x][p_2.y] = tempEntity;
+        for (int y = rows - 1; y >= 0; y--)     // Iterate through column from bottom to top
+        {
+            Entity entity = grid[x][y];
 
-    TileObject& tileObject1 = ecsManager.GetComponent<TileObject>(grid[p_1.x][p_1.y]);
-    tileObject1.coords = p_1;
+            if (entity == NULL_ENTITY)          // Empty tile space
+            {
+                count++;
+            }
+            else if (count > 0)                 // Tile must drop (count) spaces
+            {
+                Coordinates oldCoords = GetEntityCoords(entity);
+                Coordinates newCoords{oldCoords.x, oldCoords.y + count};
 
-    TileObject& tileObject2 = ecsManager.GetComponent<TileObject>(grid[p_2.x][p_2.y]);
-    tileObject2.coords = p_2;
+                TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+                tileObject.coords = newCoords;
 
-    ecsManager.AddComponent(grid[p_1.x][p_1.y], Translate{GetPositionFromCoords(p_1), 400.0f});
-    ecsManager.AddComponent(grid[p_2.x][p_2.y], Translate{GetPositionFromCoords(p_2), 400.0f});
+                ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(newCoords), TILE_FALL_SPEED});
+
+                grid[oldCoords.x][oldCoords.y] = NULL_ENTITY;
+                grid[newCoords.x][newCoords.y] = entity;
+            }
+        }
+
+        for (int offset = count; offset > 0; offset--)
+        {
+            TileColor randColor = p_tileColors[rand() % p_tileColors.size()];
+            
+            Coordinates coords{x, count - offset};                                      // Coordinates after falling
+            Coordinates spawnCoords{x, -offset};
+            
+            Vector2f tilePosition = GetPositionFromCoords(spawnCoords);     // Screen position based on spawn coordinates
+             
+            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal, TileState::Idle);
+            
+            ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(coords), TILE_FALL_SPEED});
+            
+            grid[coords.x][coords.y] = entity;
+        }
+    }
+}
+
+
+void Board::SwapTiles(Entity p_tileOne, Entity p_tileTwo)
+{
+    Coordinates c1 = GetEntityCoords(p_tileOne);
+    Coordinates c2 = GetEntityCoords(p_tileTwo);
+
+    Entity tempEntity = grid[c1.x][c1.y];
+    grid[c1.x][c1.y] = grid[c2.x][c2.y];
+    grid[c2.x][c2.y] = tempEntity;
+
+    TileObject& tileObject1 = ecsManager.GetComponent<TileObject>(grid[c1.x][c1.y]);
+    tileObject1.coords = c1;
+
+    TileObject& tileObject2 = ecsManager.GetComponent<TileObject>(grid[c2.x][c2.y]);
+    tileObject2.coords = c2;
+
+    ecsManager.AddComponent(grid[c1.x][c1.y], Translate{GetPositionFromCoords(c1), TILE_SWAP_SPEED});
+    ecsManager.AddComponent(grid[c2.x][c2.y], Translate{GetPositionFromCoords(c2), TILE_SWAP_SPEED});
 }
 
 bool Board::CheckMatches()
@@ -84,10 +127,10 @@ bool Board::CheckMatches()
     verticalMatches.insert( verticalMatches.end(), horizontalMatches.begin(), horizontalMatches.end());
     currentMatches = verticalMatches;
 
-    for (Match m : currentMatches)
-    {
-        m.print();
-    }
+    // for (Match m : currentMatches)
+    // {
+    //     m.print();
+    // }
 
     return (currentMatches.size() > 0);
 }
@@ -96,9 +139,9 @@ bool Board::CheckMatches()
 
 Coordinates Board::GetEntityCoords(Entity p_entity)
 {
-    for (int x = 0; x < rows; x++)
+    for (int x = 0; x < cols; x++)
     {
-        for (int y = 0; y < cols; y++)
+        for (int y = 0; y < rows; y++)
         {
             Coordinates coords = {x, y};
             if (p_entity == grid[x][y])
@@ -119,19 +162,54 @@ Vector2f Board::GetPositionFromCoords(Coordinates p_coordinates)
     return Vector2f{pos_x, pos_y};
 }
 
-bool Board::CanSwap(Coordinates p_tileOne, Coordinates p_tileTwo)
+bool Board::CanSwap(Entity p_entityOne, Entity p_entityTwo)
 {
-    if ((p_tileOne.x == p_tileTwo.x && p_tileOne.y == p_tileTwo.y - 1) ||
-        (p_tileOne.x == p_tileTwo.x && p_tileOne.y == p_tileTwo.y + 1) ||
-        (p_tileOne.x == p_tileTwo.x - 1 && p_tileOne.y == p_tileTwo.y) ||
-        (p_tileOne.x == p_tileTwo.x + 1 && p_tileOne.y == p_tileTwo.y) )
+    Coordinates tileOne = GetEntityCoords(p_entityOne);
+    Coordinates tileTwo = GetEntityCoords(p_entityTwo);
+
+    if (p_entityOne != NULL_ENTITY && p_entityTwo != NULL_ENTITY)
+    {
+        if ((tileOne.x == tileTwo.x     && tileOne.y == tileTwo.y - 1   ) ||
+            (tileOne.x == tileTwo.x     && tileOne.y == tileTwo.y + 1   ) ||
+            (tileOne.x == tileTwo.x - 1 && tileOne.y == tileTwo.y       ) ||
+            (tileOne.x == tileTwo.x + 1 && tileOne.y == tileTwo.y       ))
         {
-            TileObject& tileOne = ecsManager.GetComponent<TileObject>(grid[p_tileOne.x][p_tileOne.y]);
-            TileObject& tileTwo = ecsManager.GetComponent<TileObject>(grid[p_tileTwo.x][p_tileTwo.y]);
+            TileObject& tileOne = ecsManager.GetComponent<TileObject>(p_entityOne);
+            TileObject& tileTwo = ecsManager.GetComponent<TileObject>(p_entityTwo);
 
             return (tileOne.state == TileState::Idle && tileTwo.state == TileState::Idle);
         }
-    else return false;
+    }
+    return false;
+}
+
+void Board::ClearMatches()
+{
+    for (Match match: currentMatches)
+    {
+        for (Coordinates tile: match.tiles)
+        {
+            Entity entity = grid[tile.x][tile.y];
+
+            if (entity != NULL_ENTITY)
+            {
+                
+                TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+
+                if (tileObject.state == TileState::Clearing) 
+                {
+                    // Tile already being cleared. Do nothing.
+                } 
+                else
+                {
+                    ecsManager.AddComponent<Destruction>(entity, Destruction{TILE_CLEAR_SCALE, TILE_CLEAR_SPEED});
+                    grid[tile.x][tile.y] = NULL_ENTITY;
+                    tileObject.state = TileState::Clearing;
+                }
+            }
+        }
+    }
+    currentMatches.clear();
 }
 
 
@@ -139,20 +217,20 @@ std::vector<Match> Board::GetVerticalMatches()
 {
     std::vector<Match> matches;
 
-    for (int x = 0; x < rows; x++)
+    for (int x = 0; x < cols; x++)
     {
         int count = 0;
         TileColor lastColor = TileColor::Colorless;
 
-        for (int y = 0; y < cols; y++)
+        for (int y = 0; y < rows; y++)
         {
             Entity entity = grid[x][y];
             TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
             TileColor color = tileObject.color;
             
-            if (color == Colorless || color != lastColor || y == cols - 1)
+            if (entity == NULL_ENTITY || color == Colorless || color != lastColor || y == rows - 1)
             {
-                if (y == cols - 1 && color == lastColor) // Add last tile to the match
+                if (y == rows - 1 && color == lastColor) // Add last tile to the match
                 {
                     count++;
                     y++;
@@ -160,13 +238,13 @@ std::vector<Match> Board::GetVerticalMatches()
                 
                 if (count >= 3)
                 {
-                    std::vector<Entity> entities;
+                    std::vector<Coordinates> tiles;
 
                     for (int i = count; i > 0; i--)
                     {
-                        entities.push_back(grid[x][y-i]);
+                        tiles.push_back(Coordinates{x,y-i});
                     }
-                    Match match {MatchType::VerticalMatch, count, entities, Coordinates{x, y-count}, Coordinates{x, y-1}};
+                    Match match {MatchType::VerticalMatch, count, tiles};
                     matches.push_back(match);
                 }
                 count = 1;
@@ -186,18 +264,18 @@ std::vector<Match> Board::GetHorizontalMatches()
 {
     std::vector<Match> matches;
 
-    for (int y = 0; y < cols; y++)
+    for (int y = 0; y < rows; y++)
     {
         int count = 0;
         TileColor lastColor = TileColor::Colorless;
 
-        for (int x = 0; x < rows; x++)
+        for (int x = 0; x < cols; x++)
         {
             Entity entity = grid[x][y];
             TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
             TileColor color = tileObject.color;
             
-            if (color == Colorless || color != lastColor || x == rows - 1)
+            if (entity == NULL_ENTITY || color == Colorless || color != lastColor || x == cols - 1)
             {
                 if (x == cols - 1 && color == lastColor) // Add last tile to the match
                 {
@@ -207,13 +285,13 @@ std::vector<Match> Board::GetHorizontalMatches()
                 
                 if (count >= 3)
                 {
-                    std::vector<Entity> entities;
+                    std::vector<Coordinates> tiles;
 
                     for (int i = count; i > 0; i--)
                     {
-                        entities.push_back(grid[x-i][y]);
+                        tiles.push_back(Coordinates{x-i,y});
                     }
-                    Match match {MatchType::HorizontalMatch, count, entities, Coordinates{x-count, y}, Coordinates{x-1,y}};
+                    Match match {MatchType::HorizontalMatch, count, tiles};
                     matches.push_back(match);
                 }
                 count = 1;

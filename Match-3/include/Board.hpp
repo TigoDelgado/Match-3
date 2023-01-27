@@ -18,25 +18,26 @@ struct Match
 {
     MatchType type;
     int count;
-    std::vector<Entity> entities;
-    Coordinates start;
-    Coordinates end;
+    std::vector<Coordinates> tiles;
 
     void print() 
     {
-        std::cout << "Match type: " << type << " | count: " << count << " | start : [" << start.x << ", " << start.y << "] | end: [" << end.x << ", " << end.y << "]" << std::endl;
+        std::cout << "Match type: " << type << " | count: " << count << " | start : [" << tiles[0].x << ", " << tiles[0].y << "] | end: [" << tiles[tiles.size()-1].x << ", " << tiles[tiles.size()-1].y << "]" << std::endl;
     }
 };
 
 class Board
 {
 public:
-    Board(Vector2f p_position, int p_rows, int p_cols, EntityCreator& p_entityCreator);
+    Board(Vector2f p_position, int p_cols, int p_rows, EntityCreator& p_entityCreator);
 
     void PopulateBoard(std::vector<TileColor> p_tileColors);      // populates board with random Tile Entities of desired Tile Types 
+
+    void SpawnTiles(std::vector<TileColor> p_tileColors);
+
     void InsertTile(Entity p_tile, Coordinates p_coords);
 
-    void SwapTiles(Coordinates p_1, Coordinates p_2);
+    void SwapTiles(Entity p_tileOne, Entity p_tileTwo);
 
     bool CheckMatches();
 
@@ -46,15 +47,16 @@ public:
 
     Coordinates GetEntityCoords(Entity p_entity);
 
-    bool CanSwap(Coordinates p_tileOne, Coordinates p_tileTwo);
+    bool CanSwap(Entity p_entityOne, Entity p_entityTwo);
+
+    void ClearMatches();
 
 private:
     Vector2f position;
-    int rows;
     int cols;    
+    int rows;
     EntityCreator entityCreator;
     std::vector<std::vector<Entity>> grid;
-    int size; // TODO remove if not necessary
 
     std::vector<Match> GetVerticalMatches();
     std::vector<Match> GetHorizontalMatches();

@@ -25,6 +25,9 @@ void RenderSystem::Update(RenderWindow& window)
 		auto& transform = ecsManager.GetComponent<Transform>(entity);
         auto& sprite = ecsManager.GetComponent<Sprite>(entity);
 
-        window.Render(sprite.texture, transform.position, sprite.dimensions * transform.scale);
+		// Images are rendered starting from the top-left point
+		Vector2f topLeft = transform.position - (sprite.dimensions * transform.scale) / 2;
+
+        window.Render(sprite.texture, topLeft, sprite.dimensions * transform.scale);
     }
 }

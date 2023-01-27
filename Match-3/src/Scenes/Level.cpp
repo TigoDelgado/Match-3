@@ -6,6 +6,7 @@
 #include "Components/TileObject.hpp"
 #include "Components/Swappable.hpp"
 #include "Components/Translate.hpp"
+#include "Components/Destruction.hpp"
 
 #include <iostream>
 
@@ -30,6 +31,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     ecsManager.RegisterComponent<TileObject>();
     ecsManager.RegisterComponent<Swappable>();
     ecsManager.RegisterComponent<Translate>();
+    ecsManager.RegisterComponent<Destruction>();
 
     /* -------------------------------- Register Systems -------------------------------- */
 
@@ -37,13 +39,15 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     renderSystem = ecsManager.RegisterSystem<RenderSystem>();
     clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
     moveTileSystem = ecsManager.RegisterSystem<MoveTileSystem>();
+    clearTileSystem = ecsManager.RegisterSystem<ClearTileSystem>();
+
     // FIXME Don't allow systems to register without required components
 
 
     /* ------------------------------ Create Scene Objects ------------------------------ */
 
     // TODO pass this through a level manager?
-    std::vector<TileColor> tileColors
+    tileColors = std::vector<TileColor>
     {
         TileColor::Black,
         TileColor::White,
@@ -56,106 +60,82 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
 
     board->PopulateBoard(tileColors);
 
-    state = WAITING_ONE;
+    state = WAITING;
 }
 
 void Level::HandleEvent(SDL_Event& event)
 {
     switch(event.type) 
     {
-        case SDL_MOUSEBUTTONDOWN:
-            if(event.button.button == SDL_BUTTON_LEFT)
+    case SDL_MOUSEBUTTONDOWN:
+        if(event.button.button == SDL_BUTTON_LEFT)
+        {
+            Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
+            
+            Entity entity;
+
+            if (selectedOne == NULL_ENTITY) // Select first tile
             {
-                if (state == WAITING_ONE)
+                if (clickTileSystem->ClickedTile(mousePosition, entity))
                 {
-                    Coordinates coords;
-                    Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
-
-                    if (clickTileSystem->ClickedEntity(mousePosition, coords))
-                    {
-                        tileOne = coords;
-
-                        // FIXME remove print
-                        std::cout << "Selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
-                    }
-
-                    state = WAITING_TWO;
+                    selectedOne = entity;
+                    // TODO add selected component?
                 }
-                else if (state == WAITING_TWO)
+            }
+            else // First tile already selected
+            {
+                if (clickTileSystem->ClickedTile(mousePosition, entity))
                 {
-                    Coordinates coords;
-                    Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
-
-                    if (clickTileSystem->ClickedEntity(mousePosition, coords))
+                    if (entity == selectedOne)  // De-select tile
                     {
-                        if (tileOne == coords)
-                        {
-                            state = WAITING_ONE;
-                            // FIXME remove print
-                            std::cout << "De-selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
-                        }
-
-                        else if (board->CanSwap(tileOne, coords))
-                        {
-                            tileTwo = coords;
-
-                            board->SwapTiles(tileOne, tileTwo);
-
-                            state = SWAPPING_TILES;
-
-                            // FIXME remove print
-                            std::cout << "Swapping tiles [" << tileOne.x << " ," << tileOne.y << "] and [" << tileTwo.x << " ," << tileTwo.y << "]" << std::endl;
-                        }
-
-                        else
-                        {
-                            tileOne = coords;
-
-                            // FIXME remove print
-                            std::cout << "Selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
-                        }
+                        selectedOne = NULL_ENTITY;
                     }
-                    else
+                    else    
                     {
-                        state = WAITING_ONE;
-                        // FIXME remove print
-                        std::cout << "De-selecting tile [" << tileOne.x << " ," << tileOne.y << "]" << std::endl;
+                        if (board->CanSwap(selectedOne, entity))     // Select second tile
+                        {
+                            selectedTwo = entity;
+                        }
+                        else    // Select new first tile
+                        {
+                            selectedOne = entity;
+                        }
                     }
                 }
             }
-            break;
-        default:
-            break;
         }
+
+    default:
+        break;
+    }
 }
+
 
 void Level::Update(float dt)
 {
     switch (state)
     {
-    case WAITING_ONE:
-        /* code */
-        break;
-
-    case WAITING_TWO:
-        /* code */
+    case WAITING:
+        if (selectedOne != NULL_ENTITY && selectedTwo != NULL_ENTITY)
+        {
+            board->SwapTiles(selectedOne, selectedTwo);
+            state = SWAPPING_TILES;
+        }
         break;
 
     case SWAPPING_TILES:
         if (!moveTileSystem->Update(dt))
         {
-            // FIXME not the correct state
-
             if (board->CheckMatches())
             {
-                std::cout << "FOUND MATCHES!" << std::endl;
-                // board->ClearMatches();
-                state = WAITING_ONE;
+                board->ClearMatches();
+                selectedOne = NULL_ENTITY;
+                selectedTwo = NULL_ENTITY;
+                state = CLEARING_MATCHES;
             }
             else
             {
-                std::cout << "did not find matches..." << std::endl;
-                board->SwapTiles(tileOne, tileTwo);
+                board->SwapTiles(selectedOne, selectedTwo);
                 state = SWAPPING_BACK;
             }
         }
@@ -164,8 +144,41 @@ void Level::Update(float dt)
     case SWAPPING_BACK:
         if (!moveTileSystem->Update(dt))
         {
-            state = WAITING_ONE;
-        } 
+            selectedOne = NULL_ENTITY;
+            selectedTwo = NULL_ENTITY;
+            state = WAITING;
+        }
+        break;
+
+    case CLEARING_MATCHES:
+        if (!clearTileSystem->Update(dt))
+        {
+            std::cout << "board->SpawnTiles()" << std::endl;
+            board->SpawnTiles(tileColors);
+            
+            std::cout << "GRAVITATING_ROWS" << std::endl;
+            state = GRAVITATING_ROWS;
+        }
+        break;
+
+    case GRAVITATING_ROWS:
+        if (!moveTileSystem->Update(dt))    // TODO create gravitate system?
+        {
+            std::cout << "board->CheckMatches()" << std::endl;
+            if (board->CheckMatches())
+            {
+                std::cout << "board->ClearMatches()" << std::endl;
+                board->ClearMatches();
+                std::cout << "CLEARING_MATCHES" << std::endl;
+                state = CLEARING_MATCHES;
+            }
+            else
+            {
+                std::cout << "WAITING" << std::endl;
+                state = WAITING;
+            }
+        }
+        break;
     
     default:
         break;

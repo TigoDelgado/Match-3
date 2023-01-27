@@ -9,7 +9,7 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, C
 {
     Entity entity = ecsManager.CreateEntity();
 
-	ecsManager.AddComponent(entity, Transform{p_position, Vector2f{1.0f, 1.0f}, 0.0f});
+	ecsManager.AddComponent(entity, Transform{p_position, 1.0f, 0.0f});
 
     ecsManager.AddComponent(entity, Sprite{GetTileTexture(p_color, p_type), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
 
