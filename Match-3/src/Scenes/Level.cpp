@@ -55,6 +55,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     board->PopulateBoard(tileColors);
 
     state = WAITING;
+    blocked = false;
 }
 
 void Level::HandleEvent(SDL_Event& event)
@@ -70,15 +71,15 @@ void Level::HandleEvent(SDL_Event& event)
             
             Entity entity;
 
-            if (selectedOne == NULL_ENTITY) 
+            if (!blocked && selectedOne == NULL_ENTITY) 
             {
                 if (clickTileSystem->ClickedTile(mousePosition, entity))    // Select first tile
                 {
                     selectedOne = entity;
-                    changedSelected = true;
+                    changedSelectedOne = true;
                 }
             }
-            else // First tile already selected
+            else if (!blocked) // First tile already selected
             {
                 if (clickTileSystem->ClickedTile(mousePosition, entity))
                 {
@@ -88,20 +89,22 @@ void Level::HandleEvent(SDL_Event& event)
                         selectedOne = NULL_ENTITY;
                         selectedTwo = NULL_ENTITY;
 
-                        changedSelected = true;
+                        changedSelectedOne = true;
                     }
                     else    
                     {
-                        if (board->CanSwap(selectedOne, entity))     // Select second tile
+                        if (board->CanSwap(selectedOne, entity))    // Select second tile
                         {
+                            blocked = true;                         // Assures only one move queued while in clearing loop
                             selectedTwo = entity;
+                            changedSelectedTwo = true;
                         }
                         else    // Select new first tile
                         {
                             lastSelected = selectedOne;
                             selectedOne = entity;
 
-                            changedSelected = true;
+                            changedSelectedOne = true;
                         }
                     }
                 }
@@ -111,7 +114,7 @@ void Level::HandleEvent(SDL_Event& event)
                     selectedOne = NULL_ENTITY;
                     selectedTwo = NULL_ENTITY;
 
-                    changedSelected = true;
+                    changedSelectedOne = true;
                 }
             }
         }
@@ -122,39 +125,12 @@ void Level::HandleEvent(SDL_Event& event)
         if(event.button.button == SDL_BUTTON_LEFT)
         {
             mouseDown = false;
-
-            // if (selectedOne != NULL_ENTITY && selectedTwo == NULL_ENTITY)
-            // {
-            //     Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
-            
-            //     Entity entity;
-
-            //     if (clickTileSystem->ClickedTile(mousePosition, entity))
-            //     {
-            //         if (selectedOne != entity)      // If mouse is dropped over other tile
-            //         {
-            //             lastSelected = selectedOne;
-            //             selectedOne = NULL_ENTITY;
-            //             selectedTwo = NULL_ENTITY;
-
-            //             changedSelected = true;
-            //         }
-            //     }
-            //     else                                // if mouse dropped somewhere else FIXME
-            //     {
-            //         lastSelected = selectedOne;
-            //         selectedOne = NULL_ENTITY;
-            //         selectedTwo = NULL_ENTITY;
-
-            //         changedSelected = true;
-            //     }
-            // }
         }
         // std::cout << "Mouse UP | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
         break;
 
     case SDL_MOUSEMOTION:
-        if (mouseDown && selectedOne != NULL_ENTITY && selectedTwo == NULL_ENTITY)  // Clicked tile and dragged to other tile
+        if (!blocked && mouseDown && selectedOne != NULL_ENTITY && selectedTwo == NULL_ENTITY)  // Clicked tile and dragged to other tile
         {
             Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
             
@@ -164,7 +140,9 @@ void Level::HandleEvent(SDL_Event& event)
                 {
                     if (board->CanSwap(selectedOne, entity))     // Select second tile
                         {
+                            blocked = true;
                             selectedTwo = entity;
+                            changedSelectedTwo = true;
                         }
                 }
         }
@@ -179,14 +157,51 @@ void Level::HandleEvent(SDL_Event& event)
 
 void Level::Update(float dt)
 {
+    if (changedSelectedOne)
+    {
+        // std::cout << "Changed selected from " << lastSelected  << " to " << selectedOne << std::endl;
+        if (lastSelected != NULL_ENTITY)
+        {
+            // std::cout << "Removing Selected to entity " << lastSelected << std::endl;
+            board->RemoveSelected(lastSelected);
+        }
+        if (selectedOne != NULL_ENTITY)
+        {
+            // std::cout << "Adding Selected to entity " << selectedOne << std::endl;
+            board->AddSelected(selectedOne);
+        }
+        changedSelectedOne = false;
+    }
+    if (changedSelectedTwo)
+    {
+        if (selectedTwo != NULL_ENTITY)
+        {
+            // std::cout << "Adding Selected to second entity " << selectedOne << std::endl;
+            board->AddSelected(selectedTwo);
+        }
+        changedSelectedTwo = false;
+    }
+
     switch (state)
     {
     case WAITING:
+
         if (selectedOne != NULL_ENTITY && selectedTwo != NULL_ENTITY)
         {
-            board->SwapTiles(selectedOne, selectedTwo);
-            board->RemoveSelected(selectedOne);
-            state = SWAPPING_TILES;
+            if (board->CanSwap(selectedOne, selectedTwo))
+            {
+                board->SwapTiles(selectedOne, selectedTwo);
+                board->RemoveSelected(selectedOne);
+                board->RemoveSelected(selectedTwo);
+                state = SWAPPING_TILES;
+                blocked = true;
+            }
+            else    // Prevents invalid moves selected during clearance loop
+            {
+                std::cout << "I PREVENTED AN INVALID MOVE" << std::endl;
+                board->RemoveSelected(selectedTwo);
+                selectedTwo = NULL_ENTITY;
+            }
         }
         break;
 
@@ -199,6 +214,7 @@ void Level::Update(float dt)
                 selectedOne = NULL_ENTITY;
                 selectedTwo = NULL_ENTITY;
                 state = CLEARING_MATCHES;
+                blocked = false;
             }
             else
             {
@@ -214,6 +230,7 @@ void Level::Update(float dt)
             selectedOne = NULL_ENTITY;
             selectedTwo = NULL_ENTITY;
             state = WAITING;
+            blocked = false;
         }
         break;
 
@@ -237,28 +254,13 @@ void Level::Update(float dt)
             else
             {
                 state = WAITING;
+                blocked = false;
             }
         }
         break;
     
     default:
         break;
-    }
-
-    if (changedSelected)
-    {
-        // std::cout << "Changed selected from " << lastSelected  << " to " << selectedOne << std::endl;
-        if (lastSelected != NULL_ENTITY)
-        {
-            // std::cout << "Removing Selected to entity " << lastSelected << std::endl;
-            board->RemoveSelected(lastSelected);
-        }
-        if (selectedOne != NULL_ENTITY)
-        {
-            // std::cout << "Adding Selected to entity " << selectedOne << std::endl;
-            board->AddSelected(selectedOne);
-        }
-        changedSelected = false;
     }
 
     animateSelectedSystem->Update(dt);

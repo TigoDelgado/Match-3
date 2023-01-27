@@ -73,7 +73,9 @@ private:
 
     LevelState state = INITIALIZING;
 
-    bool changedSelected = false;
+    bool blocked = true;
+    bool changedSelectedOne = false;
+    bool changedSelectedTwo = false;
     Entity lastSelected = NULL_ENTITY;
     Entity selectedOne = NULL_ENTITY;
     Entity selectedTwo = NULL_ENTITY;
