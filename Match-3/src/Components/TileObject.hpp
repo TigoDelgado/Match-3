@@ -19,6 +19,7 @@ enum TileType
     Vertical,
     Horizontal,
     Exploding,
+    BigExploding,
     Consuming
 };
 

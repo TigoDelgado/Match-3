@@ -46,6 +46,12 @@ private:
     SDL_Texture* blueExplodingTile;
     SDL_Texture* orangeExplodingTile;
 
+    SDL_Texture* blackBigExplodingTile;
+    SDL_Texture* whiteBigExplodingTile;
+    SDL_Texture* pinkBigExplodingTile;
+    SDL_Texture* blueBigExplodingTile;
+    SDL_Texture* orangeBigExplodingTile;
+
     SDL_Texture* blackConsumingTile;
     SDL_Texture* whiteConsumingTile;
     SDL_Texture* pinkConsumingTile;

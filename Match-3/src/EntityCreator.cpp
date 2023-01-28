@@ -38,6 +38,7 @@ SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)
         if (p_type == TileType::Horizontal) return blackHorizontalTile;
         if (p_type == TileType::Vertical) return blackVerticalTile;
         if (p_type == TileType::Exploding) return blackExplodingTile;
+        if (p_type == TileType::BigExploding) return blackBigExplodingTile;
         if (p_type == TileType::Consuming) return blackConsumingTile;
     }
     else if (p_color == TileColor::White)
@@ -46,6 +47,7 @@ SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)
         if (p_type == TileType::Horizontal) return whiteHorizontalTile;
         if (p_type == TileType::Vertical) return whiteVerticalTile;
         if (p_type == TileType::Exploding) return whiteExplodingTile;
+        if (p_type == TileType::BigExploding) return whiteBigExplodingTile;
         if (p_type == TileType::Consuming) return whiteConsumingTile;
     }
     else if (p_color == TileColor::Pink)
@@ -54,6 +56,7 @@ SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)
         if (p_type == TileType::Horizontal) return pinkHorizontalTile;
         if (p_type == TileType::Vertical) return pinkVerticalTile;
         if (p_type == TileType::Exploding) return pinkExplodingTile;
+        if (p_type == TileType::BigExploding) return pinkBigExplodingTile;
         if (p_type == TileType::Consuming) return pinkConsumingTile;
     }
     else if (p_color == TileColor::Blue)
@@ -62,6 +65,7 @@ SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)
         if (p_type == TileType::Horizontal) return blueHorizontalTile;
         if (p_type == TileType::Vertical) return blueVerticalTile;
         if (p_type == TileType::Exploding) return blueExplodingTile;
+        if (p_type == TileType::BigExploding) return blueBigExplodingTile;
         if (p_type == TileType::Consuming) return blueConsumingTile;
     }
     else if (p_color == TileColor::Orange)
@@ -70,6 +74,7 @@ SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)
         if (p_type == TileType::Horizontal) return orangeHorizontalTile;
         if (p_type == TileType::Vertical) return orangeVerticalTile;
         if (p_type == TileType::Exploding) return orangeExplodingTile;
+        if (p_type == TileType::BigExploding) return orangeBigExplodingTile;
         if (p_type == TileType::Consuming) return orangeConsumingTile;
     }
     return colorlessTile;
@@ -77,34 +82,40 @@ SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)
 
 void EntityCreator::LoadTextures(RenderWindow& window)
 {
-    blackTile = window.LoadTexture("res/Color-1.png");
-    whiteTile = window.LoadTexture("res/Color-2.png");
-    pinkTile = window.LoadTexture("res/Color-3.png");
-    blueTile = window.LoadTexture("res/Color-4.png");
-    orangeTile = window.LoadTexture("res/Color-5.png");
-    colorlessTile = window.LoadTexture("res/Color-1.png"); // FIXME get real texture;
+    blackTile = window.LoadTexture("../res/Tiles/Color-1.png");
+    whiteTile = window.LoadTexture("../res/Tiles/Color-2.png");
+    pinkTile = window.LoadTexture("../res/Tiles/Color-3.png");
+    blueTile = window.LoadTexture("../res/Tiles/Color-4.png");
+    orangeTile = window.LoadTexture("../res/Tiles/Color-5.png");
+    colorlessTile = window.LoadTexture("../res/Tiles/Color-1.png"); // FIXME get real texture;
 
-    blackHorizontalTile = window.LoadTexture("res/Color-1-H.png");
-    whiteHorizontalTile = window.LoadTexture("res/Color-2-H.png");
-    pinkHorizontalTile = window.LoadTexture("res/Color-3-H.png");
-    blueHorizontalTile = window.LoadTexture("res/Color-4-H.png");
-    orangeHorizontalTile = window.LoadTexture("res/Color-5-H.png");
+    blackHorizontalTile = window.LoadTexture("../res/Tiles/Color-1-H.png");
+    whiteHorizontalTile = window.LoadTexture("../res/Tiles/Color-2-H.png");
+    pinkHorizontalTile = window.LoadTexture("../res/Tiles/Color-3-H.png");
+    blueHorizontalTile = window.LoadTexture("../res/Tiles/Color-4-H.png");
+    orangeHorizontalTile = window.LoadTexture("../res/Tiles/Color-5-H.png");
 
-    blackVerticalTile = window.LoadTexture("res/Color-1-V.png");
-    whiteVerticalTile = window.LoadTexture("res/Color-2-V.png");
-    pinkVerticalTile = window.LoadTexture("res/Color-3-V.png");
-    blueVerticalTile = window.LoadTexture("res/Color-4-V.png");
-    orangeVerticalTile = window.LoadTexture("res/Color-5-V.png");
+    blackVerticalTile = window.LoadTexture("../res/Tiles/Color-1-V.png");
+    whiteVerticalTile = window.LoadTexture("../res/Tiles/Color-2-V.png");
+    pinkVerticalTile = window.LoadTexture("../res/Tiles/Color-3-V.png");
+    blueVerticalTile = window.LoadTexture("../res/Tiles/Color-4-V.png");
+    orangeVerticalTile = window.LoadTexture("../res/Tiles/Color-5-V.png");
 
-    blackExplodingTile = window.LoadTexture("res/Color-1-X.png");
-    whiteExplodingTile = window.LoadTexture("res/Color-2-X.png");
-    pinkExplodingTile = window.LoadTexture("res/Color-3-X.png");
-    blueExplodingTile = window.LoadTexture("res/Color-4-X.png");
-    orangeExplodingTile = window.LoadTexture("res/Color-5-X.png");
+    blackExplodingTile = window.LoadTexture("../res/Tiles/Color-1-X.png");
+    whiteExplodingTile = window.LoadTexture("../res/Tiles/Color-2-X.png");
+    pinkExplodingTile = window.LoadTexture("../res/Tiles/Color-3-X.png");
+    blueExplodingTile = window.LoadTexture("../res/Tiles/Color-4-X.png");
+    orangeExplodingTile = window.LoadTexture("../res/Tiles/Color-5-X.png");
 
-    blackConsumingTile = window.LoadTexture("res/Color-1-C.png");
-    whiteConsumingTile = window.LoadTexture("res/Color-2-C.png");
-    pinkConsumingTile = window.LoadTexture("res/Color-3-C.png");
-    blueConsumingTile = window.LoadTexture("res/Color-4-C.png");
-    orangeConsumingTile = window.LoadTexture("res/Color-5-C.png");
+    blackBigExplodingTile = window.LoadTexture("../res/Tiles/Color-1-X2.png");
+    whiteBigExplodingTile = window.LoadTexture("../res/Tiles/Color-2-X2.png");
+    pinkBigExplodingTile = window.LoadTexture("../res/Tiles/Color-3-X2.png");
+    blueBigExplodingTile = window.LoadTexture("../res/Tiles/Color-4-X2.png");
+    orangeBigExplodingTile = window.LoadTexture("../res/Tiles/Color-5-X2.png");
+
+    blackConsumingTile = window.LoadTexture("../res/Tiles/Color-1-C.png");
+    whiteConsumingTile = window.LoadTexture("../res/Tiles/Color-2-C.png");
+    pinkConsumingTile = window.LoadTexture("../res/Tiles/Color-3-C.png");
+    blueConsumingTile = window.LoadTexture("../res/Tiles/Color-4-C.png");
+    orangeConsumingTile = window.LoadTexture("../res/Tiles/Color-5-C.png");
 }
