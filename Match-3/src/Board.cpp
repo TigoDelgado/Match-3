@@ -360,6 +360,8 @@ void Board::ClearMatches()
                         type = TileType::BigExploding;
                     } 
 
+                    // TODO else throw exception
+
                     tileObject.type = type;
 
                     entityCreator.UpdateTileSprite(entity);
