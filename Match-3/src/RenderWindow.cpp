@@ -8,14 +8,17 @@ RenderWindow::RenderWindow(const char* p_title, int p_width, int p_height)
     :window(NULL), renderer(NULL)
 {
     window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_width, p_height, SDL_WINDOW_SHOWN);
-
     if (window == NULL)
         std::cout << "Failed to create WINDOW. SDL_Error: " << SDL_GetError() << std::endl;
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
     if (renderer == NULL)
         std::cout << "Failed to create RENDERER. SDL_Error: " << SDL_GetError() << std::endl;
+
+
+    globalFont = TTF_OpenFont( "../res/Fonts/OpenSans/OpenSans-Bold.ttf", 36 );
+    if (globalFont == NULL)
+        std::cout << "Failed to open global font. SDL_Error: " << SDL_GetError() << std::endl;
 }
 
 SDL_Texture* RenderWindow::LoadTexture(const char* p_filePath)
@@ -26,6 +29,34 @@ SDL_Texture* RenderWindow::LoadTexture(const char* p_filePath)
     if (texture == NULL)
         std::cout << "Failed to load texture from " << (p_filePath) << ". SDL_Error: " << SDL_GetError() <<std::endl;
 
+    return texture;
+}
+
+SDL_Texture* RenderWindow::LoadTextureFromText(const char* p_text, SDL_Color p_color)
+{
+    // Render text surface
+    SDL_Texture* texture = NULL;
+
+    // FIXME use Solid, Shadded or Blended?
+    SDL_Surface* textSurface = TTF_RenderText_Blended( globalFont, p_text, p_color );
+    if( textSurface == NULL )
+    {
+        std::cout << "Failed to render text surface. SDL_Error: " << SDL_GetError() << std::endl;
+    }
+    else
+    {
+        // Create texture from surface pixels
+        texture = SDL_CreateTextureFromSurface( renderer, textSurface );
+
+        if( texture == NULL )
+        {
+            std::cout << "Failed to create texture from rendered text. SDL_Error: " << SDL_GetError() << std::endl;
+        }
+
+        // Get rid of old surface
+        SDL_FreeSurface( textSurface );
+    }
+    
     return texture;
 }
 
@@ -53,8 +84,8 @@ void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position)
     SDL_Rect dst;
     dst.x = p_position.x;
     dst.y = p_position.y;
-    dst.w = 45;
-    dst.h = 45;
+    dst.w = textureWidth;
+    dst.h = textureHeight;
 
     SDL_RenderCopy(renderer, p_texture, &src, &dst);
 }

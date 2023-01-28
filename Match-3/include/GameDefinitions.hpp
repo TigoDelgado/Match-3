@@ -6,10 +6,12 @@
 #define TILE_MARGIN 6
 #define TILE_SWAP_SPEED 300
 #define TILE_FALL_SPEED 300
-#define TILE_MAX_SPEED 800
-#define TILE_ACCELERATION 500
+#define TILE_MAX_SPEED 1000
+#define TILE_ACCELERATION 600
 #define TILE_CLEAR_SPEED 4
 #define TILE_CLEAR_SCALE 0.1
 #define TILE_ROTATE_SPEED 100
+
+#define COMBO_AMPLIFIER 0.2
 
 #endif //__Match3_Game_Definitions_h__

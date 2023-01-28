@@ -61,6 +61,7 @@ private:
 
     EntityCreator entityCreator;
     SDL_Texture* background;
+    SDL_Texture* scoreText;
     Board* board;
     std::vector<TileColor> tileColors;
 

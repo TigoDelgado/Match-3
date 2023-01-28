@@ -17,10 +17,13 @@ ECS_Manager ecsManager;
 Game::Game()
 {
     if (SDL_Init(SDL_INIT_VIDEO) > 0)
-        std::cout << "SDL_Init FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
+        std::cout << "SDL_Init Failed. SDL_Error: " << SDL_GetError() << std::endl;
 
     if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)) //FIXME don't use jpegs please :S
-        std::cout << "IMG_Init FAILED. SDL_ERROR: " << SDL_GetError() << std::endl;
+        std::cout << "IMG_Init Failed. SDL_Error: " << SDL_GetError() << std::endl;
+
+    if (TTF_Init() == -1)
+        std::cout << "TTF_Init Failed. SDL_Error: " << SDL_GetError() << std::endl;
 
 }
 

@@ -2,6 +2,7 @@
 #define __Match3_Board_h__
 
 #include <vector>
+#include <algorithm>
 
 #include "ECS/Definitions.hpp"
 #include "EntityCreator.hpp"
@@ -20,6 +21,11 @@ struct Match
     MatchType type;
     int count;
     std::vector<Coordinates> tiles;
+
+    static bool compareMatches(Match p_match1, Match p_match2)
+    {
+        return (p_match1.count < p_match2.count);
+    }
 
     void print() 
     {
@@ -61,6 +67,8 @@ public:
     void ClearMatches();
     void ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches);
     bool TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color);
+    int CalculateScore(Match match);
+    void ResetScore();
 
     void AddSelected(Entity entity);
     void RemoveSelected(Entity entity);
@@ -77,6 +85,9 @@ private:
     std::vector<Match> currentMatches;
 
     Coordinates swappedTiles[2];
+
+    int score = 0;
+    float combo = 1;
 };
 
 #endif //__Match3_Board_h__

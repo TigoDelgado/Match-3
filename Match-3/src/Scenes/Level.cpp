@@ -11,6 +11,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     /* ------------------------------- Setup Resources  ------------------------------- */
 
     background = window.LoadTexture(p_background);
+    scoreText = window.LoadTextureFromText("Score: ", SDL_Color{0, 0, 0});
 
     // Load Tile object textures
     entityCreator.LoadTextures(window);
@@ -58,8 +59,11 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     // board->InsertTile(Coordinates{2,2}, TileColor::Orange, TileType::Normal);
     // board->InsertTile(Coordinates{2,3}, TileColor::Orange, TileType::Normal);
     // board->InsertTile(Coordinates{2,4}, TileColor::Orange, TileType::Normal);
-    // board->InsertTile(Coordinates{3,3}, TileColor::Orange, TileType::Normal);
-    // board->InsertTile(Coordinates{1,3}, TileColor::Orange, TileType::Normal);
+    // board->InsertTile(Coordinates{2,5}, TileColor::Orange, TileType::Normal);
+    // board->InsertTile(Coordinates{3,2}, TileColor::Blue, TileType::Normal);
+    // board->InsertTile(Coordinates{3,3}, TileColor::Blue, TileType::Normal);
+    // board->InsertTile(Coordinates{3,4}, TileColor::Blue, TileType::Normal);
+
 
     state = WAITING;
     blocked = false;
@@ -216,6 +220,7 @@ void Level::Update(float dt)
         {
             if (board->CheckMatches())
             {
+                board->ResetScore();
                 board->ClearMatches();
                 selectedOne = NULL_ENTITY;
                 selectedTwo = NULL_ENTITY;
@@ -276,6 +281,8 @@ void Level::Render()
 {
     window.Clear();
     window.Render(background, Vector2f{0.0f, 0.0f}, /* FIXME don't hardcode this */ Vector2f{960.0f,540.0f}, 0, NULL, SDL_FLIP_NONE);
+    window.Render(scoreText, Vector2f{30.0f, 10.0f});
+    window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
     renderSystem->Update(window);
     window.Display();
 }
