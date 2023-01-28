@@ -51,6 +51,7 @@ public:
     bool BelongsToBoard(Entity p_entity);
 
     void ClearMatches();
+    void ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches);
     bool TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color);
 
     void AddSelected(Entity entity);
@@ -67,6 +68,8 @@ private:
     std::vector<Match> GetHorizontalMatches();
     void SetMatches(std::vector<Match>& p_verticalMatches, std::vector<Match>& p_horizontalMatches);
     std::vector<Match> currentMatches;
+
+    Coordinates swappedTiles[2];
 };
 
 #endif //__Match3_Board_h__
