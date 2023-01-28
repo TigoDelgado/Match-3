@@ -50,9 +50,16 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
         TileColor::Orange,
     };
 
-    board = new Board(Vector2f{400.0f, 200.0f}, p_rows, p_cols, entityCreator);
+    board = new Board(Vector2f{200.0f, 100.0f}, p_rows, p_cols, entityCreator);
 
     board->PopulateBoard(tileColors);
+
+    // FIXME remove
+    // board->InsertTile(Coordinates{2,2}, TileColor::Orange, TileType::Normal);
+    // board->InsertTile(Coordinates{2,3}, TileColor::Orange, TileType::Normal);
+    // board->InsertTile(Coordinates{2,4}, TileColor::Orange, TileType::Normal);
+    // board->InsertTile(Coordinates{3,3}, TileColor::Orange, TileType::Normal);
+    // board->InsertTile(Coordinates{1,3}, TileColor::Orange, TileType::Normal);
 
     state = WAITING;
     blocked = false;
@@ -268,7 +275,7 @@ void Level::Update(float dt)
 void Level::Render()
 {
     window.Clear();
-    window.Render(background, Vector2f{0.0f, 0.0f}, Vector2f{1280.0f,720.0f}, 0, NULL, SDL_FLIP_NONE);
+    window.Render(background, Vector2f{0.0f, 0.0f}, /* FIXME don't hardcode this */ Vector2f{960.0f,540.0f}, 0, NULL, SDL_FLIP_NONE);
     renderSystem->Update(window);
     window.Display();
 }

@@ -11,7 +11,8 @@ enum MatchType
 {
     VerticalMatch,
     HorizontalMatch,
-    MixedMatch
+    MixedMatch,
+    SpecialMatch
 };
 
 struct Match
@@ -23,6 +24,12 @@ struct Match
     void print() 
     {
         std::cout << "Match type: " << type << " | count: " << count << " | start : [" << tiles[0].x << ", " << tiles[0].y << "] | end: [" << tiles[tiles.size()-1].x << ", " << tiles[tiles.size()-1].y << "]" << std::endl;
+        std::cout << "Tiles: ";
+        for (Coordinates tile: tiles)
+        {
+            std::cout << "[" << tile.x << ", " << tile.y << "]  ";
+        }
+        std::cout << std::endl;
     }
 };
 
@@ -35,7 +42,7 @@ public:
 
     void SpawnTiles(std::vector<TileColor> p_tileColors);
 
-    void InsertTile(Entity p_tile, Coordinates p_coords);
+    void InsertTile(Coordinates p_coords, TileColor p_color, TileType p_type);
 
     void SwapTiles(Entity p_tileOne, Entity p_tileTwo);
 
@@ -49,6 +56,7 @@ public:
 
     bool CanSwap(Entity p_entityOne, Entity p_entityTwo);
     bool BelongsToBoard(Entity p_entity);
+    bool MatchesCollide(Match p_match1, Match p_match2, std::vector<Coordinates>& p_jointTiles);
 
     void ClearMatches();
     void ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches);
@@ -66,7 +74,6 @@ private:
 
     std::vector<Match> GetVerticalMatches();
     std::vector<Match> GetHorizontalMatches();
-    void SetMatches(std::vector<Match>& p_verticalMatches, std::vector<Match>& p_horizontalMatches);
     std::vector<Match> currentMatches;
 
     Coordinates swappedTiles[2];

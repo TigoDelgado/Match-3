@@ -26,12 +26,12 @@ Game::Game()
 
 void Game::Run()
 {
-    RenderWindow window("Match 3", 1280, 720);
+    RenderWindow window("Match 3", 960, 540);
 
     ecsManager.Init();
 
     // TODO create scene manager
-    GameScene* currentScene = new Level(window, 8, 8, "res/Backdrop13.jpg");
+    GameScene* currentScene = new Level(window, 8, 8, "../res/Backdrop13.jpg");
     
 
     /* ----------------------------------- Main Loop ------------------------------------ */

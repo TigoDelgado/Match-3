@@ -56,6 +56,17 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
     }
 };
 
+void Board::InsertTile(Coordinates p_coords, TileColor p_color, TileType p_type)
+{
+    Entity entity = grid[p_coords.x][p_coords.y];
+    TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+
+    tileObject.color = p_color;
+    tileObject.type = p_type;
+
+    entityCreator.UpdateTileSprite(entity);
+}
+
 void Board::SpawnTiles(std::vector<TileColor> p_tileColors)
 {
     for (int x = 0; x < cols; x++)              // For each column
@@ -89,10 +100,10 @@ void Board::SpawnTiles(std::vector<TileColor> p_tileColors)
         {
             TileColor randColor = p_tileColors[rand() % p_tileColors.size()];
             
-            Coordinates coords{x, count - offset};                                      // Coordinates after falling
+            Coordinates coords{x, count - offset};                              // Coordinates after falling
             Coordinates spawnCoords{x, -offset};
             
-            Vector2f tilePosition = GetPositionFromCoords(spawnCoords);     // Screen position based on spawn coordinates
+            Vector2f tilePosition = GetPositionFromCoords(spawnCoords);         // Screen position based on spawn coordinates
              
             Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal);
             
@@ -133,17 +144,89 @@ bool Board::CheckMatches()
     std::vector<Match> verticalMatches = GetVerticalMatches();
     std::vector<Match> horizontalMatches = GetHorizontalMatches();
 
-    SetMatches(verticalMatches, horizontalMatches);
-
-    verticalMatches.insert( verticalMatches.end(), horizontalMatches.begin(), horizontalMatches.end());
+    verticalMatches.insert(verticalMatches.end(), horizontalMatches.begin(), horizontalMatches.end());
     currentMatches = verticalMatches;
 
-    // for (Match m : currentMatches)
+    std::size_t i = 0;
+
+    while (i < currentMatches.size())
+    {
+        Match match1 = currentMatches[i];
+        Match collidingMatch{MatchType::MixedMatch, match1.count, match1.tiles};
+        bool collided = false;
+
+        std::vector<Coordinates> jointTiles;
+
+        for (std::size_t j = i+1; j < currentMatches.size(); j++)
+        {
+            Match match2 = currentMatches[j];
+
+            jointTiles.clear();
+
+            if (MatchesCollide(match1, match2, jointTiles))
+            {
+                collided = true;
+                collidingMatch.count = jointTiles.size();
+                collidingMatch.tiles = jointTiles;
+                currentMatches.erase(currentMatches.begin() + j);
+            }
+        }
+
+        if (collided)
+        {
+            currentMatches.erase(currentMatches.begin() + i);
+            currentMatches.push_back(collidingMatch);
+        }
+        else
+        {
+            i++;
+        }
+    }
+
+    // std::cout << std::endl << "________________________________________________________" << std::endl;
+    // for (Match match : currentMatches)
     // {
-    //     m.print();
+    //     match.print();
+    //     std::cout << std::endl;
     // }
+    // std::cout << "________________________________________________________" << std::endl;
 
     return (currentMatches.size() > 0);
+}
+
+bool Board::MatchesCollide(Match p_match1, Match p_match2, std::vector<Coordinates>& p_jointTiles)
+{
+    bool collide = false;
+    Coordinates collideTile;
+
+    for (Coordinates tile1 : p_match1.tiles)
+    {
+        p_jointTiles.push_back(tile1);              // tile1 is joint tile if matches collide
+        for (Coordinates tile2 : p_match2.tiles)
+        {
+            if (tile1 == tile2)
+            {
+                collide = true;                     // Matches collide - we don't push back tile2 because it was already pushed
+                collideTile = tile1;
+            }
+        }
+    }
+    if (!collide)
+    {
+        return false;
+    } 
+    else    // collided
+    {
+        for (Coordinates tile : p_match2.tiles)
+        {
+            if (!(tile == collideTile))
+            {
+                p_jointTiles.push_back(tile);
+            }
+
+        }
+    }
+    return true;
 }
 
 
@@ -219,42 +302,62 @@ void Board::ClearMatches()
 
         for (Match match: currentMatches)
         {
-            int offset = rand() % 2;                                                    // Randomize center of even sized matches 
-            Coordinates coords = match.tiles[(match.tiles.size() - offset) / 2];        // Get tile at center of match
-
-            for (Coordinates tile : match.tiles)
+            if (match.count > 3 && match.type != MatchType::SpecialMatch)               // Match will create a special tile
             {
-                if (tile == swappedTiles[1]) coords = swappedTiles[1];          // If match includes swapped tiles, transform them
-                if (tile == swappedTiles[0]) coords = swappedTiles[0];          // Prioritize first selection
-            }
-            
-            Entity entity = grid[coords.x][coords.y];
-            
-            if (!tilesCleared[coords.x][coords.y] && entity != NULL_ENTITY)     // Tile not cleared yet
-            {
-                TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+                int offset = rand() % 2;                                                // Randomize center of even sized matches 
+                Coordinates coords = match.tiles[(match.tiles.size() - offset) / 2];    // Get tile at center of match
 
-                if (tileObject.type != TileType::Normal)            // Transforming special tile
+                for (Coordinates tile : match.tiles)
                 {
-                    ActivateSpecial(coords, specialMatches);        // Activate its ability before transforming
+                    if (tile == swappedTiles[1])                    // If match includes swapped tiles, prioritize them
+                    {   
+                        coords = swappedTiles[1];  
+                        swappedTiles[1] = Coordinates{-1, -1};      // If other matches appear here, ignore
+                    }         
+                    if (tile == swappedTiles[0])                    // Prioritize first selection
+                    {                   
+                        coords = swappedTiles[0];
+                        swappedTiles[0] = Coordinates{-1, -1};      // If other matches appear here, ignore          
+                    } 
                 }
-
-                if (match.count >= 4 && TilesSameColor(match.tiles, tileObject.color) 
-                    && (match.type == MatchType::VerticalMatch || match.type == MatchType::HorizontalMatch))   // Create special tile if all of same color
+                
+                Entity entity = grid[coords.x][coords.y];
+                
+                if (!tilesCleared[coords.x][coords.y] && entity != NULL_ENTITY)     // Tile not cleared yet
                 {
-                    // FIXME make a method out of me
+                    TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+
+                    if (tileObject.type != TileType::Normal)            // Transforming special tile
+                    {
+                        ActivateSpecial(coords, specialMatches);        // Activate its ability before transforming
+                    }
+
                     TileType type;
+
                     if (match.count == 4 && match.type == MatchType::VerticalMatch)
                     {
+                        // Create Vertical Tile
                         type = TileType::Vertical;
                     } 
-                    if (match.count == 4 && match.type == MatchType::HorizontalMatch)
+                    else if (match.count == 4 && match.type == MatchType::HorizontalMatch)
                     {
+                        // Create Horizontal Tile
                         type = TileType::Horizontal;
                     } 
-                    if (match.count >= 5)
+                    else if (match.count >= 5 && (match.type == MatchType::VerticalMatch || match.type == MatchType::HorizontalMatch))
                     {
+                        // Create Consuming Tile
                         type = TileType::Consuming;
+                    }
+                    else if (match.count < 8 && match.type == MatchType::MixedMatch)
+                    {
+                        // Create Exploding Tile
+                        type = TileType::Exploding;
+                    }
+                    else if (match.count >= 8 && match.type == MatchType::MixedMatch)
+                    {
+                        // Create Big Exploding Tile
+                        type = TileType::BigExploding;
                     } 
 
                     tileObject.type = type;
@@ -262,13 +365,12 @@ void Board::ClearMatches()
                     entityCreator.UpdateTileSprite(entity);
 
                     tilesCleared[coords.x][coords.y] = true; 
+                
                 }
             }
-
             
 
-
-            for (Coordinates tile: match.tiles)
+            for (Coordinates tile: match.tiles)                             // Clear remaining match tiles
             {
                 Entity entity = grid[tile.x][tile.y];
 
@@ -338,8 +440,48 @@ void Board::ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMat
             }
         }
     }
+    else if (tileObject.type == TileType::Exploding)                // Create small square match
+    {
+        for (int xOffset = -1; xOffset <= 1; xOffset++)
+        {
+            int x = p_tile.x + xOffset;
+            if (0 <= x && x < cols)                                 // Make sure tile exists
+            {
+                for (int yOffset = -1; yOffset <= 1; yOffset++)
+                {
+                    int y = p_tile.y + yOffset;
+                    if (0 <= y && y < rows)                         // Make sure tile exists
+                    {
+                        specialCoordinates.push_back(Coordinates{x,y});
+                        count++;
+                    }
+                }
+            }
 
-    Match specialMatch{MatchType::MixedMatch, count, specialCoordinates};
+        }
+    }
+    else if (tileObject.type == TileType::BigExploding)             // Create big explosion match
+    {
+        for (int xOffset = -2; xOffset <= 2; xOffset++)
+        {
+            int x = p_tile.x + xOffset;
+            if (0 <= x && x < cols)                                 // Make sure tile exists
+            {
+                for (int yOffset = -2; yOffset <= 2; yOffset++)
+                {
+                    int y = p_tile.y + yOffset;
+                    if (0 <= y && y < rows)                         // Make sure tile exists
+                    {
+                        specialCoordinates.push_back(Coordinates{x,y});
+                        count++;
+                    }
+                }
+            }
+
+        }
+    }
+
+    Match specialMatch{MatchType::SpecialMatch, count, specialCoordinates};
     p_specialMatches.push_back(specialMatch);
 }
 
@@ -474,11 +616,4 @@ std::vector<Match> Board::GetHorizontalMatches()
         }
     }
     return matches;
-}
-
-void Board::SetMatches(std::vector<Match>& p_verticalMatches, std::vector<Match>& p_horizontalMatches)
-{
-    std::vector<Match> matches;
-
-    // TODO concatenate matches!
 }
