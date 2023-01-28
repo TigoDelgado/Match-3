@@ -300,6 +300,8 @@ void Board::ClearMatches()
         currentMatches.insert( currentMatches.end(), specialMatches.begin(), specialMatches.end());
         specialMatches.clear();
 
+        std::sort(currentMatches.begin(), currentMatches.end(), Match::compareMatches); // Leave bigger matches for last (higher score)
+
         for (Match match: currentMatches)
         {
             if (match.count > 3 && match.type != MatchType::SpecialMatch)               // Match will create a special tile
@@ -392,12 +394,23 @@ void Board::ClearMatches()
                 }
                 // Else: tile already cleared - do nothing.
             }
+            int matchScore = CalculateScore(match);
+            score += matchScore * combo;
+
+            // if (score == 0) std::cout << std::endl << "=====================================================================" << std::endl;
+            // std::cout << std::endl;
+            // std::cout << "Match: " << matchScore << std::endl;
+            // std::cout << "Combo: " << combo << std::endl;
+            // std::cout << "Points: " << matchScore * combo << std::endl;
+            // std::cout << "Score: " << score << std::endl;
+            // std::cout << "---------------------------------------------------------------------" << std::endl;
+
+            combo += COMBO_AMPLIFIER;
         }
     }
 
     currentMatches.clear();
 }
-
 
 
 void Board::ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches)
@@ -489,7 +502,6 @@ void Board::ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMat
 
 
 
-
 bool Board::TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color)
 {
     if (p_color == TileColor::Colorless) return false;
@@ -508,6 +520,18 @@ bool Board::TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color)
 
     return true;       
 }
+
+int Board::CalculateScore(Match match)
+{
+    return match.count * 100;
+}
+
+void Board::ResetScore()
+{
+    score = 0;
+    combo = 1;
+}
+
 
 void Board::AddSelected(Entity entity)
 {
