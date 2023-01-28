@@ -29,11 +29,12 @@ bool ClearTileSystem::Update(float dt)
 	for (Entity const& entity : entities)
 	{
 		Transform& transform = ecsManager.GetComponent<Transform>(entity);
+		// TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
         Destruction& destruction = ecsManager.GetComponent<Destruction>(entity);
 
 		if (transform.scale <= destruction.scale)
 		{
-			//ecsManager.RemoveComponent<Destruction>(entity);
+			// std::cout << "DESTROYED entity previously on [" << tileObject.coords.x << ", " << tileObject.coords.y << "]" << std::endl;
 			ecsManager.DestroyEntity(entity);
 		}
 		else

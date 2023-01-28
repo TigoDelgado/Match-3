@@ -18,16 +18,8 @@ enum TileType
     Normal,
     Vertical,
     Horizontal,
-    Explosion,
+    Exploding,
     Consuming
-};
-
-enum TileState
-{
-    Idle,
-    Swapping,
-    Gravitating,
-    Clearing
 };
 
 struct TileObject
@@ -35,7 +27,6 @@ struct TileObject
     TileColor color;
     TileType type;
     Coordinates coords;
-    TileState state;
 };
 
 #endif //__Match3_Component_Tile_Object_h__

@@ -48,8 +48,10 @@ public:
     Coordinates GetEntityCoords(Entity p_entity);
 
     bool CanSwap(Entity p_entityOne, Entity p_entityTwo);
+    bool BelongsToBoard(Entity p_entity);
 
     void ClearMatches();
+    bool TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color);
 
     void AddSelected(Entity entity);
     void RemoveSelected(Entity entity);
