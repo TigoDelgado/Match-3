@@ -36,6 +36,11 @@ bool MoveTileSystem::Update(float dt)
 		}
 		else
 		{
+			if (translate.speed < translate.maxSpeed)				// Has not reach top speed yet
+			{
+				translate.speed += translate.acceleration * dt;		// Add acceleration force
+			}
+
 			Vector2f direction = translate.destination - transform.position;
 			direction = direction.normalize();
 

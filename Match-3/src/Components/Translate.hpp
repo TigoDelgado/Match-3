@@ -7,6 +7,8 @@ struct Translate
 {
     Vector2f destination;
     float speed;
+    float acceleration;
+    float maxSpeed;
 };
 
 #endif //__Match3_Component_Translate_h__

@@ -78,7 +78,7 @@ void Board::SpawnTiles(std::vector<TileColor> p_tileColors)
                 TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
                 tileObject.coords = newCoords;
 
-                ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(newCoords), TILE_FALL_SPEED});
+                ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(newCoords), TILE_FALL_SPEED, TILE_ACCELERATION, TILE_MAX_SPEED});
 
                 grid[oldCoords.x][oldCoords.y] = NULL_ENTITY;
                 grid[newCoords.x][newCoords.y] = entity;
@@ -96,7 +96,7 @@ void Board::SpawnTiles(std::vector<TileColor> p_tileColors)
              
             Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal);
             
-            ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(coords), TILE_FALL_SPEED});
+            ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(coords), TILE_FALL_SPEED, TILE_ACCELERATION, TILE_MAX_SPEED});
             
             grid[coords.x][coords.y] = entity;
         }
@@ -119,8 +119,8 @@ void Board::SwapTiles(Entity p_tileOne, Entity p_tileTwo)
     TileObject& tileObject2 = ecsManager.GetComponent<TileObject>(grid[c2.x][c2.y]);
     tileObject2.coords = c2;
 
-    ecsManager.AddComponent(grid[c1.x][c1.y], Translate{GetPositionFromCoords(c1), TILE_SWAP_SPEED});
-    ecsManager.AddComponent(grid[c2.x][c2.y], Translate{GetPositionFromCoords(c2), TILE_SWAP_SPEED});
+    ecsManager.AddComponent(grid[c1.x][c1.y], Translate{GetPositionFromCoords(c1), TILE_SWAP_SPEED, 0, TILE_SWAP_SPEED});
+    ecsManager.AddComponent(grid[c2.x][c2.y], Translate{GetPositionFromCoords(c2), TILE_SWAP_SPEED, 0, TILE_SWAP_SPEED});
 
     swappedTiles[0] = c1;
     swappedTiles[1] = c2;
