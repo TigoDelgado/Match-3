@@ -13,7 +13,7 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, C
 
     ecsManager.AddComponent(entity, TileObject{p_color, p_type, p_coords});
 
-    ecsManager.AddComponent(entity, Sprite{GetTileTexture(p_color, p_type), Vector2f{TILE_WIDTH, TILE_HEIGHT}});
+    ecsManager.AddComponent(entity, Sprite{GetTileTexture(p_color, p_type), 0, Vector2f{70, 70}, Vector2f{TILE_WIDTH, TILE_HEIGHT}});
 
     ecsManager.AddComponent(entity, Swappable{});
 
@@ -86,7 +86,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
     whiteTile = window.LoadTexture("../res/Tiles/Color-2.png");
     pinkTile = window.LoadTexture("../res/Tiles/Color-3.png");
     blueTile = window.LoadTexture("../res/Tiles/Color-4.png");
-    orangeTile = window.LoadTexture("../res/Tiles/Color-5.png");
+    orangeTile = window.LoadTexture("../res/Tiles/Color-5-sprite-sheet.png");
     colorlessTile = window.LoadTexture("../res/Tiles/Color-1.png"); // FIXME get real texture;
 
     blackHorizontalTile = window.LoadTexture("../res/Tiles/Color-1-H.png");

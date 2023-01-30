@@ -24,16 +24,19 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     ecsManager.RegisterComponent<TileObject>();
     ecsManager.RegisterComponent<Swappable>();
     ecsManager.RegisterComponent<Translate>();
-    ecsManager.RegisterComponent<Destruction>();
+    ecsManager.RegisterComponent<Shrinking>();
+    ecsManager.RegisterComponent<EntityDestruction>();
+    ecsManager.RegisterComponent<ClearedTile>();
     ecsManager.RegisterComponent<Selected>();
 
     /* -------------------------------- Register Systems -------------------------------- */
 
-    // gravitySystem = ecsManager.RegisterSystem<GravitySystem>();
     renderSystem = ecsManager.RegisterSystem<RenderSystem>();
     clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
     moveTileSystem = ecsManager.RegisterSystem<MoveTileSystem>();
-    clearTileSystem = ecsManager.RegisterSystem<ClearTileSystem>();
+    shrinkEntitySystem = ecsManager.RegisterSystem<ShrinkEntitySystem>();
+    destroyEntitySystem = ecsManager.RegisterSystem<DestroyEntitySystem>();    
+    clearTileSystem = ecsManager.RegisterSystem<ClearTileSystem>();    
     animateSelectedSystem = ecsManager.RegisterSystem<AnimateSelectedSystem>();
 
     // FIXME Don't allow systems to register without required components
@@ -168,6 +171,10 @@ void Level::HandleEvent(SDL_Event& event)
 
 void Level::Update(float dt)
 {
+    destroyEntitySystem->Update(dt);
+    animateSelectedSystem->Update(dt);
+    shrinkEntitySystem->Update(dt);
+
     if (changedSelectedOne)
     {
         // std::cout << "Changed selected from " << lastSelected  << " to " << selectedOne << std::endl;
@@ -273,14 +280,12 @@ void Level::Update(float dt)
     default:
         break;
     }
-
-    animateSelectedSystem->Update(dt);
 }
 
 void Level::Render()
 {
     window.Clear();
-    window.Render(background, Vector2f{0.0f, 0.0f}, /* FIXME don't hardcode this */ Vector2f{960.0f,540.0f}, 0, NULL, SDL_FLIP_NONE);
+    window.Render(background, Vector2f{0.0f, 0.0f});
     window.Render(scoreText, Vector2f{30.0f, 10.0f});
     window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
     renderSystem->Update(window);

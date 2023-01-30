@@ -11,10 +11,13 @@
 #include "ECS/Manager.hpp"
 #include "Components/Transform.hpp"
 #include "Components/Sprite.hpp"
+#include "Components/SpriteAnimation.hpp"
 #include "Components/TileObject.hpp"
 #include "Components/Swappable.hpp"
 #include "Components/Translate.hpp"
-#include "Components/Destruction.hpp"
+#include "Components/EntityDestruction.hpp"
+#include "Components/ClearedTile.hpp"
+#include "Components/Shrinking.hpp"
 #include "Components/Selected.hpp"
 
 #include "ECS/Manager.hpp"
@@ -22,6 +25,8 @@
 #include "Systems/Render.hpp"
 #include "Systems/ClickTile.hpp"
 #include "Systems/MoveTile.hpp"
+#include "Systems/DestroyEntity.hpp"
+#include "Systems/ShrinkEntity.hpp"
 #include "Systems/ClearTile.hpp"
 #include "Systems/AnimateSelected.hpp"
 
@@ -65,10 +70,11 @@ private:
     Board* board;
     std::vector<TileColor> tileColors;
 
-    std::shared_ptr<GravitySystem> gravitySystem;
     std::shared_ptr<RenderSystem> renderSystem;
     std::shared_ptr<ClickTileSystem> clickTileSystem;
     std::shared_ptr<MoveTileSystem> moveTileSystem;
+    std::shared_ptr<ShrinkEntitySystem> shrinkEntitySystem;
+    std::shared_ptr<DestroyEntitySystem> destroyEntitySystem;
     std::shared_ptr<ClearTileSystem> clearTileSystem;
     std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
 

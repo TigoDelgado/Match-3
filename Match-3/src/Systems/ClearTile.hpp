@@ -9,8 +9,6 @@ class ClearTileSystem : public System
 public:
     void Init() override;
 	bool Update(float dt);
-private:
-    bool Cleared(Vector2f init, Vector2f dest, Vector2f final);
 };
 
 

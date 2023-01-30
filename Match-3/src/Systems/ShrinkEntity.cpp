@@ -1,10 +1,8 @@
 #include "ECS/Manager.hpp"
-#include "Systems/ClearTile.hpp"
+#include "Systems/ShrinkEntity.hpp"
 
 #include "Components/Transform.hpp"
 #include "Components/Shrinking.hpp"
-#include "Components/TileObject.hpp"
-#include "Components/EntityDestruction.hpp"
 
 #include "Math2D.hpp"
 
@@ -12,18 +10,17 @@
 
 extern ECS_Manager ecsManager;
 
-void ClearTileSystem::Init()
+void ShrinkEntitySystem::Init()
 {
 	Signature signature;
 	signature.set(ecsManager.GetComponentType<Transform>());
     signature.set(ecsManager.GetComponentType<Shrinking>());
-    signature.set(ecsManager.GetComponentType<TileObject>());
 
-	ecsManager.SetSystemSignature<ClearTileSystem>(signature);
+	ecsManager.SetSystemSignature<ShrinkEntitySystem>(signature);
 }
 
 
-bool ClearTileSystem::Update(float dt)
+bool ShrinkEntitySystem::Update(float dt)
 {
 	if (entities.size() <= 0) return false;
 
@@ -34,7 +31,17 @@ bool ClearTileSystem::Update(float dt)
 
 		if (transform.scale <= shrinking.finalScale)
 		{
-			ecsManager.AddComponent<EntityDestruction>(entity, EntityDestruction{0});
+			ecsManager.RemoveComponent<Shrinking>(entity);
+		}
+		else
+		{
+			transform.scale -= shrinking.speed * dt;
+            shrinking.speed += shrinking.acceleration;
+
+            if (transform.scale < shrinking.finalScale)
+            {
+                transform.scale = shrinking.finalScale;
+            }
 		}
 	}
 

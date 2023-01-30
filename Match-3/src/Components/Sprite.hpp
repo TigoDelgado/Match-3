@@ -6,7 +6,9 @@
 struct Sprite
 {
     SDL_Texture* texture;
-    Vector2f dimensions;
+    int currentFrame;
+    Vector2f sourceDimensions;
+    Vector2f destDimensions;
 };
 
 #endif //__Match3_Component_Sprite_h__
