@@ -109,7 +109,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
     // yellowTile = window.LoadTexture("../res/Tiles/Yellow.png");
     yellowTile = window.LoadTexture("../res/Tiles/Gold.png");
 
-    colorlessTile = window.LoadTexture("../res/Tiles/Grey.png");
+    colorlessTile = window.LoadTexture("../res/Tiles/Colorless.png");
 
     blackVerticalTile = window.LoadTexture("../res/Tiles/Black-V.png");
     blueVerticalTile = window.LoadTexture("../res/Tiles/Blue-V.png");

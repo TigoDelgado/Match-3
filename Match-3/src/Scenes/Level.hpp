@@ -51,7 +51,7 @@ enum LevelState
 class Level : public GameScene
 {
 public:
-    Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background);
+    Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background, const char* p_boardTexture);
 
     //Main loop functions
     void HandleEvent(SDL_Event& event) override;
@@ -62,11 +62,13 @@ public:
 
 private:
     RenderWindow window;
+    Vector2f windowDimensions;
     int rows;
     int cols;
 
     EntityCreator entityCreator;
     SDL_Texture* background;
+    SDL_Texture* boardTexture;
     SDL_Texture* scoreText;
     Board* board;
     std::vector<TileColor> tileColors;

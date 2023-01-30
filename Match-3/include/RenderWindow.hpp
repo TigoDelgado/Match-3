@@ -16,8 +16,10 @@ public:
     void CleanUp();
     void Clear();
     void Render(SDL_Texture* p_texture, Vector2f p_position);
+    void Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_offset, Vector2f p_sourceDimensions, Vector2f p_destDimensions);
     void Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_offset, Vector2f p_sourceDimensions, Vector2f p_destDimensions, double p_rotation, SDL_Point* p_center, SDL_RendererFlip p_flip);
     void Display();
+    Vector2f GetDimensions();
     
 private:
     SDL_Window* window;

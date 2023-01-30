@@ -12,10 +12,23 @@
 
 extern ECS_Manager ecsManager;
 
-Board::Board(Vector2f p_position, int p_cols, int p_rows, EntityCreator& p_entityCreator)
-    :position(p_position), cols(p_cols), rows(p_rows), entityCreator(p_entityCreator)
+Board::Board(Vector2f p_center, int p_cols, int p_rows, EntityCreator& p_entityCreator)
+    :cols(p_cols), rows(p_rows), entityCreator(p_entityCreator)
 {
     grid = std::vector<std::vector<Entity>> (cols, std::vector<Entity>(rows, NULL_ENTITY));
+    size.x = TILE_WIDTH * cols + TILE_MARGIN * (cols - 1);
+    size.y = TILE_WIDTH * rows + TILE_MARGIN * (rows - 1);
+
+    std::cout << "size: [" << size.x << ", " << size.y << "]" << std::endl;
+
+    float halfWidth = size.x / 2;
+    float halfHeight = size.y / 2;
+
+    std::cout << "half size: [" << halfWidth << ", " << halfHeight << "]" << std::endl;
+    std::cout << "center: [" << p_center.x << ", " << p_center.y << "]" << std::endl;
+
+    position = Vector2f{p_center.x - halfWidth + TILE_WIDTH / 2, p_center.y - halfHeight + TILE_WIDTH / 2};
+    std::cout << "position: [" << position.x << ", " << position.y << "]" << std::endl;
 }
 
 void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
@@ -232,7 +245,17 @@ bool Board::MatchesCollide(Match p_match1, Match p_match2, std::vector<Coordinat
     return true;
 }
 
+Vector2f Board::GetBackgroundPosition()
+{
+    float offset = TILE_WIDTH / 2 + TILE_MARGIN;
+    return Vector2f{position.x - offset, position.y - offset};
+}
 
+Vector2f Board::GetBackgroundSize()
+{
+    Vector2f margins{TILE_MARGIN * 2, TILE_MARGIN * 2};
+    return size + margins;
+}
 
 Coordinates Board::GetEntityCoords(Entity p_entity)
 {
@@ -554,7 +577,6 @@ void Board::RemoveSelected(Entity entity)
     transform.rotation = 0.0f;
     transform.scale = 1.0f;
 }
-
 
 std::vector<Match> Board::GetVerticalMatches()
 {

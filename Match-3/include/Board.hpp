@@ -73,10 +73,14 @@ public:
     void AddSelected(Entity entity);
     void RemoveSelected(Entity entity);
 
+    Vector2f GetBackgroundPosition();
+    Vector2f GetBackgroundSize();
+
 private:
     Vector2f position;
     int cols;    
     int rows;
+    Vector2f size;
     EntityCreator entityCreator;
     std::vector<std::vector<Entity>> grid;
 
@@ -88,6 +92,7 @@ private:
 
     int score = 0;
     float combo = 1;
+
 };
 
 #endif //__Match3_Board_h__

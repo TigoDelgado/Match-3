@@ -90,13 +90,30 @@ void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position)
     SDL_RenderCopy(renderer, p_texture, &src, &dst);
 }
 
-
-
-void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_sheetOffset, Vector2f p_sourceDimensions, Vector2f p_destDimensions, double p_rotation, SDL_Point* p_center, SDL_RendererFlip p_flip)
+void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_sheetOffset, Vector2f p_sourceDimensions, Vector2f p_destDimensions)
 {
     int textureWidth, textureHeight;
     SDL_QueryTexture(p_texture, NULL, NULL, &textureWidth, &textureHeight);
 
+    SDL_Rect src;
+    src.x = p_sheetOffset.x;
+    src.y = p_sheetOffset.y;
+    src.w = p_sourceDimensions.x;
+    src.h = p_sourceDimensions.y;
+
+    SDL_Rect dst;
+    dst.x = p_position.x;
+    dst.y = p_position.y;
+    dst.w = p_destDimensions.x;
+    dst.h = p_destDimensions.y;
+
+    SDL_RenderCopy(renderer, p_texture, &src, &dst);
+}
+
+
+
+void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_sheetOffset, Vector2f p_sourceDimensions, Vector2f p_destDimensions, double p_rotation, SDL_Point* p_center, SDL_RendererFlip p_flip)
+{
     SDL_Rect src;
     src.x = p_sheetOffset.x;
     src.y = p_sheetOffset.y;
@@ -115,4 +132,11 @@ void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f 
 void RenderWindow::Display()
 {
     SDL_RenderPresent(renderer);
+}
+
+Vector2f RenderWindow::GetDimensions()
+{
+    int w, h;
+    SDL_GetWindowSize(window, &w, &h);
+    return Vector2f{float(w), float(h)};
 }

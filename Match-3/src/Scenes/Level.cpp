@@ -4,13 +4,16 @@
 
 extern ECS_Manager ecsManager;
 
-Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background)
+Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background, const char* p_boardTexture)
     :window(p_window), rows(p_rows), cols(p_cols)
 {
 
     /* ------------------------------- Setup Resources  ------------------------------- */
 
+    windowDimensions = p_window.GetDimensions();
+
     background = window.LoadTexture(p_background);
+    boardTexture = window.LoadTexture(p_boardTexture);
     scoreText = window.LoadTextureFromText("Score: ", SDL_Color{0, 0, 0});
 
     // Load Tile object textures
@@ -58,7 +61,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
         TileColor::Yellow,
     };
 
-    board = new Board(Vector2f{200.0f, 100.0f}, p_rows, p_cols, entityCreator);
+    board = new Board(Vector2f{360.0f, 360.0f}, p_rows, p_cols, entityCreator);
 
     board->PopulateBoard(tileColors);
 
@@ -294,7 +297,8 @@ void Level::Update(float dt)
 void Level::Render()
 {
     window.Clear();
-    // window.Render(background, Vector2f{0.0f, 0.0f});
+    window.Render(background, Vector2f{0.0f, 0.0f}, Vector2f{0.0f, 0.0f}, Vector2f{720, 720}, windowDimensions);
+    window.Render(boardTexture, board->GetBackgroundPosition(), Vector2f{0, 0}, Vector2f{1000, 1000}, board->GetBackgroundSize());
     window.Render(scoreText, Vector2f{30.0f, 10.0f});
     // window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
     renderSystem->Update(window);

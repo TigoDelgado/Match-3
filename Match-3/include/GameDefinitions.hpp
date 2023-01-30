@@ -1,11 +1,11 @@
 #ifndef __Match3_Game_Definitions_h__
 #define __Match3_Game_Definitions_h__
 
-#define TILE_WIDTH 50
-#define TILE_HEIGHT 50
+#define TILE_WIDTH 50.0f
+#define TILE_HEIGHT 50.0f
 #define TILE_SOURCE_WIDTH 100
 #define TILE_SOURCE_HEIGHT 100
-#define TILE_MARGIN 6
+#define TILE_MARGIN 6.0f
 
 #define TILE_SWAP_SPEED 300
 #define TILE_FALL_SPEED 300
