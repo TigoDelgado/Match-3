@@ -49,11 +49,13 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     // TODO pass this through a level manager?
     tileColors = std::vector<TileColor>
     {
-        TileColor::Black,
-        TileColor::White,
-        TileColor::Pink,
+        // TileColor::Black,
         TileColor::Blue,
-        TileColor::Orange,
+        TileColor::Green,
+        TileColor::Magenta,
+        TileColor::Purple,
+        // TileColor::White,
+        TileColor::Yellow,
     };
 
     board = new Board(Vector2f{200.0f, 100.0f}, p_rows, p_cols, entityCreator);
@@ -61,13 +63,17 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     board->PopulateBoard(tileColors);
 
     // FIXME remove
-    // board->InsertTile(Coordinates{2,2}, TileColor::Orange, TileType::Normal);
-    // board->InsertTile(Coordinates{2,3}, TileColor::Orange, TileType::Normal);
-    // board->InsertTile(Coordinates{2,4}, TileColor::Orange, TileType::Normal);
-    // board->InsertTile(Coordinates{2,5}, TileColor::Orange, TileType::Normal);
-    // board->InsertTile(Coordinates{3,2}, TileColor::Blue, TileType::Normal);
-    // board->InsertTile(Coordinates{3,3}, TileColor::Blue, TileType::Normal);
-    // board->InsertTile(Coordinates{3,4}, TileColor::Blue, TileType::Normal);
+    board->InsertTile(Coordinates{2,2}, TileColor::Yellow, TileType::Normal);
+    board->InsertTile(Coordinates{2,3}, TileColor::Yellow, TileType::Normal);
+    board->InsertTile(Coordinates{2,4}, TileColor::Yellow, TileType::Normal);
+    board->InsertTile(Coordinates{2,5}, TileColor::Yellow, TileType::Normal);
+    board->InsertTile(Coordinates{2,6}, TileColor::Yellow, TileType::Normal);
+
+    board->InsertTile(Coordinates{3,2}, TileColor::Magenta, TileType::Normal);
+    board->InsertTile(Coordinates{3,3}, TileColor::Magenta, TileType::Normal);
+    board->InsertTile(Coordinates{3,4}, TileColor::Magenta, TileType::Normal);
+    board->InsertTile(Coordinates{3,5}, TileColor::Magenta, TileType::Normal);
+    board->InsertTile(Coordinates{3,6}, TileColor::Magenta, TileType::Normal);
 
 
     state = WAITING;
@@ -288,7 +294,7 @@ void Level::Update(float dt)
 void Level::Render()
 {
     window.Clear();
-    window.Render(background, Vector2f{0.0f, 0.0f});
+    // window.Render(background, Vector2f{0.0f, 0.0f});
     window.Render(scoreText, Vector2f{30.0f, 10.0f});
     // window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
     renderSystem->Update(window);

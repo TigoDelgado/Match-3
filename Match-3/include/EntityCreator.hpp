@@ -22,41 +22,54 @@ public:
 
 private:
     SDL_Texture* blackTile;
-    SDL_Texture* whiteTile;
-    SDL_Texture* pinkTile;
     SDL_Texture* blueTile;
-    SDL_Texture* orangeTile;
+    SDL_Texture* greenTile;
+    SDL_Texture* magentaTile;
+    SDL_Texture* purpleTile;
+    SDL_Texture* whiteTile;
+    SDL_Texture* yellowTile;
+
     SDL_Texture* colorlessTile;
 
-    SDL_Texture* blackHorizontalTile;
-    SDL_Texture* whiteHorizontalTile;
-    SDL_Texture* pinkHorizontalTile;
-    SDL_Texture* blueHorizontalTile;
-    SDL_Texture* orangeHorizontalTile;
-
     SDL_Texture* blackVerticalTile;
-    SDL_Texture* whiteVerticalTile;
-    SDL_Texture* pinkVerticalTile;
     SDL_Texture* blueVerticalTile;
-    SDL_Texture* orangeVerticalTile;
+    SDL_Texture* greenVerticalTile;
+    SDL_Texture* magentaVerticalTile;
+    SDL_Texture* purpleVerticalTile;
+    SDL_Texture* whiteVerticalTile;
+    SDL_Texture* yellowVerticalTile;
+
+    SDL_Texture* blackHorizontalTile;
+    SDL_Texture* blueHorizontalTile;
+    SDL_Texture* greenHorizontalTile;
+    SDL_Texture* magentaHorizontalTile;
+    SDL_Texture* purpleHorizontalTile;
+    SDL_Texture* whiteHorizontalTile;
+    SDL_Texture* yellowHorizontalTile;
 
     SDL_Texture* blackExplodingTile;
-    SDL_Texture* whiteExplodingTile;
-    SDL_Texture* pinkExplodingTile;
     SDL_Texture* blueExplodingTile;
-    SDL_Texture* orangeExplodingTile;
+    SDL_Texture* greenExplodingTile;
+    SDL_Texture* magentaExplodingTile;
+    SDL_Texture* purpleExplodingTile;
+    SDL_Texture* whiteExplodingTile;
+    SDL_Texture* yellowExplodingTile;
 
     SDL_Texture* blackBigExplodingTile;
-    SDL_Texture* whiteBigExplodingTile;
-    SDL_Texture* pinkBigExplodingTile;
     SDL_Texture* blueBigExplodingTile;
-    SDL_Texture* orangeBigExplodingTile;
+    SDL_Texture* greenBigExplodingTile;
+    SDL_Texture* magentaBigExplodingTile;
+    SDL_Texture* purpleBigExplodingTile;
+    SDL_Texture* whiteBigExplodingTile;
+    SDL_Texture* yellowBigExplodingTile;
 
     SDL_Texture* blackConsumingTile;
-    SDL_Texture* whiteConsumingTile;
-    SDL_Texture* pinkConsumingTile;
     SDL_Texture* blueConsumingTile;
-    SDL_Texture* orangeConsumingTile;
+    SDL_Texture* greenConsumingTile;
+    SDL_Texture* magentaConsumingTile;
+    SDL_Texture* purpleConsumingTile;
+    SDL_Texture* whiteConsumingTile;
+    SDL_Texture* yellowConsumingTile;
 };
 
 

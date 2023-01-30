@@ -6,10 +6,12 @@
 enum TileColor
 {
     Black,
-    White,
-    Pink,
     Blue,
-    Orange,
+    Green,
+    Magenta,
+    Purple,
+    White,
+    Yellow,
     Colorless
 };
 
