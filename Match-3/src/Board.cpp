@@ -6,6 +6,7 @@
 #include "Components/EntityDestruction.hpp"
 #include "Components/ClearedTile.hpp"
 #include "Components/Selected.hpp"
+#include "Components/SpriteAnimation.hpp"
 
 #include <iostream>
 
@@ -56,6 +57,9 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
             // std::cout << "Changed color of entity " << entity << " on tile [" << centerTile.x << ", " << centerTile.y << "]" << std::endl;
         }
     }
+
+    InsertTile(Coordinates{0,0}, TileColor::Orange, TileType::Normal);
+    ecsManager.AddComponent<SpriteAnimation>(grid[0][0], SpriteAnimation{0, 4, 0, -1, 0.5f, 0.0f});
 };
 
 void Board::InsertTile(Coordinates p_coords, TileColor p_color, TileType p_type)

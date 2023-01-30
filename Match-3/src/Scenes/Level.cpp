@@ -21,6 +21,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     
     ecsManager.RegisterComponent<Transform>();
     ecsManager.RegisterComponent<Sprite>();
+    ecsManager.RegisterComponent<SpriteAnimation>();
     ecsManager.RegisterComponent<TileObject>();
     ecsManager.RegisterComponent<Swappable>();
     ecsManager.RegisterComponent<Translate>();
@@ -38,6 +39,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     destroyEntitySystem = ecsManager.RegisterSystem<DestroyEntitySystem>();    
     clearTileSystem = ecsManager.RegisterSystem<ClearTileSystem>();    
     animateSelectedSystem = ecsManager.RegisterSystem<AnimateSelectedSystem>();
+    animateSpriteSystem = ecsManager.RegisterSystem<AnimateSpriteSystem>();
 
     // FIXME Don't allow systems to register without required components
 
@@ -172,6 +174,7 @@ void Level::HandleEvent(SDL_Event& event)
 void Level::Update(float dt)
 {
     destroyEntitySystem->Update(dt);
+    animateSpriteSystem->Update(dt);
     animateSelectedSystem->Update(dt);
     shrinkEntitySystem->Update(dt);
 
@@ -287,7 +290,7 @@ void Level::Render()
     window.Clear();
     window.Render(background, Vector2f{0.0f, 0.0f});
     window.Render(scoreText, Vector2f{30.0f, 10.0f});
-    window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
+    // window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
     renderSystem->Update(window);
     window.Display();
 }

@@ -1,6 +1,9 @@
 #ifndef __Match3_Component_Sprite_h__
 #define __Match3_Component_Sprite_h__
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 #include "Math2D.hpp"
 
 struct Sprite

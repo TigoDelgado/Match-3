@@ -29,6 +29,7 @@
 #include "Systems/ShrinkEntity.hpp"
 #include "Systems/ClearTile.hpp"
 #include "Systems/AnimateSelected.hpp"
+#include "Systems/AnimateSprite.hpp"
 
 
 enum LevelState
@@ -77,6 +78,7 @@ private:
     std::shared_ptr<DestroyEntitySystem> destroyEntitySystem;
     std::shared_ptr<ClearTileSystem> clearTileSystem;
     std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
+    std::shared_ptr<AnimateSpriteSystem> animateSpriteSystem;
 
     LevelState state = INITIALIZING;
 

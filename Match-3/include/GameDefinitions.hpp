@@ -13,6 +13,8 @@
 #define TILE_CLEAR_SCALE 0
 #define TILE_ROTATE_SPEED 100
 
+#define MAX_ANIMATION_FRAMES 20
+
 #define COMBO_AMPLIFIER 0.2
 
 #endif //__Match3_Game_Definitions_h__
