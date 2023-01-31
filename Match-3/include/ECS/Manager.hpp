@@ -78,10 +78,16 @@ public:
 		return systemManager->RegisterSystem<T>();
 	}
 
+	template<typename T> std::shared_ptr<T> GetSystem()
+	{
+		return systemManager->GetSystem<T>();
+	}
+
 	template<typename T> void SetSystemSignature(Signature signature)
 	{
 		systemManager->SetSignature<T>(signature);
 	}
+
 
 private:
     std::unique_ptr<EntityManager> entityManager;

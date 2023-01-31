@@ -27,6 +27,17 @@ public:
 		return system;
 	}
 
+	template<typename T> std::shared_ptr<T> GetSystem()
+	{
+		const char* typeName = typeid(T).name();
+
+		auto system = systems.at(typeName);
+
+		return system;
+	}
+
+
+
 	template<typename T> void SetSignature(Signature signature)
 	{
 		const char* typeName = typeid(T).name();

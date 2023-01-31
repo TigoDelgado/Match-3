@@ -9,9 +9,11 @@
 #include "Timer.hpp"
 
 #include "GameScene.hpp"
+#include "SceneManager.hpp"
 #include "Scenes/Level.hpp"
 
 ECS_Manager ecsManager;
+SceneManager sceneManager;
 
 #define TIME_STEP 0.01f         // fixed dt for updates
 #define STEPS_PER_FRAME 2       // max steps allowed in a single frame
@@ -21,7 +23,7 @@ Game::Game()
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) > 0)
         std::cout << "SDL_Init Failed. SDL_Error: " << SDL_GetError() << std::endl;
 
-    if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)) //FIXME don't use jpegs please :S
+    if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG))
         std::cout << "IMG_Init Failed. SDL_Error: " << SDL_GetError() << std::endl;
 
     if (TTF_Init() == -1)
@@ -39,13 +41,14 @@ void Game::Run()
     RenderWindow window("Match 3", 720, 720);
 
     ecsManager.Init();
+    sceneManager.Init();
 
     // TODO create scene manager
     GameScene* currentScene = new Level(window, 8, 8, "../res/Background/bs7.png", "../res/Board.png");
 
-    gameMusic[0] = Mix_LoadMUS( "../res/Audio/Covert Affair - Film Noire - Kevin MacLeod.mp3" );
-    gameMusic[1] = Mix_LoadMUS( "../res/Audio/Covert Affair - Film Noire - Kevin MacLeod.mp3" );
-    gameMusic[2] = Mix_LoadMUS( "../res/Audio/Covert Affair - Film Noire - Kevin MacLeod.mp3" );
+    gameMusic.push_back(Mix_LoadMUS( "../res/Audio/Bumper Tag - John Deley.mp3"));
+    gameMusic.push_back(Mix_LoadMUS( "../res/Audio/Covert Affair - Film Noire - Kevin MacLeod.mp3"));
+    gameMusic.push_back(Mix_LoadMUS( "../res/Audio/Piano Store - Jimmy Fontanez_Media Right Productions.mp3"));
 
     int musicIndex = rand() % 3;
     

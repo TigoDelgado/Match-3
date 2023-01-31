@@ -8,7 +8,9 @@
 #include "Board.hpp"
 #include "EntityCreator.hpp"
 
+#include "SceneManager.hpp"
 #include "ECS/Manager.hpp"
+
 #include "Components/Transform.hpp"
 #include "Components/Sprite.hpp"
 #include "Components/SpriteAnimation.hpp"
@@ -20,7 +22,6 @@
 #include "Components/Shrinking.hpp"
 #include "Components/Selected.hpp"
 
-#include "ECS/Manager.hpp"
 #include "Systems/Gravity.hpp"
 #include "Systems/Render.hpp"
 #include "Systems/ClickTile.hpp"
@@ -73,15 +74,6 @@ private:
     Board* board;
     std::vector<TileColor> tileColors;
 
-    std::shared_ptr<RenderSystem> renderSystem;
-    std::shared_ptr<ClickTileSystem> clickTileSystem;
-    std::shared_ptr<MoveTileSystem> moveTileSystem;
-    std::shared_ptr<ShrinkEntitySystem> shrinkEntitySystem;
-    std::shared_ptr<DestroyEntitySystem> destroyEntitySystem;
-    std::shared_ptr<ClearTileSystem> clearTileSystem;
-    std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
-    std::shared_ptr<AnimateSpriteSystem> animateSpriteSystem;
-
     LevelState state = INITIALIZING;
 
     bool blocked = true;
@@ -91,6 +83,15 @@ private:
     Entity selectedOne = NULL_ENTITY;
     Entity selectedTwo = NULL_ENTITY;
     bool mouseDown = false;
+
+    std::shared_ptr<RenderSystem> renderSystem;
+    std::shared_ptr<ClickTileSystem> clickTileSystem;
+    std::shared_ptr<MoveTileSystem> moveTileSystem;
+    std::shared_ptr<ShrinkEntitySystem> shrinkEntitySystem;
+    std::shared_ptr<DestroyEntitySystem> destroyEntitySystem;
+    std::shared_ptr<ClearTileSystem> clearTileSystem;
+    std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
+    std::shared_ptr<AnimateSpriteSystem> animateSpriteSystem;
 };
 
 #endif //__Match3_Scene_Level_h__

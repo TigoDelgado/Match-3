@@ -3,6 +3,7 @@
 #include <iostream>
 
 extern ECS_Manager ecsManager;
+extern SceneManager sceneManager;
 
 Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background, const char* p_boardTexture)
     :window(p_window), rows(p_rows), cols(p_cols)
@@ -20,32 +21,16 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     entityCreator.LoadTextures(window);
 
 
-    /* ------------------------------ Register Components ------------------------------ */
-    
-    ecsManager.RegisterComponent<Transform>();
-    ecsManager.RegisterComponent<Sprite>();
-    ecsManager.RegisterComponent<SpriteAnimation>();
-    ecsManager.RegisterComponent<TileObject>();
-    ecsManager.RegisterComponent<Swappable>();
-    ecsManager.RegisterComponent<Translate>();
-    ecsManager.RegisterComponent<Shrinking>();
-    ecsManager.RegisterComponent<EntityDestruction>();
-    ecsManager.RegisterComponent<ClearedTile>();
-    ecsManager.RegisterComponent<Selected>();
+    /* ------------------------------- Get Scene Systems  ------------------------------- */
 
-    /* -------------------------------- Register Systems -------------------------------- */
-
-    renderSystem = ecsManager.RegisterSystem<RenderSystem>();
-    clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
-    moveTileSystem = ecsManager.RegisterSystem<MoveTileSystem>();
-    shrinkEntitySystem = ecsManager.RegisterSystem<ShrinkEntitySystem>();
-    destroyEntitySystem = ecsManager.RegisterSystem<DestroyEntitySystem>();    
-    clearTileSystem = ecsManager.RegisterSystem<ClearTileSystem>();    
-    animateSelectedSystem = ecsManager.RegisterSystem<AnimateSelectedSystem>();
-    animateSpriteSystem = ecsManager.RegisterSystem<AnimateSpriteSystem>();
-
-    // FIXME Don't allow systems to register without required components
-
+    renderSystem = sceneManager.renderSystem;
+    clickTileSystem = sceneManager.clickTileSystem;
+    moveTileSystem = sceneManager.moveTileSystem;
+    shrinkEntitySystem = sceneManager.shrinkEntitySystem;
+    destroyEntitySystem = sceneManager.destroyEntitySystem;
+    clearTileSystem = sceneManager.clearTileSystem;
+    animateSelectedSystem = sceneManager.animateSelectedSystem;
+    animateSpriteSystem = sceneManager.animateSpriteSystem;
 
     /* ------------------------------ Create Scene Objects ------------------------------ */
 
