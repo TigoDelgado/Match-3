@@ -2,7 +2,7 @@
 #include "Systems/ClearTile.hpp"
 
 #include "Components/Transform.hpp"
-#include "Components/Shrinking.hpp"
+#include "Components/Expansion.hpp"
 #include "Components/TileObject.hpp"
 #include "Components/EntityDestruction.hpp"
 
@@ -16,7 +16,7 @@ void ClearTileSystem::Init()
 {
 	Signature signature;
 	signature.set(ecsManager.GetComponentType<Transform>());
-    signature.set(ecsManager.GetComponentType<Shrinking>());
+    signature.set(ecsManager.GetComponentType<Expansion>());
     signature.set(ecsManager.GetComponentType<TileObject>());
 
 	ecsManager.SetSystemSignature<ClearTileSystem>(signature);
@@ -30,9 +30,9 @@ bool ClearTileSystem::Update(float dt)
 	for (Entity const& entity : entities)
 	{
 		Transform& transform = ecsManager.GetComponent<Transform>(entity);
-        Shrinking& shrinking = ecsManager.GetComponent<Shrinking>(entity);
+        Expansion& expansion = ecsManager.GetComponent<Expansion>(entity);
 
-		if (transform.scale.x <= shrinking.finalScale.x && transform.scale.y <= shrinking.finalScale.y)
+		if (transform.scale.x <= expansion.finalScale.x && transform.scale.y <= expansion.finalScale.y)
 		{
 			ecsManager.AddComponent<EntityDestruction>(entity, EntityDestruction{0});
 		}

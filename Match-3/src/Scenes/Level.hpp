@@ -19,7 +19,7 @@
 #include "Components/Translate.hpp"
 #include "Components/EntityDestruction.hpp"
 #include "Components/ClearedTile.hpp"
-#include "Components/Shrinking.hpp"
+#include "Components/Expansion.hpp"
 #include "Components/Selected.hpp"
 
 #include "Systems/Gravity.hpp"
@@ -27,7 +27,7 @@
 #include "Systems/ClickTile.hpp"
 #include "Systems/MoveTile.hpp"
 #include "Systems/DestroyEntity.hpp"
-#include "Systems/ShrinkEntity.hpp"
+#include "Systems/Expand.hpp"
 #include "Systems/ClearTile.hpp"
 #include "Systems/AnimateSelected.hpp"
 #include "Systems/AnimateSprite.hpp"
@@ -87,7 +87,7 @@ private:
     std::shared_ptr<RenderSystem> renderSystem;
     std::shared_ptr<ClickTileSystem> clickTileSystem;
     std::shared_ptr<MoveTileSystem> moveTileSystem;
-    std::shared_ptr<ShrinkEntitySystem> shrinkEntitySystem;
+    std::shared_ptr<ExpandSystem> expandSystem;
     std::shared_ptr<DestroyEntitySystem> destroyEntitySystem;
     std::shared_ptr<ClearTileSystem> clearTileSystem;
     std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;

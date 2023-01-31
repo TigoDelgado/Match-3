@@ -26,7 +26,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     renderSystem = sceneManager.renderSystem;
     clickTileSystem = sceneManager.clickTileSystem;
     moveTileSystem = sceneManager.moveTileSystem;
-    shrinkEntitySystem = sceneManager.shrinkEntitySystem;
+    expandSystem = sceneManager.expandSystem;
     destroyEntitySystem = sceneManager.destroyEntitySystem;
     clearTileSystem = sceneManager.clearTileSystem;
     animateSelectedSystem = sceneManager.animateSelectedSystem;
@@ -171,7 +171,7 @@ void Level::Update(float dt)
     destroyEntitySystem->Update(dt);
     animateSpriteSystem->Update(dt);
     animateSelectedSystem->Update(dt);
-    shrinkEntitySystem->Update(dt);
+    expandSystem->Update(dt);
 
     if (changedSelectedOne)
     {

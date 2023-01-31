@@ -2,7 +2,7 @@
 #include "GameDefinitions.hpp"
 
 #include "Components/Translate.hpp"
-#include "Components/Shrinking.hpp"
+#include "Components/Expansion.hpp"
 #include "Components/EntityDestruction.hpp"
 #include "Components/ClearedTile.hpp"
 #include "Components/Selected.hpp"
@@ -408,7 +408,7 @@ void Board::ClearMatches()
                         ActivateSpecial(tile, specialMatches);              // Create special tiles matches --> specialMatches
                     }
 
-                    ecsManager.AddComponent<Shrinking>(entity, Shrinking{Vector2f{TILE_CLEAR_SCALE, TILE_CLEAR_SCALE}, TILE_CLEAR_SPEED, TILE_CLEAR_ACCELERATION});
+                    ecsManager.AddComponent<Expansion>(entity, Expansion{Vector2f{TILE_CLEAR_SCALE, TILE_CLEAR_SCALE}, -TILE_CLEAR_SPEED, -TILE_CLEAR_ACCELERATION});
                     ecsManager.AddComponent<ClearedTile>(entity, ClearedTile{});
 
                     tilesCleared[tile.x][tile.y] = true;
