@@ -11,6 +11,8 @@ public:
 	void Update(float dt);
 
 private:
+    float rotation = 0;
+    bool clockwise = true;
 };
 
 

@@ -21,10 +21,23 @@ void AnimateSelectedSystem::Init()
 
 void AnimateSelectedSystem::Update(float dt)
 {
+    if (clockwise)
+    {
+        rotation += TILE_ROTATE_SPEED * dt;
+
+        if (rotation > TILE_SELECTED_ROTATION) clockwise = false;
+    }
+    else // if !clockwise
+    {
+        rotation -= TILE_ROTATE_SPEED * dt;
+
+        if (rotation < -TILE_SELECTED_ROTATION) clockwise = true;
+    }
+
     for (Entity const& entity : entities)
 	{
 		Transform& transform = ecsManager.GetComponent<Transform>(entity);
 
-        transform.rotation += TILE_ROTATE_SPEED * dt;
+        transform.rotation = rotation;
     }
 }

@@ -105,7 +105,7 @@ GameScene* MainMenu::GetNextScene()
 
 MainMenu::~MainMenu()
 {
-    std::cout << "MY DOOM WAS ORDERED!" << std::endl;
+    // std::cout << "MY DOOM WAS ORDERED!" << std::endl;
     for (Entity button : buttons)
     {
         ecsManager.DestroyEntity(button);

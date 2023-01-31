@@ -97,7 +97,6 @@ void Game::Run()
                 default:
                     break;
                 }
-
                 currentScene->HandleEvent(event);
             }
 
