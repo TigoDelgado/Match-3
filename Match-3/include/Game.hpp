@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include "ECS/Manager.hpp"
 
 class Game
@@ -12,7 +13,7 @@ public:
     Game();
     void Run();
 private:
-    
+    std::vector<Mix_Music*> gameMusic;
 };
 
 #endif //__Match3_Game_h__

@@ -1,5 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 
 #include "Game.hpp"
@@ -16,7 +18,7 @@ ECS_Manager ecsManager;
 
 Game::Game()
 {
-    if (SDL_Init(SDL_INIT_VIDEO) > 0)
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) > 0)
         std::cout << "SDL_Init Failed. SDL_Error: " << SDL_GetError() << std::endl;
 
     if (!IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG)) //FIXME don't use jpegs please :S
@@ -24,6 +26,11 @@ Game::Game()
 
     if (TTF_Init() == -1)
         std::cout << "TTF_Init Failed. SDL_Error: " << SDL_GetError() << std::endl;
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+        std::cout << "SDL_mixer failed to initialize. SDL_mixer Error: " << Mix_GetError() << std::endl;
+
+    Mix_Init(MIX_INIT_MP3);
 
 }
 
@@ -34,8 +41,15 @@ void Game::Run()
     ecsManager.Init();
 
     // TODO create scene manager
-    GameScene* currentScene = new Level(window, 10, 10, "../res/Background/bs7.png", "../res/Board.png");
+    GameScene* currentScene = new Level(window, 8, 8, "../res/Background/bs7.png", "../res/Board.png");
+
+    gameMusic[0] = Mix_LoadMUS( "../res/Audio/Covert Affair - Film Noire - Kevin MacLeod.mp3" );
+    gameMusic[1] = Mix_LoadMUS( "../res/Audio/Covert Affair - Film Noire - Kevin MacLeod.mp3" );
+    gameMusic[2] = Mix_LoadMUS( "../res/Audio/Covert Affair - Film Noire - Kevin MacLeod.mp3" );
+
+    int musicIndex = rand() % 3;
     
+    Mix_PlayMusic( gameMusic[musicIndex], -1 );
 
     /* ----------------------------------- Main Loop ------------------------------------ */
 

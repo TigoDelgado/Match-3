@@ -1,10 +1,10 @@
 all: development
 
 production:
-	cd Match-3 && g++ -static-libgcc -static-libstdc++ -Iinclude -Isrc -Llib -o bin/Game src/*.cpp src/Systems/*.cpp src/Scenes/*.cpp -O3 -Wall -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+	cd Match-3 && g++ -static-libgcc -static-libstdc++ -Iinclude -Isrc -Llib -o bin/Game src/*.cpp src/Systems/*.cpp src/Scenes/*.cpp -O3 -Wall -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 development:
-	cd Match-3 && g++ -static-libgcc -static-libstdc++ -Iinclude -Isrc -Llib -o debug/Game_debug src/*.cpp src/Systems/*.cpp src/Scenes/*.cpp -g -Wall -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+	cd Match-3 && g++ -static-libgcc -static-libstdc++ -Iinclude -Isrc -Llib -o debug/Game_debug src/*.cpp src/Systems/*.cpp src/Scenes/*.cpp -g -Wall -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 
 run: runDev
