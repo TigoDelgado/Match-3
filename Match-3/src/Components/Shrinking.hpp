@@ -5,7 +5,7 @@
 
 struct Shrinking
 {
-    float finalScale;
+    Vector2f finalScale;
     float speed;
     float acceleration;
 };

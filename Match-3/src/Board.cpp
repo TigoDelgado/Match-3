@@ -19,16 +19,10 @@ Board::Board(Vector2f p_center, int p_cols, int p_rows, EntityCreator& p_entityC
     size.x = TILE_WIDTH * cols + TILE_MARGIN * (cols - 1);
     size.y = TILE_WIDTH * rows + TILE_MARGIN * (rows - 1);
 
-    std::cout << "size: [" << size.x << ", " << size.y << "]" << std::endl;
-
     float halfWidth = size.x / 2;
     float halfHeight = size.y / 2;
 
-    std::cout << "half size: [" << halfWidth << ", " << halfHeight << "]" << std::endl;
-    std::cout << "center: [" << p_center.x << ", " << p_center.y << "]" << std::endl;
-
     position = Vector2f{p_center.x - halfWidth + TILE_WIDTH / 2, p_center.y - halfHeight + TILE_WIDTH / 2};
-    std::cout << "position: [" << position.x << ", " << position.y << "]" << std::endl;
 }
 
 void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
@@ -414,7 +408,7 @@ void Board::ClearMatches()
                         ActivateSpecial(tile, specialMatches);              // Create special tiles matches --> specialMatches
                     }
 
-                    ecsManager.AddComponent<Shrinking>(entity, Shrinking{TILE_CLEAR_SCALE, TILE_CLEAR_SPEED, TILE_CLEAR_ACCELERATION});
+                    ecsManager.AddComponent<Shrinking>(entity, Shrinking{Vector2f{TILE_CLEAR_SCALE, TILE_CLEAR_SCALE}, TILE_CLEAR_SPEED, TILE_CLEAR_ACCELERATION});
                     ecsManager.AddComponent<ClearedTile>(entity, ClearedTile{});
 
                     tilesCleared[tile.x][tile.y] = true;
@@ -566,7 +560,7 @@ void Board::AddSelected(Entity entity)
     ecsManager.AddComponent<Selected>(entity, Selected{});
     Transform& transform = ecsManager.GetComponent<Transform>(entity);
     transform.rotation = 0.0f;
-    transform.scale = 0.95f;
+    transform.scale = Vector2f{0.95f, 0.95f};
 }
 
 
@@ -575,7 +569,7 @@ void Board::RemoveSelected(Entity entity)
     ecsManager.RemoveComponent<Selected>(entity);
     Transform& transform = ecsManager.GetComponent<Transform>(entity);
     transform.rotation = 0.0f;
-    transform.scale = 1.0f;
+    transform.scale = Vector2f{1.0f, 1.0f};
 }
 
 std::vector<Match> Board::GetVerticalMatches()

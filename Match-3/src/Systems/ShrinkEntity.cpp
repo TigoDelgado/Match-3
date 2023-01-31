@@ -29,18 +29,22 @@ bool ShrinkEntitySystem::Update(float dt)
 		Transform& transform = ecsManager.GetComponent<Transform>(entity);
         Shrinking& shrinking = ecsManager.GetComponent<Shrinking>(entity);
 
-		if (transform.scale <= shrinking.finalScale)
+		if (transform.scale.x <= shrinking.finalScale.x && transform.scale.y <= shrinking.finalScale.y)
 		{
 			ecsManager.RemoveComponent<Shrinking>(entity);
 		}
 		else
 		{
-			transform.scale -= shrinking.speed * dt;
+			transform.scale = transform.scale - shrinking.speed * dt;
             shrinking.speed += shrinking.acceleration;
 
-            if (transform.scale < shrinking.finalScale)
+            if (transform.scale.x < shrinking.finalScale.x)
             {
-                transform.scale = shrinking.finalScale;
+                transform.scale.x = shrinking.finalScale.x;
+            }
+			if (transform.scale.y < shrinking.finalScale.y)
+            {
+                transform.scale.y = shrinking.finalScale.y;
             }
 		}
 	}

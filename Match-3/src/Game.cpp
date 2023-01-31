@@ -34,7 +34,7 @@ void Game::Run()
     ecsManager.Init();
 
     // TODO create scene manager
-    GameScene* currentScene = new Level(window, 8, 9, "../res/Background/bs7.png", "../res/Board.png");
+    GameScene* currentScene = new Level(window, 10, 10, "../res/Background/bs7.png", "../res/Board.png");
     
 
     /* ----------------------------------- Main Loop ------------------------------------ */

@@ -32,7 +32,7 @@ bool ClearTileSystem::Update(float dt)
 		Transform& transform = ecsManager.GetComponent<Transform>(entity);
         Shrinking& shrinking = ecsManager.GetComponent<Shrinking>(entity);
 
-		if (transform.scale <= shrinking.finalScale)
+		if (transform.scale.x <= shrinking.finalScale.x && transform.scale.y <= shrinking.finalScale.y)
 		{
 			ecsManager.AddComponent<EntityDestruction>(entity, EntityDestruction{0});
 		}

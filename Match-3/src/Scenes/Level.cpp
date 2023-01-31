@@ -59,6 +59,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
         TileColor::Purple,
         // TileColor::White,
         TileColor::Yellow,
+        // TileColor::Colorless
     };
 
     board = new Board(Vector2f{360.0f, 360.0f}, p_rows, p_cols, entityCreator);
@@ -66,17 +67,17 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     board->PopulateBoard(tileColors);
 
     // FIXME remove
-    board->InsertTile(Coordinates{2,2}, TileColor::Yellow, TileType::Normal);
-    board->InsertTile(Coordinates{2,3}, TileColor::Yellow, TileType::Normal);
-    board->InsertTile(Coordinates{2,4}, TileColor::Yellow, TileType::Normal);
-    board->InsertTile(Coordinates{2,5}, TileColor::Yellow, TileType::Normal);
-    board->InsertTile(Coordinates{2,6}, TileColor::Yellow, TileType::Normal);
+    // board->InsertTile(Coordinates{2,2}, TileColor::Yellow, TileType::Normal);
+    // board->InsertTile(Coordinates{2,3}, TileColor::Yellow, TileType::Normal);
+    // board->InsertTile(Coordinates{2,4}, TileColor::Yellow, TileType::Normal);
+    // board->InsertTile(Coordinates{2,5}, TileColor::Yellow, TileType::Normal);
+    // board->InsertTile(Coordinates{2,6}, TileColor::Yellow, TileType::Normal);
 
-    board->InsertTile(Coordinates{3,2}, TileColor::Magenta, TileType::Normal);
-    board->InsertTile(Coordinates{3,3}, TileColor::Magenta, TileType::Normal);
-    board->InsertTile(Coordinates{3,4}, TileColor::Magenta, TileType::Normal);
-    board->InsertTile(Coordinates{3,5}, TileColor::Magenta, TileType::Normal);
-    board->InsertTile(Coordinates{3,6}, TileColor::Magenta, TileType::Normal);
+    // board->InsertTile(Coordinates{3,2}, TileColor::Magenta, TileType::Normal);
+    // board->InsertTile(Coordinates{3,3}, TileColor::Magenta, TileType::Normal);
+    // board->InsertTile(Coordinates{3,4}, TileColor::Magenta, TileType::Normal);
+    // board->InsertTile(Coordinates{3,5}, TileColor::Magenta, TileType::Normal);
+    // board->InsertTile(Coordinates{3,6}, TileColor::Magenta, TileType::Normal);
 
 
     state = WAITING;
