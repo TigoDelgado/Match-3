@@ -102,7 +102,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
 {
     blackTile = window.LoadTexture("../res/Tiles/Black.png");
     blueTile = window.LoadTexture("../res/Tiles/Blue.png");
-    greenTile = window.LoadTexture("../res/Tiles/Green.png");
+    greenTile = window.LoadTexture("../res/Tiles/DGreen.png");
     magentaTile = window.LoadTexture("../res/Tiles/Magenta.png");
     purpleTile = window.LoadTexture("../res/Tiles/Purple.png");
     whiteTile = window.LoadTexture("../res/Tiles/White.png");
@@ -113,7 +113,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
 
     blackVerticalTile = window.LoadTexture("../res/Tiles/Black-V.png");
     blueVerticalTile = window.LoadTexture("../res/Tiles/Blue-V.png");
-    greenVerticalTile = window.LoadTexture("../res/Tiles/Green-V.png");
+    greenVerticalTile = window.LoadTexture("../res/Tiles/DGreen-V.png");
     magentaVerticalTile = window.LoadTexture("../res/Tiles/Magenta-V.png");
     purpleVerticalTile = window.LoadTexture("../res/Tiles/Purple-V.png");
     whiteVerticalTile = window.LoadTexture("../res/Tiles/White-V.png");
@@ -122,7 +122,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
 
     blackHorizontalTile = window.LoadTexture("../res/Tiles/Black-H.png");
     blueHorizontalTile = window.LoadTexture("../res/Tiles/Blue-H.png");
-    greenHorizontalTile = window.LoadTexture("../res/Tiles/Green-H.png");
+    greenHorizontalTile = window.LoadTexture("../res/Tiles/DGreen-H.png");
     magentaHorizontalTile = window.LoadTexture("../res/Tiles/Magenta-H.png");
     purpleHorizontalTile = window.LoadTexture("../res/Tiles/Purple-H.png");
     whiteHorizontalTile = window.LoadTexture("../res/Tiles/White-H.png");
@@ -131,7 +131,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
 
     blackExplodingTile = window.LoadTexture("../res/Tiles/Black-X.png");
     blueExplodingTile = window.LoadTexture("../res/Tiles/Blue-X.png");
-    greenExplodingTile = window.LoadTexture("../res/Tiles/Green-X.png");
+    greenExplodingTile = window.LoadTexture("../res/Tiles/DGreen-X.png");
     magentaExplodingTile = window.LoadTexture("../res/Tiles/Magenta-X.png");
     purpleExplodingTile = window.LoadTexture("../res/Tiles/Purple-X.png");
     whiteExplodingTile = window.LoadTexture("../res/Tiles/White-X.png");
@@ -140,7 +140,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
 
     blackBigExplodingTile = window.LoadTexture("../res/Tiles/Black-X2.png");
     blueBigExplodingTile = window.LoadTexture("../res/Tiles/Blue-X2.png");
-    greenBigExplodingTile = window.LoadTexture("../res/Tiles/Green-X2.png");
+    greenBigExplodingTile = window.LoadTexture("../res/Tiles/DGreen-X2.png");
     magentaBigExplodingTile = window.LoadTexture("../res/Tiles/Magenta-X2.png");
     purpleBigExplodingTile = window.LoadTexture("../res/Tiles/Purple-X2.png");
     whiteBigExplodingTile = window.LoadTexture("../res/Tiles/White-X2.png");
@@ -149,7 +149,7 @@ void EntityCreator::LoadTextures(RenderWindow& window)
 
     blackConsumingTile = window.LoadTexture("../res/Tiles/Black-C2.png");
     blueConsumingTile = window.LoadTexture("../res/Tiles/Blue-C2.png");
-    greenConsumingTile = window.LoadTexture("../res/Tiles/Green-C2.png");
+    greenConsumingTile = window.LoadTexture("../res/Tiles/DGreen-C2.png");
     magentaConsumingTile = window.LoadTexture("../res/Tiles/Magenta-C2.png");
     purpleConsumingTile = window.LoadTexture("../res/Tiles/Purple-C2.png");
     whiteConsumingTile = window.LoadTexture("../res/Tiles/White-C2.png");
