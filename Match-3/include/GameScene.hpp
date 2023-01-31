@@ -11,6 +11,8 @@ public:
     virtual void HandleEvent(SDL_Event& event) = 0;
     virtual void Update(float dt) = 0;
     virtual void Render() = 0;
+    virtual bool ChangeScene() = 0;
+    virtual GameScene* GetNextScene() = 0;
 
     virtual ~GameScene(){};
 };

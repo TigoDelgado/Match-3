@@ -21,4 +21,8 @@
 
 #define COMBO_AMPLIFIER 0.2
 
+#define BACKGROUND_PATH "../res/Background/bs7.png"
+#define START_BUTTON "../res/Tiles/Colorless.png"
+#define QUIT_BUTTON "../res/Tiles/White-X2.png"
+
 #endif //__Match3_Game_Definitions_h__

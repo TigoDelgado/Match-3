@@ -13,14 +13,20 @@
 #include "Components/Swappable.hpp"
 #include "Components/SpriteAnimation.hpp"
 #include "Components/DelayedAnimation.hpp"
+#include "Components/Button.hpp"
 
 class EntityCreator
 {
 public: 
     Entity CreateTileEntity(Vector2f p_position, TileColor p_color, Coordinates p_coords, TileType p_type);
     void UpdateTileSprite(Entity p_entity);
+
+    Entity CreateButtonEntity(int p_index, ButtonType p_type, Vector2f p_dimensions, Vector2f p_position);
+
     void LoadTextures(RenderWindow& window);
     SDL_Texture* GetTileTexture(TileColor p_color, TileType p_type);
+    SDL_Texture* GetButtonTexture(ButtonType p_type);
+
 
 private:
     SDL_Texture* blackTile;
@@ -72,6 +78,10 @@ private:
     SDL_Texture* purpleConsumingTile;
     SDL_Texture* whiteConsumingTile;
     SDL_Texture* yellowConsumingTile;
+
+    SDL_Texture* startButton;
+    SDL_Texture* quitButton;
+    SDL_Texture* defaultButton;
 };
 
 

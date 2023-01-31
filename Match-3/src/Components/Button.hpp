@@ -3,9 +3,17 @@
 
 #include "Math2D.hpp"
 
+enum ButtonType
+{
+    START,
+    QUIT,
+    DEFAULT
+};
+
 struct Button
 {
-    Vector2f position;
+    int index;
+    ButtonType type;
     Vector2f dimensions;
 };
 

@@ -26,6 +26,22 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, C
     return entity;
 }
 
+Entity EntityCreator::CreateButtonEntity(int p_index, ButtonType p_type, Vector2f p_dimensions, Vector2f p_position)
+{
+    Entity entity = ecsManager.CreateEntity();
+
+    ecsManager.AddComponent(entity, Transform{p_position, Vector2f{1.0f, 1.0f}, 0.0f});
+
+    SDL_Texture* texture = GetButtonTexture(p_type);
+    int width, height;
+    SDL_QueryTexture(texture, NULL, NULL, &width, &height);
+    ecsManager.AddComponent(entity, Sprite{texture, 0, Vector2f{float(width), float(height)}, p_dimensions});
+
+    ecsManager.AddComponent(entity, Button{p_index, p_type, p_dimensions});
+
+    return entity;
+}
+
 void EntityCreator::UpdateTileSprite(Entity p_entity)
 {
     TileObject& tileObject = ecsManager.GetComponent<TileObject>(p_entity);
@@ -41,6 +57,24 @@ void EntityCreator::UpdateTileSprite(Entity p_entity)
         if (tileObject.type == TileType::BigExploding || tileObject.type == TileType::Consuming) animation = {0, 4, 0, 0, 1, 0.05f, 0.0f};
         else animation = {0, 4, 0, 0, 0, 0.05f, 0.0f};
         ecsManager.AddComponent(p_entity, DelayedAnimation{animation, 5.0f, 3.0f, -1});
+    }
+}
+
+SDL_Texture* EntityCreator::GetButtonTexture(ButtonType p_type)
+{
+    switch (p_type)
+    {
+    case ButtonType::START:
+        return startButton;
+        break;
+
+    case ButtonType::QUIT:
+        return quitButton;
+        break;
+    
+    default:
+        return defaultButton;
+        break;
     }
 }
 
@@ -169,4 +203,8 @@ void EntityCreator::LoadTextures(RenderWindow& window)
     whiteConsumingTile = window.LoadTexture("../res/Tiles/White-C2.png");
     // yellowConsumingTile = window.LoadTexture("../res/Tiles/Yellow-C2.png");
     yellowConsumingTile = window.LoadTexture("../res/Tiles/Gold-C2.png");
+
+    startButton = whiteHorizontalTile; //window.LoadTexture(START_BUTTON);
+    quitButton = whiteBigExplodingTile; //window.LoadTexture(QUIT_BUTTON);
+    defaultButton = colorlessTile;
 }

@@ -7,6 +7,7 @@
 #include <SDL2/SDL_mixer.h>
 
 #include "ECS/Manager.hpp"
+#include "GameScene.hpp"
 
 class Game
 {
@@ -14,9 +15,8 @@ public:
     Game();
     void Run();
 private:
-    void RegisterComponents();
-    void RegisterSystems();
-    std::vector<Mix_Music*> gameMusic;
+    GameScene* currentScene;
+    GameScene* nextScene;
 };
 
 #endif //__Match3_Game_h__

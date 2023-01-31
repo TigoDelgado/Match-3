@@ -4,6 +4,7 @@
 
 extern ECS_Manager ecsManager;
 extern SceneManager sceneManager;
+extern EntityCreator entityCreator;
 
 Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background, const char* p_boardTexture)
     :window(p_window), rows(p_rows), cols(p_cols)
@@ -16,9 +17,6 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     background = window.LoadTexture(p_background);
     boardTexture = window.LoadTexture(p_boardTexture);
     scoreText = window.LoadTextureFromText("Score: ", SDL_Color{0, 0, 0});
-
-    // Load Tile object textures
-    entityCreator.LoadTextures(window);
 
 
     /* ------------------------------- Get Scene Systems  ------------------------------- */
@@ -295,4 +293,14 @@ void Level::Render()
     // window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
     renderSystem->Update(window);
     window.Display();
+}
+
+bool Level::ChangeScene()
+{
+    return false;
+}
+
+GameScene* Level::GetNextScene()
+{
+    return nullptr;
 }

@@ -16,6 +16,7 @@
 #include "Components/Expansion.hpp"
 #include "Components/Selected.hpp"
 #include "Components/DelayedAnimation.hpp"
+#include "Components/Button.hpp"
 
 #include "Systems/Gravity.hpp"
 #include "Systems/Render.hpp"
@@ -27,6 +28,7 @@
 #include "Systems/AnimateSelected.hpp"
 #include "Systems/AnimateSprite.hpp"
 #include "Systems/DelayAnimation.hpp"
+#include "Systems/ClickButton.hpp"
 
 extern ECS_Manager ecsManager;
 
@@ -46,6 +48,7 @@ public:
         ecsManager.RegisterComponent<ClearedTile>();
         ecsManager.RegisterComponent<Selected>();
         ecsManager.RegisterComponent<DelayedAnimation>();
+        ecsManager.RegisterComponent<Button>();
 
         renderSystem = ecsManager.RegisterSystem<RenderSystem>();
         clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
@@ -56,6 +59,7 @@ public:
         animateSelectedSystem = ecsManager.RegisterSystem<AnimateSelectedSystem>();
         animateSpriteSystem = ecsManager.RegisterSystem<AnimateSpriteSystem>();
         delayAnimationSystem = ecsManager.RegisterSystem<DelayAnimationSystem>();
+        clickButtonSystem = ecsManager.RegisterSystem<ClickButtonSystem>();
     };
 
     std::shared_ptr<RenderSystem> renderSystem;
@@ -67,6 +71,7 @@ public:
     std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
     std::shared_ptr<AnimateSpriteSystem> animateSpriteSystem;
     std::shared_ptr<DelayAnimationSystem> delayAnimationSystem;
+    std::shared_ptr<ClickButtonSystem> clickButtonSystem;
 };
 
 #endif //__Match3_Scene_Level_h__

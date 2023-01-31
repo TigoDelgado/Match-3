@@ -60,8 +60,10 @@ public:
     void HandleEvent(SDL_Event& event) override;
     void Update(float dt) override;
     void Render() override;
+    bool ChangeScene() override;
+    GameScene* GetNextScene() override;
 
-    virtual ~Level(){};
+    ~Level(){};
 
 private:
     RenderWindow window;
@@ -69,7 +71,7 @@ private:
     int rows;
     int cols;
 
-    EntityCreator entityCreator;
+    // EntityCreator entityCreator;
     SDL_Texture* background;
     SDL_Texture* boardTexture;
     SDL_Texture* scoreText;
