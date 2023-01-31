@@ -11,6 +11,8 @@
 #include "Components/Transform.hpp"
 #include "Components/Sprite.hpp"
 #include "Components/Swappable.hpp"
+#include "Components/SpriteAnimation.hpp"
+#include "Components/DelayedAnimation.hpp"
 
 class EntityCreator
 {

@@ -9,7 +9,8 @@ struct SpriteAnimation
 {
     int firstFrame;             // sprite sheet frames to iterate through - including initial frame
     int lastFrame;
-    int currentFrame; 
+    int currentFrame;
+    int returnFrame; 
     int loops;                 // how many loops to animate before terminating (-1 if infinite loop)
     float frameTime;                // how long each frame takes
     float timeCount;

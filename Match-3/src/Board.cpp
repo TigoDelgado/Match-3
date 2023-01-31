@@ -371,12 +371,12 @@ void Board::ClearMatches()
                         // Create Consuming Tile
                         type = TileType::Consuming;
                     }
-                    else if (match.count < 8 && match.type == MatchType::MixedMatch)
+                    else if (match.count < 7 && match.type == MatchType::MixedMatch)
                     {
                         // Create Exploding Tile
                         type = TileType::Exploding;
                     }
-                    else if (match.count >= 8 && match.type == MatchType::MixedMatch)
+                    else if (match.count >= 7 && match.type == MatchType::MixedMatch)
                     {
                         // Create Big Exploding Tile
                         type = TileType::BigExploding;

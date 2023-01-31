@@ -31,6 +31,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     clearTileSystem = sceneManager.clearTileSystem;
     animateSelectedSystem = sceneManager.animateSelectedSystem;
     animateSpriteSystem = sceneManager.animateSpriteSystem;
+    delayAnimationSystem = sceneManager.delayAnimationSystem;
 
     /* ------------------------------ Create Scene Objects ------------------------------ */
 
@@ -52,17 +53,21 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
     board->PopulateBoard(tileColors);
 
     // FIXME remove
-    // board->InsertTile(Coordinates{2,2}, TileColor::Yellow, TileType::Normal);
-    // board->InsertTile(Coordinates{2,3}, TileColor::Yellow, TileType::Normal);
-    // board->InsertTile(Coordinates{2,4}, TileColor::Yellow, TileType::Normal);
-    // board->InsertTile(Coordinates{2,5}, TileColor::Yellow, TileType::Normal);
-    // board->InsertTile(Coordinates{2,6}, TileColor::Yellow, TileType::Normal);
+    board->InsertTile(Coordinates{2,2}, TileColor::Purple, TileType::Normal);
+    board->InsertTile(Coordinates{2,3}, TileColor::Purple, TileType::Normal);
+    board->InsertTile(Coordinates{2,4}, TileColor::Purple, TileType::Normal);
+    board->InsertTile(Coordinates{2,5}, TileColor::Purple, TileType::Normal);
+    board->InsertTile(Coordinates{2,6}, TileColor::Purple, TileType::Normal);
 
-    // board->InsertTile(Coordinates{3,2}, TileColor::Magenta, TileType::Normal);
-    // board->InsertTile(Coordinates{3,3}, TileColor::Magenta, TileType::Normal);
-    // board->InsertTile(Coordinates{3,4}, TileColor::Magenta, TileType::Normal);
-    // board->InsertTile(Coordinates{3,5}, TileColor::Magenta, TileType::Normal);
-    // board->InsertTile(Coordinates{3,6}, TileColor::Magenta, TileType::Normal);
+    board->InsertTile(Coordinates{1,4}, TileColor::Purple, TileType::Normal);
+    board->InsertTile(Coordinates{3,4}, TileColor::Purple, TileType::Normal);
+
+    board->InsertTile(Coordinates{6,4}, TileColor::Green, TileType::Normal);
+    board->InsertTile(Coordinates{6,5}, TileColor::Green, TileType::Normal);
+    board->InsertTile(Coordinates{6,6}, TileColor::Green, TileType::Normal);
+
+    board->InsertTile(Coordinates{5,5}, TileColor::Green, TileType::Normal);
+    board->InsertTile(Coordinates{7,5}, TileColor::Green, TileType::Normal);
 
 
     state = WAITING;
@@ -168,6 +173,7 @@ void Level::HandleEvent(SDL_Event& event)
 
 void Level::Update(float dt)
 {
+    delayAnimationSystem->Update(dt);
     destroyEntitySystem->Update(dt);
     animateSpriteSystem->Update(dt);
     animateSelectedSystem->Update(dt);

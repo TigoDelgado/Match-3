@@ -15,6 +15,7 @@
 #include "Components/ClearedTile.hpp"
 #include "Components/Expansion.hpp"
 #include "Components/Selected.hpp"
+#include "Components/DelayedAnimation.hpp"
 
 #include "Systems/Gravity.hpp"
 #include "Systems/Render.hpp"
@@ -25,6 +26,7 @@
 #include "Systems/ClearTile.hpp"
 #include "Systems/AnimateSelected.hpp"
 #include "Systems/AnimateSprite.hpp"
+#include "Systems/DelayAnimation.hpp"
 
 extern ECS_Manager ecsManager;
 
@@ -43,6 +45,7 @@ public:
         ecsManager.RegisterComponent<EntityDestruction>();
         ecsManager.RegisterComponent<ClearedTile>();
         ecsManager.RegisterComponent<Selected>();
+        ecsManager.RegisterComponent<DelayedAnimation>();
 
         renderSystem = ecsManager.RegisterSystem<RenderSystem>();
         clickTileSystem = ecsManager.RegisterSystem<ClickTileSystem>();
@@ -52,6 +55,7 @@ public:
         clearTileSystem = ecsManager.RegisterSystem<ClearTileSystem>();
         animateSelectedSystem = ecsManager.RegisterSystem<AnimateSelectedSystem>();
         animateSpriteSystem = ecsManager.RegisterSystem<AnimateSpriteSystem>();
+        delayAnimationSystem = ecsManager.RegisterSystem<DelayAnimationSystem>();
     };
 
     std::shared_ptr<RenderSystem> renderSystem;
@@ -62,6 +66,7 @@ public:
     std::shared_ptr<ClearTileSystem> clearTileSystem;
     std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
     std::shared_ptr<AnimateSpriteSystem> animateSpriteSystem;
+    std::shared_ptr<DelayAnimationSystem> delayAnimationSystem;
 };
 
 #endif //__Match3_Scene_Level_h__

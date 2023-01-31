@@ -17,6 +17,12 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, C
 
     ecsManager.AddComponent(entity, Swappable{});
 
+    if (p_type == TileType::Consuming)
+    {
+        SpriteAnimation animation{0, 4, 0, 0, 0, 0.1f, 0.0f};
+        ecsManager.AddComponent(entity, DelayedAnimation{animation, 5.0f, 3.0f, -1});
+    }
+
     return entity;
 }
 
@@ -27,7 +33,15 @@ void EntityCreator::UpdateTileSprite(Entity p_entity)
 
     sprite.texture = GetTileTexture(tileObject.color, tileObject.type);
 
-    // std::cout << "Updating tile of entity " << p_entity << " at [" << tileObject.coords.x << ", " << tileObject.coords.y << "]" << std::endl;
+    // TODO create animation manager to take care of this
+    // Quick and dirty way to add iddle animation to special tiles -- they never transform back into normal tiles
+    if (tileObject.type != TileType::Normal)
+    {
+        SpriteAnimation animation;
+        if (tileObject.type == TileType::BigExploding || tileObject.type == TileType::Consuming) animation = {0, 4, 0, 0, 1, 0.05f, 0.0f};
+        else animation = {0, 4, 0, 0, 0, 0.05f, 0.0f};
+        ecsManager.AddComponent(p_entity, DelayedAnimation{animation, 5.0f, 3.0f, -1});
+    }
 }
 
 SDL_Texture* EntityCreator::GetTileTexture(TileColor p_color, TileType p_type)

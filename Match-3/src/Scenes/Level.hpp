@@ -21,6 +21,7 @@
 #include "Components/ClearedTile.hpp"
 #include "Components/Expansion.hpp"
 #include "Components/Selected.hpp"
+#include "Components/DelayedAnimation.hpp"
 
 #include "Systems/Gravity.hpp"
 #include "Systems/Render.hpp"
@@ -31,6 +32,7 @@
 #include "Systems/ClearTile.hpp"
 #include "Systems/AnimateSelected.hpp"
 #include "Systems/AnimateSprite.hpp"
+#include "Systems/DelayAnimation.hpp"
 
 
 enum LevelState
@@ -92,6 +94,7 @@ private:
     std::shared_ptr<ClearTileSystem> clearTileSystem;
     std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
     std::shared_ptr<AnimateSpriteSystem> animateSpriteSystem;
+    std::shared_ptr<DelayAnimationSystem> delayAnimationSystem;
 };
 
 #endif //__Match3_Scene_Level_h__

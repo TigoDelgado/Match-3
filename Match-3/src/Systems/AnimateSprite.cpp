@@ -33,6 +33,7 @@ void AnimateSpriteSystem::Update(float dt)
                 if (animation.loops == 0)
                 {
                     // Remove self if reach end of final loop
+                    sprite.currentFrame = animation.returnFrame;
                     ecsManager.RemoveComponent<SpriteAnimation>(entity);
                 }
                 else 
@@ -46,9 +47,8 @@ void AnimateSpriteSystem::Update(float dt)
             {
                 animation.currentFrame++;
                 animation.timeCount = 0;
+                sprite.currentFrame = animation.currentFrame;
             }
-
-            sprite.currentFrame = animation.currentFrame;
         }
     }
 }

@@ -71,6 +71,7 @@
         "xlocmes": "cpp",
         "xlocmon": "cpp",
         "xloctime": "cpp",
-        "clearedtile": "cpp"
+        "clearedtile": "cpp",
+        "delayedanimation": "cpp"
     }
 }
