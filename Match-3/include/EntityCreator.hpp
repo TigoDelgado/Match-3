@@ -23,6 +23,8 @@ public:
 
     Entity CreateButtonEntity(int p_index, ButtonType p_type, Vector2f p_dimensions, Vector2f p_position);
 
+    Entity CreateTextEntity(const char* p_initialText, Vector2f p_position, SDL_Color p_color, RenderWindow& p_window);
+
     void LoadTextures(RenderWindow& window);
     SDL_Texture* GetTileTexture(TileColor p_color, TileType p_type);
     SDL_Texture* GetButtonTexture(ButtonType p_type);
@@ -81,6 +83,8 @@ private:
 
     SDL_Texture* startButton;
     SDL_Texture* quitButton;
+    SDL_Texture* plusButton;
+    SDL_Texture* minusButton;
     SDL_Texture* defaultButton;
 };
 

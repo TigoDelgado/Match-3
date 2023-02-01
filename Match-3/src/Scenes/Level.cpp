@@ -4,9 +4,10 @@
 
 extern ECS_Manager ecsManager;
 extern SceneManager sceneManager;
+extern AudioManager audioManager;
 extern EntityCreator entityCreator;
 
-Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background, const char* p_boardTexture)
+Level::Level(RenderWindow& p_window, int p_rows, int p_cols, int p_colors, const char* p_background, const char* p_boardTexture)
     :window(p_window), rows(p_rows), cols(p_cols)
 {
 
@@ -16,7 +17,8 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
 
     background = window.LoadTexture(p_background);
     boardTexture = window.LoadTexture(p_boardTexture);
-    scoreText = window.LoadTextureFromText("Score: ", SDL_Color{0, 0, 0});
+
+    // scoreText = window.LoadTextureFromText("Score: ", SDL_Color{255, 255, 255});
 
 
     /* ------------------------------- Get Scene Systems  ------------------------------- */
@@ -33,39 +35,37 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_backg
 
     /* ------------------------------ Create Scene Objects ------------------------------ */
 
-    // TODO pass this through a level manager?
-    tileColors = std::vector<TileColor>
-    {
-        // TileColor::Black,
-        TileColor::Blue,
-        TileColor::Green,
-        TileColor::Magenta,
-        TileColor::Purple,
-        // TileColor::White,
-        TileColor::Yellow,
-        // TileColor::Colorless
-    };
+    tileColors.push_back(TileColor::Purple);
+    tileColors.push_back(TileColor::Yellow);
+    tileColors.push_back(TileColor::Blue);
+    if (p_colors > 3) tileColors.push_back(TileColor::Magenta);
+    if (p_colors > 4) tileColors.push_back(TileColor::Green);
+    if (p_colors > 5) tileColors.push_back(TileColor::Black);
 
-    board = new Board(Vector2f{360.0f, 360.0f}, p_rows, p_cols, entityCreator);
+    board = new Board(Vector2f{360.0f, 300.0f}, p_rows, p_cols, entityCreator);
 
     board->PopulateBoard(tileColors);
 
+    Vector2f scorePosition = Vector2f{360.0f, 300.0f};
+    scorePosition.y += board->GetBackgroundSize().y / 2 + 60;
+    scoreText = entityCreator.CreateTextEntity("000", scorePosition, SDL_Color{255, 225, 240}, window);
+
     // FIXME remove
-    board->InsertTile(Coordinates{2,2}, TileColor::Purple, TileType::Normal);
-    board->InsertTile(Coordinates{2,3}, TileColor::Purple, TileType::Normal);
-    board->InsertTile(Coordinates{2,4}, TileColor::Purple, TileType::Normal);
-    board->InsertTile(Coordinates{2,5}, TileColor::Purple, TileType::Normal);
-    board->InsertTile(Coordinates{2,6}, TileColor::Purple, TileType::Normal);
+    // board->InsertTile(Coordinates{2,2}, TileColor::Purple, TileType::Normal);
+    // board->InsertTile(Coordinates{2,3}, TileColor::Purple, TileType::Normal);
+    // board->InsertTile(Coordinates{2,4}, TileColor::Purple, TileType::Normal);
+    // board->InsertTile(Coordinates{2,5}, TileColor::Purple, TileType::Normal);
+    // board->InsertTile(Coordinates{2,6}, TileColor::Purple, TileType::Normal);
 
-    board->InsertTile(Coordinates{1,4}, TileColor::Purple, TileType::Normal);
-    board->InsertTile(Coordinates{3,4}, TileColor::Purple, TileType::Normal);
+    // board->InsertTile(Coordinates{1,4}, TileColor::Purple, TileType::Normal);
+    // board->InsertTile(Coordinates{3,4}, TileColor::Purple, TileType::Normal);
 
-    board->InsertTile(Coordinates{6,4}, TileColor::Green, TileType::Normal);
-    board->InsertTile(Coordinates{6,5}, TileColor::Green, TileType::Normal);
-    board->InsertTile(Coordinates{6,6}, TileColor::Green, TileType::Normal);
+    // board->InsertTile(Coordinates{6,4}, TileColor::Green, TileType::Normal);
+    // board->InsertTile(Coordinates{6,5}, TileColor::Green, TileType::Normal);
+    // board->InsertTile(Coordinates{6,6}, TileColor::Green, TileType::Normal);
 
-    board->InsertTile(Coordinates{5,5}, TileColor::Green, TileType::Normal);
-    board->InsertTile(Coordinates{7,5}, TileColor::Green, TileType::Normal);
+    // board->InsertTile(Coordinates{5,5}, TileColor::Green, TileType::Normal);
+    // board->InsertTile(Coordinates{7,5}, TileColor::Green, TileType::Normal);
 
 
     state = WAITING;
@@ -289,8 +289,6 @@ void Level::Render()
     window.Clear();
     window.Render(background, Vector2f{0.0f, 0.0f}, Vector2f{0.0f, 0.0f}, Vector2f{720, 720}, windowDimensions);
     window.Render(boardTexture, board->GetBackgroundPosition(), Vector2f{0, 0}, Vector2f{1000, 1000}, board->GetBackgroundSize());
-    window.Render(scoreText, Vector2f{30.0f, 10.0f});
-    // window.Render(scoreText, Vector2f{50.0f, 10.0f}); // FIXME dynamic score value;
     renderSystem->Update(window);
     window.Display();
 }

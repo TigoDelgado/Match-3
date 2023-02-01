@@ -36,11 +36,20 @@ private:
 
     std::shared_ptr<RenderSystem> renderSystem;
     std::shared_ptr<ClickButtonSystem> clickButtonSystem;
+    std::shared_ptr<UpdateTextSystem> updateTextSystem;
 
     std::vector<Entity> buttons;
     int buttonClicked;
+    
+    Entity colsText;
+    Entity rowsText;
+    Entity colorsText;
 
     bool startLevel = false;
+
+    int cols = 8;
+    int rows = 8;
+    int colors = 5;
     
     // EntityCreator entityCreator;
 };

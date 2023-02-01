@@ -1,6 +1,8 @@
 #include "Scenes/MainMenu.hpp"
 #include "Scenes/Level.hpp"
 
+#include <string>
+
 extern ECS_Manager ecsManager;
 extern SceneManager sceneManager;
 extern AudioManager audioManager;
@@ -13,12 +15,29 @@ MainMenu::MainMenu(RenderWindow& p_window)
 
     renderSystem = sceneManager.renderSystem;
     clickButtonSystem = sceneManager.clickButtonSystem;
+    updateTextSystem = sceneManager.updateTextSystem;
 
     background = window.LoadTexture(BACKGROUND_PATH);
 
-    buttons.push_back(entityCreator.CreateButtonEntity(0, ButtonType::START, Vector2f{100,50}, Vector2f{260,450}));
-    buttons.push_back(entityCreator.CreateButtonEntity(1, ButtonType::QUIT, Vector2f{100,50}, Vector2f{460,450}));
-    buttons.push_back(entityCreator.CreateButtonEntity(2, ButtonType::DEFAULT, Vector2f{50,50}, Vector2f{360,450}));
+    buttons.push_back(entityCreator.CreateButtonEntity(0, ButtonType::START, Vector2f{100,50}, Vector2f{360,450}));
+    // buttons.push_back(entityCreator.CreateButtonEntity(1, ButtonType::QUIT, Vector2f{100,50}, Vector2f{420,450}));
+
+    buttons.push_back(entityCreator.CreateButtonEntity(2, ButtonType::MINUS, Vector2f{50,50}, Vector2f{450,200}));    // cols--
+    buttons.push_back(entityCreator.CreateButtonEntity(3, ButtonType::PLUS, Vector2f{50,50}, Vector2f{520,200}));    // cols++
+
+    buttons.push_back(entityCreator.CreateButtonEntity(4, ButtonType::MINUS, Vector2f{50,50}, Vector2f{450,260}));    // rows--
+    buttons.push_back(entityCreator.CreateButtonEntity(5, ButtonType::PLUS, Vector2f{50,50}, Vector2f{520,260}));    // rows++
+
+    buttons.push_back(entityCreator.CreateButtonEntity(6, ButtonType::MINUS, Vector2f{50,50}, Vector2f{450,320}));    // colors--
+    buttons.push_back(entityCreator.CreateButtonEntity(7, ButtonType::PLUS, Vector2f{50,50}, Vector2f{520,320}));    // colors++
+
+    colsText = (entityCreator.CreateTextEntity("8", Vector2f{300, 200}, SDL_Color{0,0,0}, window));
+    rowsText = (entityCreator.CreateTextEntity("8", Vector2f{300, 260}, SDL_Color{0,0,0}, window));
+    colorsText = (entityCreator.CreateTextEntity("5", Vector2f{300, 320}, SDL_Color{0,0,0}, window));
+
+    buttons.push_back(entityCreator.CreateTextEntity("Columns:  ", Vector2f{200, 200}, SDL_Color{0,0,0}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Rows:     ", Vector2f{250, 260}, SDL_Color{0,0,0}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Colors:   ", Vector2f{225, 320}, SDL_Color{0,0,0}, window));
 
     buttonClicked = -1;
 
@@ -47,41 +66,70 @@ void MainMenu::Update(float dt)
         if (buttonClicked == 0)
         {
             // START LEVEL
-            std::cout << "START LEVEL" << std::endl;
             startLevel = true;
         }
         else if (buttonClicked == 1)
         {
             // QUIT GAME
-            std::cout << "QUIT GAME" << std::endl;
         }
         else if (buttonClicked == 2)
         {
-            // DO STUFF
-            std::cout << "do stuff?" << std::endl;
+            // Cols--
+            if (cols > 5)
+            {
+                cols--;
+                ecsManager.AddComponent<Text>(colsText, Text{std::to_string(cols).c_str(), SDL_Color{0,0,0}});
+            }
         }
         else if (buttonClicked == 3)
         {
-            
+            // Cols++
+            if (cols < 10)
+            {
+                cols++;
+                ecsManager.AddComponent<Text>(colsText, Text{std::to_string(cols).c_str(), SDL_Color{0,0,0}});
+            }
         }
         else if (buttonClicked == 4)
         {
-            
+            // Rows--
+            if (rows > 5)
+            {
+                rows--;
+                ecsManager.AddComponent<Text>(rowsText, Text{std::to_string(rows).c_str(), SDL_Color{0,0,0}});
+            }
         }
         else if (buttonClicked == 5)
         {
-            
+            // Rows++
+            if (rows < 10)
+            {
+                rows++;
+                ecsManager.AddComponent<Text>(rowsText, Text{std::to_string(rows).c_str(), SDL_Color{0,0,0}});
+            }
         }
         else if (buttonClicked == 6)
         {
-            
+            // Colors--
+            if (colors > 3)
+            {
+                colors--;
+                ecsManager.AddComponent<Text>(colorsText, Text{std::to_string(colors).c_str(), SDL_Color{0,0,0}});
+            }
         }
         else if (buttonClicked == 7)
         {
-            
+            // Colors++
+            if (colors < 6)
+            {
+                colors++;
+                ecsManager.AddComponent<Text>(colorsText, Text{std::to_string(colors).c_str(), SDL_Color{0,0,0}});
+            }
         }
         buttonClicked = -1;
     }
+
+    updateTextSystem->Update(window);
 }
 
 
@@ -100,7 +148,7 @@ bool MainMenu::ChangeScene()
 
 GameScene* MainMenu::GetNextScene()
 {
-    return new Level(window, 8, 8, "../res/Background/bs7.png", "../res/Board.png");
+    return new Level(window, cols, rows, colors, "../res/Background/bs7.png", "../res/Board.png");
 }
 
 MainMenu::~MainMenu()
@@ -110,4 +158,9 @@ MainMenu::~MainMenu()
     {
         ecsManager.DestroyEntity(button);
     }
+    ecsManager.DestroyEntity(colsText);
+    ecsManager.DestroyEntity(rowsText);
+    ecsManager.DestroyEntity(colorsText);
+
+    SDL_DestroyTexture(background);
 }

@@ -7,6 +7,8 @@ enum ButtonType
 {
     START,
     QUIT,
+    PLUS,
+    MINUS,
     DEFAULT
 };
 

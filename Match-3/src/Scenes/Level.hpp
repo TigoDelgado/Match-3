@@ -9,6 +9,7 @@
 #include "EntityCreator.hpp"
 
 #include "SceneManager.hpp"
+#include "AudioManager.hpp"
 #include "ECS/Manager.hpp"
 
 #include "Components/Transform.hpp"
@@ -54,7 +55,7 @@ enum LevelState
 class Level : public GameScene
 {
 public:
-    Level(RenderWindow& p_window, int p_rows, int p_cols, const char* p_background, const char* p_boardTexture);
+    Level(RenderWindow& p_window, int p_rows, int p_cols, int p_colors, const char* p_background, const char* p_boardTexture);
 
     //Main loop functions
     void HandleEvent(SDL_Event& event) override;
@@ -74,7 +75,7 @@ private:
     // EntityCreator entityCreator;
     SDL_Texture* background;
     SDL_Texture* boardTexture;
-    SDL_Texture* scoreText;
+    Entity scoreText;
     Board* board;
     std::vector<TileColor> tileColors;
 
