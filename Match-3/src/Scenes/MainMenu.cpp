@@ -19,7 +19,7 @@ MainMenu::MainMenu(RenderWindow& p_window)
 
     background = window.LoadTexture(BACKGROUND_PATH);
 
-    buttons.push_back(entityCreator.CreateButtonEntity(0, ButtonType::START, Vector2f{100,50}, Vector2f{360,450}));
+    buttons.push_back(entityCreator.CreateButtonEntity(0, ButtonType::START, Vector2f{100,50}, Vector2f{360,460}));
     // buttons.push_back(entityCreator.CreateButtonEntity(1, ButtonType::QUIT, Vector2f{100,50}, Vector2f{420,450}));
 
     buttons.push_back(entityCreator.CreateButtonEntity(2, ButtonType::MINUS, Vector2f{50,50}, Vector2f{420,260}));    // cols--
@@ -31,13 +31,13 @@ MainMenu::MainMenu(RenderWindow& p_window)
     buttons.push_back(entityCreator.CreateButtonEntity(6, ButtonType::MINUS, Vector2f{50,50}, Vector2f{420,380}));    // colors--
     buttons.push_back(entityCreator.CreateButtonEntity(7, ButtonType::PLUS, Vector2f{50,50}, Vector2f{500,380}));    // colors++
 
-    colsText = (entityCreator.CreateTextEntity("8", Vector2f{340, 260}, SDL_Color{0,0,0}, window));
-    rowsText = (entityCreator.CreateTextEntity("8", Vector2f{340, 320}, SDL_Color{0,0,0}, window));
-    colorsText = (entityCreator.CreateTextEntity("5", Vector2f{340, 380}, SDL_Color{0,0,0}, window));
+    colsText = (entityCreator.CreateTextEntity("8", Vector2f{340, 260}, SDL_Color{10,20,30}, window));
+    rowsText = (entityCreator.CreateTextEntity("8", Vector2f{340, 320}, SDL_Color{10,20,30}, window));
+    colorsText = (entityCreator.CreateTextEntity("5", Vector2f{340, 380}, SDL_Color{10,20,30}, window));
 
-    buttons.push_back(entityCreator.CreateTextEntity("Columns:  ", Vector2f{240, 260}, SDL_Color{0,0,0}, window));
-    buttons.push_back(entityCreator.CreateTextEntity("Rows:     ", Vector2f{290, 320}, SDL_Color{0,0,0}, window));
-    buttons.push_back(entityCreator.CreateTextEntity("Colors:   ", Vector2f{265, 380}, SDL_Color{0,0,0}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Columns:  ", Vector2f{240, 260}, SDL_Color{10,20,30}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Rows:     ", Vector2f{290, 320}, SDL_Color{10,20,30}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Colors:   ", Vector2f{265, 380}, SDL_Color{10,20,30}, window));
 
     buttonClicked = -1;
 }
@@ -76,7 +76,7 @@ void MainMenu::Update(float dt)
             if (cols > 5)
             {
                 cols--;
-                ecsManager.AddComponent<Text>(colsText, Text{std::to_string(cols).c_str(), SDL_Color{0,0,0}});
+                ecsManager.AddComponent<Text>(colsText, Text{std::to_string(cols).c_str(), SDL_Color{10,20,30}});
             }
         }
         else if (buttonClicked == 3)
@@ -85,7 +85,7 @@ void MainMenu::Update(float dt)
             if (cols < 10)
             {
                 cols++;
-                ecsManager.AddComponent<Text>(colsText, Text{std::to_string(cols).c_str(), SDL_Color{0,0,0}});
+                ecsManager.AddComponent<Text>(colsText, Text{std::to_string(cols).c_str(), SDL_Color{10,20,30}});
             }
         }
         else if (buttonClicked == 4)
@@ -94,7 +94,7 @@ void MainMenu::Update(float dt)
             if (rows > 5)
             {
                 rows--;
-                ecsManager.AddComponent<Text>(rowsText, Text{std::to_string(rows).c_str(), SDL_Color{0,0,0}});
+                ecsManager.AddComponent<Text>(rowsText, Text{std::to_string(rows).c_str(), SDL_Color{10,20,30}});
             }
         }
         else if (buttonClicked == 5)
@@ -103,7 +103,7 @@ void MainMenu::Update(float dt)
             if (rows < 10)
             {
                 rows++;
-                ecsManager.AddComponent<Text>(rowsText, Text{std::to_string(rows).c_str(), SDL_Color{0,0,0}});
+                ecsManager.AddComponent<Text>(rowsText, Text{std::to_string(rows).c_str(), SDL_Color{10,20,30}});
             }
         }
         else if (buttonClicked == 6)
@@ -112,7 +112,7 @@ void MainMenu::Update(float dt)
             if (colors > 3)
             {
                 colors--;
-                ecsManager.AddComponent<Text>(colorsText, Text{std::to_string(colors).c_str(), SDL_Color{0,0,0}});
+                ecsManager.AddComponent<Text>(colorsText, Text{std::to_string(colors).c_str(), SDL_Color{10,20,30}});
             }
         }
         else if (buttonClicked == 7)
@@ -121,7 +121,7 @@ void MainMenu::Update(float dt)
             if (colors < 6)
             {
                 colors++;
-                ecsManager.AddComponent<Text>(colorsText, Text{std::to_string(colors).c_str(), SDL_Color{0,0,0}});
+                ecsManager.AddComponent<Text>(colorsText, Text{std::to_string(colors).c_str(), SDL_Color{10,20,30}});
             }
         }
         buttonClicked = -1;
