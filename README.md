@@ -86,6 +86,7 @@ The Board doesn't iterate upon every entity which has a set of components, but i
 
 
 ## Features
+- [ ] GameOver screen
 - [ ] Time trial -- get more time by doing combos / big matches
 - [ ] Colorless tiles + Immovable tiles -- technically 99% implemented but not in the game
 - [ ] Particle System to create entities with vector animations -- for animations such as explosions, conffetti, etc.
@@ -102,3 +103,10 @@ The Board doesn't iterate upon every entity which has a set of components, but i
 - [x] Tiles disappear when matches are found
 - [x] Player can swap tiles -- by clicking both tiles or dragging from one to the other
 - [x] Dynamic grid -- 8x8 by default
+
+
+## Resources
+
+Background image was altered from <a href="https://www.freepik.com/free-vector/decorative-background-with-purple-damask-pattern_956821.htm">Image by kjpargeter</a> on Freepik
+
+Tile sprites were created from <a href="https://www.freepik.com/free-vector/app-vector-icons-with-different-textures-cartoon-style-ui-stone_10602956.htm">Image by macrovector</a> on Freepik
