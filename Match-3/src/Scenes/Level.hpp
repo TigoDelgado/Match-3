@@ -54,6 +54,11 @@ enum LevelState
 };
 
 
+/**
+ * A basic match-3 level, containing one board with a grid of tiles 
+ * Handles the gameplay loop according to a MCV model
+ * 
+*/
 class Level : public GameScene
 {
 public:
@@ -74,29 +79,38 @@ private:
     int rows;
     int cols;
 
+    Board* board;
     int score = 0;
     int addScore = 0;
-
-    // EntityCreator entityCreator;
-    SDL_Texture* background;
-    SDL_Texture* boardTexture;
-    Entity scoreText;
-    Board* board;
     std::vector<TileColor> tileColors;
 
+    SDL_Texture* background;
+    SDL_Texture* boardTexture;
+    
     LevelState state = INITIALIZING;
 
-    bool blocked = true;
-    bool changedSelectedOne = false;
-    bool changedSelectedTwo = false;
+    void UpdateSelected();
+
+    /* ---------------------------- Scene Entities ---------------------------- */
+
     Entity lastSelected = NULL_ENTITY;
     Entity selectedOne = NULL_ENTITY;
     Entity selectedTwo = NULL_ENTITY;
-
-    bool backToMenu = false;
     Entity backButton;
+    Entity scoreText;
+
+
+    /* ----------------------------- Scene Flags ----------------------------- */
+
+    bool blocked = true;
+    bool changedSelectedOne = false;
     int buttonClicked = -1;
+    bool changedSelectedTwo = false;
+    bool backToMenu = false;
     bool mouseDown = false;
+
+
+    /* ---------------------------- Scene Systems ---------------------------- */
 
     std::shared_ptr<RenderSystem> renderSystem;
     std::shared_ptr<ClickTileSystem> clickTileSystem;

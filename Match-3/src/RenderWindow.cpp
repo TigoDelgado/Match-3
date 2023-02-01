@@ -37,7 +37,6 @@ SDL_Texture* RenderWindow::LoadTextureFromText(const char* p_text, SDL_Color p_c
     // Render text surface
     SDL_Texture* texture = NULL;
 
-    // FIXME use Solid, Shadded or Blended?
     SDL_Surface* textSurface = TTF_RenderText_Blended( globalFont, p_text, p_color );
     if( textSurface == NULL )
     {
@@ -109,8 +108,6 @@ void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f 
 
     SDL_RenderCopy(renderer, p_texture, &src, &dst);
 }
-
-
 
 void RenderWindow::Render(SDL_Texture* p_texture, Vector2f p_position, Vector2f p_sheetOffset, Vector2f p_sourceDimensions, Vector2f p_destDimensions, double p_rotation, SDL_Point* p_center, SDL_RendererFlip p_flip)
 {

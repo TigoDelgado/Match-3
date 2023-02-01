@@ -36,6 +36,7 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, int p_colors, const
     updateTextSystem = sceneManager.updateTextSystem;
     clickButtonSystem = sceneManager.clickButtonSystem;
 
+
     /* ------------------------------ Create Scene Objects ------------------------------ */
 
     tileColors.push_back(TileColor::Purple);
@@ -69,19 +70,20 @@ void Level::HandleEvent(SDL_Event& event)
             mouseDown = true;
 
             Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
-            buttonClicked = clickButtonSystem->ClickedButton(mousePosition);
+
+            buttonClicked = clickButtonSystem->ClickedButton(mousePosition);    // Check if any button was clicked
 
             Entity entity;
 
             if (!blocked && selectedOne == NULL_ENTITY) 
             {
-                if (clickTileSystem->ClickedTile(mousePosition, entity))    // Select first tile
+                if (clickTileSystem->ClickedTile(mousePosition, entity))        // Select first tile
                 {
                     selectedOne = entity;
                     changedSelectedOne = true;
                 }
             }
-            else if (!blocked) // First tile already selected
+            else if (!blocked)  // First tile already selected
             {
                 if (clickTileSystem->ClickedTile(mousePosition, entity))
                 {
@@ -120,7 +122,6 @@ void Level::HandleEvent(SDL_Event& event)
                 }
             }
         }
-        // std::cout << "Mouse DOWN | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
         break;
 
     case SDL_MOUSEBUTTONUP:
@@ -128,7 +129,6 @@ void Level::HandleEvent(SDL_Event& event)
         {
             mouseDown = false;
         }
-        // std::cout << "Mouse UP | Selected One: " << selectedOne << " | Selected Two: " << selectedTwo << std::endl;
         break;
 
     case SDL_MOUSEMOTION:
@@ -165,36 +165,13 @@ void Level::Update(float dt)
     animateSelectedSystem->Update(dt);
     expandSystem->Update(dt);
 
-    if (changedSelectedOne)
-    {
-        // std::cout << "Changed selected from " << lastSelected  << " to " << selectedOne << std::endl;
-        if (lastSelected != NULL_ENTITY)
-        {
-            // std::cout << "Removing Selected to entity " << lastSelected << std::endl;
-            board->RemoveSelected(lastSelected);
-        }
-        if (selectedOne != NULL_ENTITY)
-        {
-            // std::cout << "Adding Selected to entity " << selectedOne << std::endl;
-            board->AddSelected(selectedOne);
-        }
-        changedSelectedOne = false;
-    }
-    if (changedSelectedTwo)
-    {
-        if (selectedTwo != NULL_ENTITY)
-        {
-            // std::cout << "Adding Selected to second entity " << selectedOne << std::endl;
-            board->AddSelected(selectedTwo);
-        }
-        changedSelectedTwo = false;
-    }
+    UpdateSelected();
 
     switch (state)
     {
     case WAITING:
 
-        if (selectedOne != NULL_ENTITY && selectedTwo != NULL_ENTITY)
+        if (selectedOne != NULL_ENTITY && selectedTwo != NULL_ENTITY)   // Both tiles selected
         {
             if (board->CanSwap(selectedOne, selectedTwo))
             {
@@ -213,9 +190,9 @@ void Level::Update(float dt)
         break;
 
     case SWAPPING_TILES:
-        if (!moveTileSystem->Update(dt))
+        if (!moveTileSystem->Update(dt))    // Tiles have finished swapping places
         {
-            if (board->CheckMatches())
+            if (board->CheckMatches())      // Swap produced matches
             {
                 board->ResetScore();
                 score += addScore;
@@ -236,7 +213,7 @@ void Level::Update(float dt)
         break;
     
     case SWAPPING_BACK:
-        if (!moveTileSystem->Update(dt))
+        if (!moveTileSystem->Update(dt))    // Tiles have finished swapping places
         {
             selectedOne = NULL_ENTITY;
             selectedTwo = NULL_ENTITY;
@@ -246,7 +223,7 @@ void Level::Update(float dt)
         break;
 
     case CLEARING_MATCHES:
-        if (!clearTileSystem->Update(dt))
+        if (!clearTileSystem->Update(dt))   // Tiles have finished disappearing
         {
             board->SpawnTiles(tileColors);
             
@@ -254,10 +231,10 @@ void Level::Update(float dt)
         }
         break;
 
-    case GRAVITATING_ROWS:
-        if (!moveTileSystem->Update(dt))    // TODO create gravitate system?
+    case GRAVITATING_ROWS:                  // Tiles have finished dropping
+        if (!moveTileSystem->Update(dt)) 
         {
-            if (board->CheckMatches())
+            if (board->CheckMatches())      // Newly dropped tiles have produced new matches
             {
                 board->ClearMatches();
                 addScore = board->GetScore();
@@ -290,6 +267,36 @@ void Level::Update(float dt)
             // BACK TO MENU
             backToMenu = true;
         }
+    }
+}
+
+
+/**
+ * Tell board to attribute or remove Selected components
+ * Used to handle the 'selected' animation
+ * 
+ */
+void Level::UpdateSelected()
+{
+    if (changedSelectedOne)
+    {
+        if (lastSelected != NULL_ENTITY)
+        {
+            board->RemoveSelected(lastSelected);
+        }
+        if (selectedOne != NULL_ENTITY)
+        {
+            board->AddSelected(selectedOne);
+        }
+        changedSelectedOne = false;
+    }
+    if (changedSelectedTwo)
+    {
+        if (selectedTwo != NULL_ENTITY)
+        {
+            board->AddSelected(selectedTwo);
+        }
+        changedSelectedTwo = false;
     }
 }
 

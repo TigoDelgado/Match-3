@@ -5,6 +5,12 @@
 
 extern ECS_Manager ecsManager;
 
+
+/**
+ * Creates a tile object entity containing the appropriate components
+ * Sprite is generated according to the objects color and type
+ * 
+ */
 Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, Coordinates p_coords, TileType p_type)
 {
     Entity entity = ecsManager.CreateEntity();
@@ -26,6 +32,12 @@ Entity EntityCreator::CreateTileEntity(Vector2f p_position, TileColor p_color, C
     return entity;
 }
 
+
+/**
+ * Creates a button entity containing the appropriate components
+ * Calculates the button's usable area through its texture's size
+ * 
+ */
 Entity EntityCreator::CreateButtonEntity(int p_index, ButtonType p_type, Vector2f p_dimensions, Vector2f p_position)
 {
     Entity entity = ecsManager.CreateEntity();
@@ -42,6 +54,12 @@ Entity EntityCreator::CreateButtonEntity(int p_index, ButtonType p_type, Vector2
     return entity;
 }
 
+
+/**
+ * Creates a text entity containing the appropriate components
+ * Loads a new texture from the received text string
+ * 
+ */
 Entity EntityCreator::CreateTextEntity(const char* p_initialText, Vector2f p_position, SDL_Color p_color, RenderWindow& p_window)
 {
     Entity entity = ecsManager.CreateEntity();
@@ -57,6 +75,11 @@ Entity EntityCreator::CreateTextEntity(const char* p_initialText, Vector2f p_pos
     return entity;
 }
 
+
+/**
+ * Called when a tile object changes its characteristics (color or type) and must receive a different sprite
+ * 
+ */
 void EntityCreator::UpdateTileSprite(Entity p_entity)
 {
     TileObject& tileObject = ecsManager.GetComponent<TileObject>(p_entity);

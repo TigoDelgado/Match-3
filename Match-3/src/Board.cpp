@@ -25,6 +25,32 @@ Board::Board(Vector2f p_center, int p_cols, int p_rows, EntityCreator& p_entityC
     position = Vector2f{p_center.x - halfWidth + TILE_WIDTH / 2, p_center.y - halfHeight + TILE_WIDTH / 2};
 }
 
+Board::~Board()
+{
+    for (int x = 0; x < cols; x++)
+    {
+        for (int y = 0; y < rows; y++)
+        {
+            Entity entity = grid[x][y];
+
+            if(entity != NULL_ENTITY)
+            {
+                ecsManager.DestroyEntity(entity);
+            }
+        }
+    }
+}
+
+
+/* ------------------------------------- Grid Funcitonality ------------------------------------- */
+
+
+/**
+ * Populates board grid with tile objects of color randomly selected from the colors provided
+ * If there are matches after populating, changes tiles from said matches in order to reach stable state
+ *
+ * @param Tile colors to appear randomly.
+ */
 void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
 {
     for (int x = 0; x < cols; x++)
@@ -66,6 +92,12 @@ void Board::PopulateBoard(std::vector<TileColor> p_tileColors)
     }
 };
 
+
+/**
+ * Inserts a specific tile in specific coordinates
+ * Can be used to create specific grid layouts
+ *
+ */
 void Board::InsertTile(Coordinates p_coords, TileColor p_color, TileType p_type)
 {
     Entity entity = grid[p_coords.x][p_coords.y];
@@ -77,54 +109,32 @@ void Board::InsertTile(Coordinates p_coords, TileColor p_color, TileType p_type)
     entityCreator.UpdateTileSprite(entity);
 }
 
-void Board::SpawnTiles(std::vector<TileColor> p_tileColors)
+
+/* --------------------------------------- Swapping Tiles --------------------------------------- */
+
+/**
+ * Checks if two tile objects can be swapped
+ */
+bool Board::CanSwap(Entity p_entityOne, Entity p_entityTwo)
 {
-    for (int x = 0; x < cols; x++)              // For each column
+    Coordinates tileOne = GetEntityCoords(p_entityOne);
+    Coordinates tileTwo = GetEntityCoords(p_entityTwo);
+
+    if ((tileOne.x == tileTwo.x     && tileOne.y == tileTwo.y - 1   ) ||
+        (tileOne.x == tileTwo.x     && tileOne.y == tileTwo.y + 1   ) ||
+        (tileOne.x == tileTwo.x - 1 && tileOne.y == tileTwo.y       ) ||
+        (tileOne.x == tileTwo.x + 1 && tileOne.y == tileTwo.y       ))
     {
-        int count = 0;                          // Amount of tile spaces to drop
-
-        for (int y = rows - 1; y >= 0; y--)     // Iterate through column from bottom to top
-        {
-            Entity entity = grid[x][y];
-
-            if (entity == NULL_ENTITY)          // Empty tile space
-            {
-                count++;
-            }
-            else if (count > 0)                 // Tile must drop (count) spaces
-            {
-                Coordinates oldCoords = GetEntityCoords(entity);
-                Coordinates newCoords{oldCoords.x, oldCoords.y + count};
-
-                TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
-                tileObject.coords = newCoords;
-
-                ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(newCoords), TILE_FALL_SPEED, TILE_ACCELERATION, TILE_MAX_SPEED});
-
-                grid[oldCoords.x][oldCoords.y] = NULL_ENTITY;
-                grid[newCoords.x][newCoords.y] = entity;
-            }
-        }
-
-        for (int offset = count; offset > 0; offset--)
-        {
-            TileColor randColor = p_tileColors[rand() % p_tileColors.size()];
-            
-            Coordinates coords{x, count - offset};                              // Coordinates after falling
-            Coordinates spawnCoords{x, -offset};
-            
-            Vector2f tilePosition = GetPositionFromCoords(spawnCoords);         // Screen position based on spawn coordinates
-             
-            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal);
-            
-            ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(coords), TILE_FALL_SPEED, TILE_ACCELERATION, TILE_MAX_SPEED});
-            
-            grid[coords.x][coords.y] = entity;
-        }
+        return BelongsToBoard(p_entityOne) && BelongsToBoard(p_entityTwo);
     }
+    return false;
 }
 
-
+/**
+ * Swaps coordinates of two tile objects
+ * Adds a translation component to each tile so they move on the screen
+ * 
+ */
 void Board::SwapTiles(Entity p_tileOne, Entity p_tileTwo)
 {
     Coordinates c1 = GetEntityCoords(p_tileOne);
@@ -147,6 +157,15 @@ void Board::SwapTiles(Entity p_tileOne, Entity p_tileTwo)
     swappedTiles[1] = c2;
 }
 
+
+/* --------------------------------------- Clearing Loop --------------------------------------- */
+
+
+/**
+ * Checks if there are matches present on the grid
+ * Stores found matches in currentMatches
+ * 
+ */
 bool Board::CheckMatches()
 {
     currentMatches.clear();
@@ -193,120 +212,22 @@ bool Board::CheckMatches()
         }
     }
 
-    // std::cout << std::endl << "________________________________________________________" << std::endl;
-    // for (Match match : currentMatches)
-    // {
-    //     match.print();
-    //     std::cout << std::endl;
-    // }
-    // std::cout << "________________________________________________________" << std::endl;
-
     return (currentMatches.size() > 0);
 }
 
-bool Board::MatchesCollide(Match p_match1, Match p_match2, std::vector<Coordinates>& p_jointTiles)
-{
-    bool collide = false;
-    Coordinates collideTile;
 
-    for (Coordinates tile1 : p_match1.tiles)
-    {
-        p_jointTiles.push_back(tile1);              // tile1 is joint tile if matches collide
-        for (Coordinates tile2 : p_match2.tiles)
-        {
-            if (tile1 == tile2)
-            {
-                collide = true;                     // Matches collide - we don't push back tile2 because it was already pushed
-                collideTile = tile1;
-            }
-        }
-    }
-    if (!collide)
-    {
-        return false;
-    } 
-    else    // collided
-    {
-        for (Coordinates tile : p_match2.tiles)
-        {
-            if (!(tile == collideTile))
-            {
-                p_jointTiles.push_back(tile);
-            }
 
-        }
-    }
-    return true;
-}
-
-Vector2f Board::GetBackgroundPosition()
-{
-    float offset = TILE_WIDTH / 2 + TILE_MARGIN;
-    return Vector2f{position.x - offset, position.y - offset};
-}
-
-Vector2f Board::GetBackgroundSize()
-{
-    Vector2f margins{TILE_MARGIN * 2, TILE_MARGIN * 2};
-    return size + margins;
-}
-
-Coordinates Board::GetEntityCoords(Entity p_entity)
-{
-    for (int x = 0; x < cols; x++)
-    {
-        for (int y = 0; y < rows; y++)
-        {
-            Coordinates coords = {x, y};
-            if (p_entity == grid[x][y])
-            {
-                return coords;
-            }
-        }
-    }
-    return Coordinates{-1, -1};
-}
-
-Entity Board::GetEntityFromCoords(Coordinates p_coords) {return grid[p_coords.x][p_coords.y];}
-
-Vector2f Board::GetPositionFromCoords(Coordinates p_coordinates) 
-{
-    float pos_x = position.x + p_coordinates.x * (TILE_WIDTH + TILE_MARGIN);
-    float pos_y = position.y + p_coordinates.y * (TILE_HEIGHT + TILE_MARGIN);
-    return Vector2f{pos_x, pos_y};
-}
-
-bool Board::CanSwap(Entity p_entityOne, Entity p_entityTwo)
-{
-    Coordinates tileOne = GetEntityCoords(p_entityOne);
-    Coordinates tileTwo = GetEntityCoords(p_entityTwo);
-
-    if ((tileOne.x == tileTwo.x     && tileOne.y == tileTwo.y - 1   ) ||
-        (tileOne.x == tileTwo.x     && tileOne.y == tileTwo.y + 1   ) ||
-        (tileOne.x == tileTwo.x - 1 && tileOne.y == tileTwo.y       ) ||
-        (tileOne.x == tileTwo.x + 1 && tileOne.y == tileTwo.y       ))
-    {
-        return BelongsToBoard(p_entityOne) && BelongsToBoard(p_entityTwo);
-    }
-    return false;
-}
-
-bool Board::BelongsToBoard(Entity p_entity)         // FIXME should this be done?
-{
-    for (int x = 0; x < cols; x++)
-    {
-        for (int y = 0; y < rows; y++)
-        {
-            Entity testEntity = grid[x][y];
-            if (p_entity == testEntity)
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
+/**
+ * Clears each of the current matches
+ * Adds an Expansion component to cleared entities so they shrink
+ * Adds a delayed Destruction component to delete entities after they disappear
+ * 
+ * If special tiles are cleared, they create new (special) matches according to their ability
+ * Special matches are then cleared, finalizing the special ability
+ * 
+ * Calculates score received for clearing matches
+ * 
+ */
 void Board::ClearMatches()
 {
     std::vector<Match> specialMatches;
@@ -381,8 +302,8 @@ void Board::ClearMatches()
                         // Create Big Exploding Tile
                         type = TileType::BigExploding;
                     } 
-
-                    // TODO else throw exception
+                    // default case
+                    else type = TileType::Normal;
 
                     tileObject.type = type;
 
@@ -419,14 +340,6 @@ void Board::ClearMatches()
             int matchScore = CalculateScore(match);
             score += matchScore * combo;
 
-            // if (score == 0) std::cout << std::endl << "=====================================================================" << std::endl;
-            // std::cout << std::endl;
-            // std::cout << "Match: " << matchScore << std::endl;
-            // std::cout << "Combo: " << combo << std::endl;
-            // std::cout << "Points: " << matchScore * combo << std::endl;
-            // std::cout << "Score: " << score << std::endl;
-            // std::cout << "---------------------------------------------------------------------" << std::endl;
-
             combo += COMBO_AMPLIFIER;
         }
     }
@@ -435,6 +348,245 @@ void Board::ClearMatches()
 }
 
 
+/**
+ * Iterates each column from bottom to top
+ * For each empty space below a tile object, it drops one space
+ * For each empty space after dropping tiles, create new tiles and drop them
+ * 
+ * Adds translation components to dropping tile objects
+ * 
+ */
+void Board::SpawnTiles(std::vector<TileColor> p_tileColors)
+{
+    for (int x = 0; x < cols; x++)              // For each column
+    {
+        int count = 0;                          // Amount of tile spaces to drop
+
+        for (int y = rows - 1; y >= 0; y--)     // Iterate through column from bottom to top
+        {
+            Entity entity = grid[x][y];
+
+            if (entity == NULL_ENTITY)          // Empty tile space
+            {
+                count++;
+            }
+            else if (count > 0)                 // Tile must drop (count) spaces
+            {
+                Coordinates oldCoords = GetEntityCoords(entity);
+                Coordinates newCoords{oldCoords.x, oldCoords.y + count};
+
+                TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+                tileObject.coords = newCoords;
+
+                ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(newCoords), TILE_FALL_SPEED, TILE_ACCELERATION, TILE_MAX_SPEED});
+
+                grid[oldCoords.x][oldCoords.y] = NULL_ENTITY;
+                grid[newCoords.x][newCoords.y] = entity;
+            }
+        }
+
+        for (int offset = count; offset > 0; offset--)
+        {
+            TileColor randColor = p_tileColors[rand() % p_tileColors.size()];
+            
+            Coordinates coords{x, count - offset};                              // Coordinates after falling
+            Coordinates spawnCoords{x, -offset};
+            
+            Vector2f tilePosition = GetPositionFromCoords(spawnCoords);         // Screen position based on spawn coordinates
+             
+            Entity entity = entityCreator.CreateTileEntity(tilePosition, randColor, coords, TileType::Normal);
+            
+            ecsManager.AddComponent(entity, Translate{GetPositionFromCoords(coords), TILE_FALL_SPEED, TILE_ACCELERATION, TILE_MAX_SPEED});
+            
+            grid[coords.x][coords.y] = entity;
+        }
+    }
+}
+
+void Board::ResetScore()
+{
+    score = 0;
+    combo = 1;
+}
+
+int Board::CalculateScore(Match match)
+{
+    return match.count * 100;
+}
+
+
+/**
+ * For each column checks if there are vertical matches and returns them
+ * 
+ */
+std::vector<Match> Board::GetVerticalMatches()
+{
+    std::vector<Match> matches;
+
+    for (int x = 0; x < cols; x++)
+    {
+        int count = 0;
+        TileColor lastColor = TileColor::Colorless;
+
+        for (int y = 0; y < rows; y++)
+        {
+            Entity entity = grid[x][y];
+            TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+            TileColor color = tileObject.color;
+            
+            if (entity == NULL_ENTITY || color == Colorless || color != lastColor || y == rows - 1)
+            {
+                if (y == rows - 1 && color == lastColor) // Add last tile to the match
+                {
+                    count++;
+                    y++;
+                }
+                
+                if (count >= 3)
+                {
+                    std::vector<Coordinates> tiles;
+
+                    for (int i = count; i > 0; i--)
+                    {
+                        tiles.push_back(Coordinates{x,y-i});
+                    }
+                    Match match {MatchType::VerticalMatch, count, tiles};
+                    matches.push_back(match);
+                }
+                count = 1;
+                lastColor = color;
+            }
+            else
+            {
+                count++;
+            }
+        }
+    }
+    return matches;
+}
+
+
+/**
+ * For each row checks if there are horizontal matches and returns them
+ * 
+ */
+std::vector<Match> Board::GetHorizontalMatches()
+{
+    std::vector<Match> matches;
+
+    for (int y = 0; y < rows; y++)
+    {
+        int count = 0;
+        TileColor lastColor = TileColor::Colorless;
+
+        for (int x = 0; x < cols; x++)
+        {
+            Entity entity = grid[x][y];
+            TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+            TileColor color = tileObject.color;
+            
+            if (entity == NULL_ENTITY || color == Colorless || color != lastColor || x == cols - 1)
+            {
+                if (x == cols - 1 && color == lastColor) // Add last tile to the match
+                {
+                    count++;
+                    x++;
+                }
+                
+                if (count >= 3)
+                {
+                    std::vector<Coordinates> tiles;
+
+                    for (int i = count; i > 0; i--)
+                    {
+                        tiles.push_back(Coordinates{x-i,y});
+                    }
+                    Match match {MatchType::HorizontalMatch, count, tiles};
+                    matches.push_back(match);
+                }
+                count = 1;
+                lastColor = color;
+            }
+            else
+            {
+                count++;
+            }
+        }
+    }
+    return matches;
+}
+
+
+/**
+ * Checks if an array of tiles share the same color
+ * Used to check if matches are valid to create special tiles
+ * 
+ */
+bool Board::TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color)
+{
+    if (p_color == TileColor::Colorless) return false;
+
+    for (Coordinates coords : p_tiles)
+    {
+        Entity entity = grid[coords.x][coords.y];
+        if (entity != NULL_ENTITY)
+        {
+            Entity entity = grid[coords.x][coords.y];
+            TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
+
+            if (tileObject.color != p_color) return false;
+        }
+    }
+
+    return true;       
+}
+
+
+/**
+ * Checks if two matches share a tile object
+ * Returns through p_jointTiles a new mixed match containing tiles from both matches
+ * 
+ */
+bool Board::MatchesCollide(Match p_match1, Match p_match2, std::vector<Coordinates>& p_jointTiles)
+{
+    bool collide = false;
+    Coordinates collideTile;
+
+    for (Coordinates tile1 : p_match1.tiles)
+    {
+        p_jointTiles.push_back(tile1);              // tile1 is joint tile if matches collide
+        for (Coordinates tile2 : p_match2.tiles)
+        {
+            if (tile1 == tile2)
+            {
+                collide = true;                     // Matches collide - we don't push back tile2 because it was already pushed
+                collideTile = tile1;
+            }
+        }
+    }
+    if (!collide)
+    {
+        return false;
+    } 
+    else    // collided
+    {
+        for (Coordinates tile : p_match2.tiles)
+        {
+            if (!(tile == collideTile))
+            {
+                p_jointTiles.push_back(tile);
+            }
+
+        }
+    }
+    return true;
+}
+
+
+/**
+ * Depending on the type of special tile, create the according special match
+ * 
+ */
 void Board::ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches)
 {
     Entity entity = grid[p_tile.x][p_tile.y];
@@ -523,37 +675,23 @@ void Board::ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMat
 }
 
 
+/* ------------------------------------- Basic Functions -------------------------------------- */
 
-bool Board::TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color)
+bool Board::BelongsToBoard(Entity p_entity)         // FIXME should this be done?
 {
-    if (p_color == TileColor::Colorless) return false;
-
-    for (Coordinates coords : p_tiles)
+    for (int x = 0; x < cols; x++)
     {
-        Entity entity = grid[coords.x][coords.y];
-        if (entity != NULL_ENTITY)
+        for (int y = 0; y < rows; y++)
         {
-            Entity entity = grid[coords.x][coords.y];
-            TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
-
-            if (tileObject.color != p_color) return false;
+            Entity testEntity = grid[x][y];
+            if (p_entity == testEntity)
+            {
+                return true;
+            }
         }
     }
-
-    return true;       
+    return false;
 }
-
-int Board::CalculateScore(Match match)
-{
-    return match.count * 100;
-}
-
-void Board::ResetScore()
-{
-    score = 0;
-    combo = 1;
-}
-
 
 void Board::AddSelected(Entity entity)
 {
@@ -563,7 +701,6 @@ void Board::AddSelected(Entity entity)
     transform.scale = Vector2f{0.95f, 0.95f};
 }
 
-
 void Board::RemoveSelected(Entity entity)
 {
     ecsManager.RemoveComponent<Selected>(entity);
@@ -572,111 +709,43 @@ void Board::RemoveSelected(Entity entity)
     transform.scale = Vector2f{1.0f, 1.0f};
 }
 
-std::vector<Match> Board::GetVerticalMatches()
+
+
+/* ----------------------------------------- Getters ----------------------------------------- */
+
+Vector2f Board::GetBackgroundPosition()
 {
-    std::vector<Match> matches;
-
-    for (int x = 0; x < cols; x++)
-    {
-        int count = 0;
-        TileColor lastColor = TileColor::Colorless;
-
-        for (int y = 0; y < rows; y++)
-        {
-            Entity entity = grid[x][y];
-            TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
-            TileColor color = tileObject.color;
-            
-            if (entity == NULL_ENTITY || color == Colorless || color != lastColor || y == rows - 1)
-            {
-                if (y == rows - 1 && color == lastColor) // Add last tile to the match
-                {
-                    count++;
-                    y++;
-                }
-                
-                if (count >= 3)
-                {
-                    std::vector<Coordinates> tiles;
-
-                    for (int i = count; i > 0; i--)
-                    {
-                        tiles.push_back(Coordinates{x,y-i});
-                    }
-                    Match match {MatchType::VerticalMatch, count, tiles};
-                    matches.push_back(match);
-                }
-                count = 1;
-                lastColor = color;
-            }
-            else
-            {
-                count++;
-            }
-        }
-    }
-    return matches;
+    float offset = TILE_WIDTH / 2 + TILE_MARGIN;
+    return Vector2f{position.x - offset, position.y - offset};
 }
 
-
-std::vector<Match> Board::GetHorizontalMatches()
+Vector2f Board::GetBackgroundSize()
 {
-    std::vector<Match> matches;
-
-    for (int y = 0; y < rows; y++)
-    {
-        int count = 0;
-        TileColor lastColor = TileColor::Colorless;
-
-        for (int x = 0; x < cols; x++)
-        {
-            Entity entity = grid[x][y];
-            TileObject& tileObject = ecsManager.GetComponent<TileObject>(entity);
-            TileColor color = tileObject.color;
-            
-            if (entity == NULL_ENTITY || color == Colorless || color != lastColor || x == cols - 1)
-            {
-                if (x == cols - 1 && color == lastColor) // Add last tile to the match
-                {
-                    count++;
-                    x++;
-                }
-                
-                if (count >= 3)
-                {
-                    std::vector<Coordinates> tiles;
-
-                    for (int i = count; i > 0; i--)
-                    {
-                        tiles.push_back(Coordinates{x-i,y});
-                    }
-                    Match match {MatchType::HorizontalMatch, count, tiles};
-                    matches.push_back(match);
-                }
-                count = 1;
-                lastColor = color;
-            }
-            else
-            {
-                count++;
-            }
-        }
-    }
-    return matches;
+    Vector2f margins{TILE_MARGIN * 2, TILE_MARGIN * 2};
+    return size + margins;
 }
 
-Board::~Board()
+Entity Board::GetEntityFromCoords(Coordinates p_coords) {return grid[p_coords.x][p_coords.y];}
+
+Vector2f Board::GetPositionFromCoords(Coordinates p_coordinates) 
+{
+    float pos_x = position.x + p_coordinates.x * (TILE_WIDTH + TILE_MARGIN);
+    float pos_y = position.y + p_coordinates.y * (TILE_HEIGHT + TILE_MARGIN);
+    return Vector2f{pos_x, pos_y};
+}
+
+Coordinates Board::GetEntityCoords(Entity p_entity)
 {
     for (int x = 0; x < cols; x++)
     {
         for (int y = 0; y < rows; y++)
         {
-            Entity entity = grid[x][y];
-
-            if(entity != NULL_ENTITY)
+            Coordinates coords = {x, y};
+            if (p_entity == grid[x][y])
             {
-                ecsManager.DestroyEntity(entity);
+                return coords;
             }
         }
     }
+    return Coordinates{-1, -1};
 }

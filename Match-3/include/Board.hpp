@@ -47,56 +47,66 @@ public:
     Board(Vector2f p_position, int p_cols, int p_rows, EntityCreator& p_entityCreator);
     ~Board();
 
+    /* --------------------------- Grid Funcitonality ---------------------------- */
+
     void PopulateBoard(std::vector<TileColor> p_tileColors);
-
-    void SpawnTiles(std::vector<TileColor> p_tileColors);
-
     void InsertTile(Coordinates p_coords, TileColor p_color, TileType p_type);
 
-    void SwapTiles(Entity p_tileOne, Entity p_tileTwo);
 
-    bool CheckMatches();
-
-    Entity GetEntityFromCoords(Coordinates p_coords);
-
-    Vector2f GetPositionFromCoords(Coordinates p_coords);
-
-    Coordinates GetEntityCoords(Entity p_entity);
+    /* ------------------------------ Swapping Tiles ------------------------------ */
 
     bool CanSwap(Entity p_entityOne, Entity p_entityTwo);
-    bool BelongsToBoard(Entity p_entity);
-    bool MatchesCollide(Match p_match1, Match p_match2, std::vector<Coordinates>& p_jointTiles);
+    void SwapTiles(Entity p_tileOne, Entity p_tileTwo);
 
+
+    /* ------------------------------- Clearing Loop ------------------------------- */
+
+    bool CheckMatches();
     void ClearMatches();
-    void ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches);
-    bool TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color);
-    int CalculateScore(Match match);
-    int GetScore() {return score;}
+    void SpawnTiles(std::vector<TileColor> p_tileColors);
     void ResetScore();
 
+
+    /* ------------------------------- Basic Functions ------------------------------- */
+
+    bool BelongsToBoard(Entity p_entity);
     void AddSelected(Entity entity);
     void RemoveSelected(Entity entity);
 
+
+    /* ----------------------------------- Getters ----------------------------------- */
+
+    int GetScore() {return score;}
     Vector2f GetBackgroundPosition();
     Vector2f GetBackgroundSize();
+    Entity GetEntityFromCoords(Coordinates p_coords);
+    Vector2f GetPositionFromCoords(Coordinates p_coords);
+    Coordinates GetEntityCoords(Entity p_entity);
 
 private:
+    std::vector<std::vector<Entity>> grid;
+
     Vector2f position;
+
     int cols;    
     int rows;
     Vector2f size;
-    EntityCreator entityCreator;
-    std::vector<std::vector<Entity>> grid;
-
-    std::vector<Match> GetVerticalMatches();
-    std::vector<Match> GetHorizontalMatches();
-    std::vector<Match> currentMatches;
 
     Coordinates swappedTiles[2];
 
+    std::vector<Match> GetVerticalMatches();
+    std::vector<Match> GetHorizontalMatches();
+    bool TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color);
+    bool MatchesCollide(Match p_match1, Match p_match2, std::vector<Coordinates>& p_jointTiles);
+    std::vector<Match> currentMatches;
+
+    void ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches);
+
     int score = 0;
     float combo = 1;
+    int CalculateScore(Match match);
 
+    EntityCreator entityCreator;
 };
 
 #endif //__Match3_Board_h__
