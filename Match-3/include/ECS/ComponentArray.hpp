@@ -1,5 +1,5 @@
 /*
-    - The ECS Manager will store one Component Array for each component type.
+    - The ECS Manager stores one Component Array for each component type.
     - Component Arrays are arrays of Entities (ID's) which have a component of said type.
     - They must be kept packed in order to efficiently iterate over all indices.
     - Each time an entity is deleted (or loses its component), the array re-arranges itself in order to stay packed.
@@ -27,7 +27,10 @@ template<typename T> class ComponentArray : public IComponentArray
 public:
     void InsertData(Entity entity, T component)
     {
-        // FIXME: check if entity alread has component!
+        if (entityToIndexMap.find(entity) != entityToIndexMap.end())
+		{
+			throw std::invalid_argument("Component already added to entity.");
+		}
 
         // Store new entity in available index and update maps
 		size_t newIndex = arraySize;
@@ -40,15 +43,17 @@ public:
 
     void RemoveData(Entity entity)
 	{
-        // FIXME: check if component exists!
+        if (entityToIndexMap.find(entity) == entityToIndexMap.end())
+		{
+			throw std::invalid_argument("Entity does not have component.");
+		}
 
 		// Copy element at end into deleted element's place to maintain density
 		size_t entityIndex = entityToIndexMap[entity];
 		size_t lastIndex = arraySize - 1;
 		componentArray[entityIndex] = componentArray[lastIndex];
 
-		// Update map to point to moved spot
-
+		// Update maps to point to moved spot
         Entity lastEntity = indexToEntityMap[lastIndex];
 
 		entityToIndexMap[lastEntity] = entityIndex;
@@ -63,7 +68,10 @@ public:
 
     T& GetData(Entity entity)
 	{
-        //FIXME check if component exists
+		if (entityToIndexMap.find(entity) == entityToIndexMap.end())
+		{
+			throw std::invalid_argument("Entity does not have component.");
+		}
 
 		// Return a reference to the entity's component
 		return componentArray[entityToIndexMap[entity]];
@@ -74,7 +82,7 @@ public:
 	{
 		if (entityToIndexMap.find(entity) != entityToIndexMap.end())
 		{
-			// Remove the entity's component if it existed
+			// Remove the entity's component if it exists
 			RemoveData(entity);
 		}
 	}

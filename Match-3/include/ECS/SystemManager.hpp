@@ -16,7 +16,10 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-		// FIXME check if system is already registered
+		if (systems.find(typeName) != systems.end())
+		{
+			std::invalid_argument("System is already registered.")
+		}
 
 		// Create a pointer to the system and return it so it can be used externally
 		auto system = std::make_shared<T>();
@@ -42,7 +45,10 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-		// FIXME check if system is registered
+		if (systems.find(typeName) == systems.end())
+		{
+			std::invalid_argument("System is not registered.")
+		}
 
 		signatures.insert({typeName, signature});
 	}

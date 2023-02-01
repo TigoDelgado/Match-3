@@ -21,7 +21,10 @@ public:
 
     Entity CreateEntity()
 	{
-        if (activeEntities >= MAX_ENTITIES) {} // FIXME: implement and throw exceptions!
+        if (activeEntities >= MAX_ENTITIES) 
+        {
+            throw std::out_of_range("Too many entities created");
+        }
         
         Entity entity = availableEntities.front();
         availableEntities.pop();
@@ -31,7 +34,10 @@ public:
 
     void DestroyEntity(Entity entity)
     {
-        if (entity >= MAX_ENTITIES) {} // FIXME: implement and throw exceptions!
+        if (entity >= MAX_ENTITIES) 
+        {
+            throw std::out_of_range("Entity index is out of range.");
+        }
 
         entitySignatures[entity].reset();
         availableEntities.push(entity);
@@ -40,14 +46,20 @@ public:
 
     void SetSignature(Entity entity, Signature signature)
     {
-        if (entity >= MAX_ENTITIES) {} // FIXME: implement and throw exceptions!
+        if (entity >= MAX_ENTITIES)
+        {
+            throw std::out_of_range("Entity index is out of range.");
+        }
 
         entitySignatures[entity] = signature;
     }
 
     Signature GetSignature(Entity entity)
     {
-        if (entity >= MAX_ENTITIES) {} // FIXME: implement and throw exceptions!
+        if (entity >= MAX_ENTITIES)
+        {
+            throw std::out_of_range("Entity index is out of range.");
+        }
 
         return entitySignatures[entity];
     }

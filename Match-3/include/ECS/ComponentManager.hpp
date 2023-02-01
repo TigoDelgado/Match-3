@@ -14,7 +14,10 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-        //FIXME check if component type already registered
+        if (componentTypes.find(typeName) != componentTypes.end())
+		{
+			throw std::invalid_argument("Component already registered.");
+		}
 
 		componentTypes.insert({typeName, activeComponentTypes});
 
@@ -27,7 +30,11 @@ public:
 	{
 		const char* typeName = typeid(T).name();
 
-        //FIXME check if component type is registered
+        if (componentTypes.find(typeName) == componentTypes.end())
+		{
+			throw std::invalid_argument("Component is not registered.");
+		}
+
 
 		return componentTypes[typeName];
 	}
@@ -75,7 +82,10 @@ private:
 	{
 		const char* typeName = typeid(T).name();
 
-        //FIXME check if component type is already registered
+        if (componentTypes.find(typeName) == componentTypes.end())
+		{
+			throw std::invalid_argument("Component is not registered.");
+		}
 
 		return std::static_pointer_cast<ComponentArray<T>>(componentArrays[typeName]);
 	}
