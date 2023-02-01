@@ -27,11 +27,6 @@ template<typename T> class ComponentArray : public IComponentArray
 public:
     void InsertData(Entity entity, T component)
     {
-        if (entityToIndexMap.find(entity) != entityToIndexMap.end())
-		{
-			throw std::invalid_argument("Component already added to entity.");
-		}
-
         // Store new entity in available index and update maps
 		size_t newIndex = arraySize;
 		entityToIndexMap[entity] = newIndex;
@@ -43,10 +38,10 @@ public:
 
     void RemoveData(Entity entity)
 	{
-        if (entityToIndexMap.find(entity) == entityToIndexMap.end())
-		{
-			throw std::invalid_argument("Entity does not have component.");
-		}
+        // if (entityToIndexMap.find(entity) == entityToIndexMap.end())
+		// {
+		// 	throw std::invalid_argument("Entity does not have component.");
+		// }
 
 		// Copy element at end into deleted element's place to maintain density
 		size_t entityIndex = entityToIndexMap[entity];
