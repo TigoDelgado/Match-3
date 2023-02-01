@@ -15,6 +15,9 @@
 #include "Components/DelayedAnimation.hpp"
 #include "Components/Button.hpp"
 
+// Entity Creator provides an easy way to create specific entities
+// Also loads images - SDL_Textures - used by those entities' sprites
+
 class EntityCreator
 {
 public: 

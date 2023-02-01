@@ -18,7 +18,7 @@ public:
 
 		if (systems.find(typeName) != systems.end())
 		{
-			std::invalid_argument("System is already registered.")
+			std::invalid_argument("System is already registered.");
 		}
 
 		// Create a pointer to the system and return it so it can be used externally
@@ -47,7 +47,7 @@ public:
 
 		if (systems.find(typeName) == systems.end())
 		{
-			std::invalid_argument("System is not registered.")
+			std::invalid_argument("System is not registered.");
 		}
 
 		signatures.insert({typeName, signature});

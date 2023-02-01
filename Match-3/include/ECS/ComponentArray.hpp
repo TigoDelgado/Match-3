@@ -68,11 +68,6 @@ public:
 
     T& GetData(Entity entity)
 	{
-		if (entityToIndexMap.find(entity) == entityToIndexMap.end())
-		{
-			throw std::invalid_argument("Entity does not have component.");
-		}
-
 		// Return a reference to the entity's component
 		return componentArray[entityToIndexMap[entity]];
 	}

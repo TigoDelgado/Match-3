@@ -7,9 +7,8 @@ int main(int argc, char* argv[])
 
     try {
         game.Run();
-        //TODO create and handle exceptions
-    } catch (...) {
-        std::cerr << "An unhandled exception was thrown" << std::endl;
+    } catch (std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return 1;
     }
     return 0;

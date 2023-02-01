@@ -34,6 +34,9 @@
 
 extern ECS_Manager ecsManager;
 
+// Working as a way to register the necessary components and systems
+// TODO implement scene transitions through the manager
+
 class SceneManager
 {
 public:
@@ -79,4 +82,4 @@ public:
     std::shared_ptr<UpdateTextSystem> updateTextSystem;
 };
 
-#endif //__Match3_Scene_Level_h__
+#endif //__Match3_Scene_Manager_h__

@@ -8,6 +8,7 @@
 #include "EntityCreator.hpp"
 #include "Math2D.hpp"
 
+// Matches can have different shapes and effects
 enum MatchType
 {
     VerticalMatch,
@@ -16,6 +17,7 @@ enum MatchType
     SpecialMatch
 };
 
+// Represents one match (3+ adjacent tiles of the same color) on the board grid
 struct Match
 {
     MatchType type;
@@ -45,7 +47,7 @@ public:
     Board(Vector2f p_position, int p_cols, int p_rows, EntityCreator& p_entityCreator);
     ~Board();
 
-    void PopulateBoard(std::vector<TileColor> p_tileColors);      // populates board with random Tile Entities of desired Tile Types 
+    void PopulateBoard(std::vector<TileColor> p_tileColors);
 
     void SpawnTiles(std::vector<TileColor> p_tileColors);
 

@@ -7,6 +7,9 @@
 
 #include "Math2D.hpp"
 
+// RenderWindow handles the SDL_Window and SDL_Renderer
+// Takes care of rendering textures through SDL_RenderCopy
+
 class RenderWindow
 {
 public:

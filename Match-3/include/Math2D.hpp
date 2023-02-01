@@ -3,6 +3,7 @@
 
 #include <cmath>
 
+// Simple 2D float vector, mostly used to calculate positions etc.
 struct Vector2f
 {
     float x, y;
@@ -30,6 +31,7 @@ struct Vector2f
     }
 };
 
+// 2D int vector, used for grid coordinates
 struct Coordinates
 {
     int x, y;

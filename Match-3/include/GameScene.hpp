@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 
-// GameScene interface
+// Game Scene interface
 class GameScene
 {
 public:

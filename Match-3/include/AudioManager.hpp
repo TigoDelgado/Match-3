@@ -6,6 +6,7 @@
 
 #include "ECS/Manager.hpp"
 
+// Audio Manager loads sounds & music and handles the SDL_Mixer
 
 extern ECS_Manager ecsManager;
 

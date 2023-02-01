@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL.h>
 
+// Simple timer to get current time in seconds
+
 namespace Timer
 {
     float CurrentTime()
