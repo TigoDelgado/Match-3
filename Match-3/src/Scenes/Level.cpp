@@ -1,6 +1,7 @@
 #include "Scenes/Level.hpp"
 
 #include <iostream>
+#include <string>
 
 extern ECS_Manager ecsManager;
 extern SceneManager sceneManager;
@@ -32,6 +33,8 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, int p_colors, const
     animateSelectedSystem = sceneManager.animateSelectedSystem;
     animateSpriteSystem = sceneManager.animateSpriteSystem;
     delayAnimationSystem = sceneManager.delayAnimationSystem;
+    updateTextSystem = sceneManager.updateTextSystem;
+    clickButtonSystem = sceneManager.clickButtonSystem;
 
     /* ------------------------------ Create Scene Objects ------------------------------ */
 
@@ -42,31 +45,15 @@ Level::Level(RenderWindow& p_window, int p_rows, int p_cols, int p_colors, const
     if (p_colors > 4) tileColors.push_back(TileColor::Green);
     if (p_colors > 5) tileColors.push_back(TileColor::Black);
 
-    board = new Board(Vector2f{360.0f, 300.0f}, p_rows, p_cols, entityCreator);
+    board = new Board(Vector2f{360.0f, 340.0f}, p_rows, p_cols, entityCreator);
 
     board->PopulateBoard(tileColors);
 
-    Vector2f scorePosition = Vector2f{360.0f, 300.0f};
-    scorePosition.y += board->GetBackgroundSize().y / 2 + 60;
+    Vector2f scorePosition = Vector2f{360.0f, 340.0f};
+    scorePosition.y += board->GetBackgroundSize().y / 2 + 40;
     scoreText = entityCreator.CreateTextEntity("000", scorePosition, SDL_Color{255, 225, 240}, window);
 
-    // FIXME remove
-    // board->InsertTile(Coordinates{2,2}, TileColor::Purple, TileType::Normal);
-    // board->InsertTile(Coordinates{2,3}, TileColor::Purple, TileType::Normal);
-    // board->InsertTile(Coordinates{2,4}, TileColor::Purple, TileType::Normal);
-    // board->InsertTile(Coordinates{2,5}, TileColor::Purple, TileType::Normal);
-    // board->InsertTile(Coordinates{2,6}, TileColor::Purple, TileType::Normal);
-
-    // board->InsertTile(Coordinates{1,4}, TileColor::Purple, TileType::Normal);
-    // board->InsertTile(Coordinates{3,4}, TileColor::Purple, TileType::Normal);
-
-    // board->InsertTile(Coordinates{6,4}, TileColor::Green, TileType::Normal);
-    // board->InsertTile(Coordinates{6,5}, TileColor::Green, TileType::Normal);
-    // board->InsertTile(Coordinates{6,6}, TileColor::Green, TileType::Normal);
-
-    // board->InsertTile(Coordinates{5,5}, TileColor::Green, TileType::Normal);
-    // board->InsertTile(Coordinates{7,5}, TileColor::Green, TileType::Normal);
-
+    backButton = entityCreator.CreateButtonEntity(0, ButtonType::BACK, Vector2f{50,50}, Vector2f{670,670});
 
     state = WAITING;
     blocked = false;
@@ -82,7 +69,8 @@ void Level::HandleEvent(SDL_Event& event)
             mouseDown = true;
 
             Vector2f mousePosition = Vector2f{float(event.button.x), float(event.button.y)};
-            
+            buttonClicked = clickButtonSystem->ClickedButton(mousePosition);
+
             Entity entity;
 
             if (!blocked && selectedOne == NULL_ENTITY) 
@@ -230,7 +218,10 @@ void Level::Update(float dt)
             if (board->CheckMatches())
             {
                 board->ResetScore();
+                score += addScore;
                 board->ClearMatches();
+                addScore = board->GetScore();
+                ecsManager.AddComponent<Text>(scoreText, Text{std::to_string(score + addScore).c_str(), SDL_Color{255,225,230}});
                 selectedOne = NULL_ENTITY;
                 selectedTwo = NULL_ENTITY;
                 state = CLEARING_MATCHES;
@@ -269,6 +260,8 @@ void Level::Update(float dt)
             if (board->CheckMatches())
             {
                 board->ClearMatches();
+                addScore = board->GetScore();
+                ecsManager.AddComponent<Text>(scoreText, Text{std::to_string(score + addScore).c_str(), SDL_Color{255,225,230}});
                 state = CLEARING_MATCHES;
             }
             else
@@ -281,6 +274,22 @@ void Level::Update(float dt)
     
     default:
         break;
+    }
+
+    if( Mix_PlayingMusic() == 0 )
+    {
+        audioManager.PlayRandomSoundtrack(0);
+    }
+
+    updateTextSystem->Update(window);
+
+    if (buttonClicked != -1)
+    {
+        if (buttonClicked == 0)
+        {
+            // BACK TO MENU
+            backToMenu = true;
+        }
     }
 }
 
@@ -295,10 +304,18 @@ void Level::Render()
 
 bool Level::ChangeScene()
 {
-    return false;
+    return backToMenu;
 }
 
 GameScene* Level::GetNextScene()
 {
-    return nullptr;
+    return new MainMenu(window);
+}
+
+Level::~Level()
+{
+    Mix_HaltMusic();
+    board->~Board();
+    ecsManager.DestroyEntity(backButton);
+    ecsManager.DestroyEntity(scoreText);
 }

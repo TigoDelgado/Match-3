@@ -22,26 +22,24 @@ MainMenu::MainMenu(RenderWindow& p_window)
     buttons.push_back(entityCreator.CreateButtonEntity(0, ButtonType::START, Vector2f{100,50}, Vector2f{360,450}));
     // buttons.push_back(entityCreator.CreateButtonEntity(1, ButtonType::QUIT, Vector2f{100,50}, Vector2f{420,450}));
 
-    buttons.push_back(entityCreator.CreateButtonEntity(2, ButtonType::MINUS, Vector2f{50,50}, Vector2f{450,200}));    // cols--
-    buttons.push_back(entityCreator.CreateButtonEntity(3, ButtonType::PLUS, Vector2f{50,50}, Vector2f{520,200}));    // cols++
+    buttons.push_back(entityCreator.CreateButtonEntity(2, ButtonType::MINUS, Vector2f{50,50}, Vector2f{420,260}));    // cols--
+    buttons.push_back(entityCreator.CreateButtonEntity(3, ButtonType::PLUS, Vector2f{50,50}, Vector2f{500,260}));    // cols++
 
-    buttons.push_back(entityCreator.CreateButtonEntity(4, ButtonType::MINUS, Vector2f{50,50}, Vector2f{450,260}));    // rows--
-    buttons.push_back(entityCreator.CreateButtonEntity(5, ButtonType::PLUS, Vector2f{50,50}, Vector2f{520,260}));    // rows++
+    buttons.push_back(entityCreator.CreateButtonEntity(4, ButtonType::MINUS, Vector2f{50,50}, Vector2f{420,320}));    // rows--
+    buttons.push_back(entityCreator.CreateButtonEntity(5, ButtonType::PLUS, Vector2f{50,50}, Vector2f{500,320}));    // rows++
 
-    buttons.push_back(entityCreator.CreateButtonEntity(6, ButtonType::MINUS, Vector2f{50,50}, Vector2f{450,320}));    // colors--
-    buttons.push_back(entityCreator.CreateButtonEntity(7, ButtonType::PLUS, Vector2f{50,50}, Vector2f{520,320}));    // colors++
+    buttons.push_back(entityCreator.CreateButtonEntity(6, ButtonType::MINUS, Vector2f{50,50}, Vector2f{420,380}));    // colors--
+    buttons.push_back(entityCreator.CreateButtonEntity(7, ButtonType::PLUS, Vector2f{50,50}, Vector2f{500,380}));    // colors++
 
-    colsText = (entityCreator.CreateTextEntity("8", Vector2f{300, 200}, SDL_Color{0,0,0}, window));
-    rowsText = (entityCreator.CreateTextEntity("8", Vector2f{300, 260}, SDL_Color{0,0,0}, window));
-    colorsText = (entityCreator.CreateTextEntity("5", Vector2f{300, 320}, SDL_Color{0,0,0}, window));
+    colsText = (entityCreator.CreateTextEntity("8", Vector2f{340, 260}, SDL_Color{0,0,0}, window));
+    rowsText = (entityCreator.CreateTextEntity("8", Vector2f{340, 320}, SDL_Color{0,0,0}, window));
+    colorsText = (entityCreator.CreateTextEntity("5", Vector2f{340, 380}, SDL_Color{0,0,0}, window));
 
-    buttons.push_back(entityCreator.CreateTextEntity("Columns:  ", Vector2f{200, 200}, SDL_Color{0,0,0}, window));
-    buttons.push_back(entityCreator.CreateTextEntity("Rows:     ", Vector2f{250, 260}, SDL_Color{0,0,0}, window));
-    buttons.push_back(entityCreator.CreateTextEntity("Colors:   ", Vector2f{225, 320}, SDL_Color{0,0,0}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Columns:  ", Vector2f{240, 260}, SDL_Color{0,0,0}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Rows:     ", Vector2f{290, 320}, SDL_Color{0,0,0}, window));
+    buttons.push_back(entityCreator.CreateTextEntity("Colors:   ", Vector2f{265, 380}, SDL_Color{0,0,0}, window));
 
     buttonClicked = -1;
-
-    audioManager.PlayRandomSoundtrack();
 }
 
 void MainMenu::HandleEvent(SDL_Event& event)

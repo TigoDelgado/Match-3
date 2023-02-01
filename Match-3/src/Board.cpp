@@ -664,3 +664,19 @@ std::vector<Match> Board::GetHorizontalMatches()
     }
     return matches;
 }
+
+Board::~Board()
+{
+    for (int x = 0; x < cols; x++)
+    {
+        for (int y = 0; y < rows; y++)
+        {
+            Entity entity = grid[x][y];
+
+            if(entity != NULL_ENTITY)
+            {
+                ecsManager.DestroyEntity(entity);
+            }
+        }
+    }
+}

@@ -94,6 +94,10 @@ SDL_Texture* EntityCreator::GetButtonTexture(ButtonType p_type)
     case ButtonType::MINUS:
         return minusButton;
         break;
+
+    case ButtonType::BACK:
+        return backButton;
+        break;
     
     default:
         return defaultButton;
@@ -231,5 +235,6 @@ void EntityCreator::LoadTextures(RenderWindow& window)
     quitButton = whiteBigExplodingTile; //window.LoadTexture(QUIT_BUTTON);
     plusButton = window.LoadTexture("../res/plus.png");
     minusButton = window.LoadTexture("../res/minus.png");
+    backButton = window.LoadTexture("../res/back.png");
     defaultButton = colorlessTile;
 }

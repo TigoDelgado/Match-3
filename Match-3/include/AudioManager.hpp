@@ -25,10 +25,10 @@ public:
         clearConsumption = Mix_LoadWAV( "../res/Audio/Sounds/Comsumption.wav" );
     }
 
-    void PlayRandomSoundtrack()
+    void PlayRandomSoundtrack(int p_loops)
     {
         int musicIndex = rand() % gameMusic.size();
-        Mix_PlayMusic( gameMusic[musicIndex], -1 );
+        Mix_PlayMusic( gameMusic[musicIndex], p_loops);
     }
 private:
     std::vector<Mix_Music*> gameMusic;

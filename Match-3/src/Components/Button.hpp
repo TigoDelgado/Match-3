@@ -9,6 +9,7 @@ enum ButtonType
     QUIT,
     PLUS,
     MINUS,
+    BACK,
     DEFAULT
 };
 

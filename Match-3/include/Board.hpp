@@ -43,6 +43,7 @@ class Board
 {
 public:
     Board(Vector2f p_position, int p_cols, int p_rows, EntityCreator& p_entityCreator);
+    ~Board();
 
     void PopulateBoard(std::vector<TileColor> p_tileColors);      // populates board with random Tile Entities of desired Tile Types 
 
@@ -68,6 +69,7 @@ public:
     void ActivateSpecial(Coordinates p_tile, std::vector<Match>& p_specialMatches);
     bool TilesSameColor(std::vector<Coordinates> p_tiles, TileColor p_color);
     int CalculateScore(Match match);
+    int GetScore() {return score;}
     void ResetScore();
 
     void AddSelected(Entity entity);

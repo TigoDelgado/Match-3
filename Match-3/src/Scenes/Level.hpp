@@ -7,6 +7,7 @@
 #include "RenderWindow.hpp"
 #include "Board.hpp"
 #include "EntityCreator.hpp"
+#include "Scenes/MainMenu.hpp"
 
 #include "SceneManager.hpp"
 #include "AudioManager.hpp"
@@ -34,6 +35,7 @@
 #include "Systems/AnimateSelected.hpp"
 #include "Systems/AnimateSprite.hpp"
 #include "Systems/DelayAnimation.hpp"
+#include "Systems/ClickButton.hpp"
 
 
 enum LevelState
@@ -64,13 +66,16 @@ public:
     bool ChangeScene() override;
     GameScene* GetNextScene() override;
 
-    ~Level(){};
+    ~Level();
 
 private:
     RenderWindow window;
     Vector2f windowDimensions;
     int rows;
     int cols;
+
+    int score = 0;
+    int addScore = 0;
 
     // EntityCreator entityCreator;
     SDL_Texture* background;
@@ -87,6 +92,10 @@ private:
     Entity lastSelected = NULL_ENTITY;
     Entity selectedOne = NULL_ENTITY;
     Entity selectedTwo = NULL_ENTITY;
+
+    bool backToMenu = false;
+    Entity backButton;
+    int buttonClicked = -1;
     bool mouseDown = false;
 
     std::shared_ptr<RenderSystem> renderSystem;
@@ -98,6 +107,8 @@ private:
     std::shared_ptr<AnimateSelectedSystem> animateSelectedSystem;
     std::shared_ptr<AnimateSpriteSystem> animateSpriteSystem;
     std::shared_ptr<DelayAnimationSystem> delayAnimationSystem;
+    std::shared_ptr<UpdateTextSystem> updateTextSystem;
+    std::shared_ptr<ClickButtonSystem> clickButtonSystem;
 };
 
 #endif //__Match3_Scene_Level_h__

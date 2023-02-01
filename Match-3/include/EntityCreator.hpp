@@ -85,6 +85,7 @@ private:
     SDL_Texture* quitButton;
     SDL_Texture* plusButton;
     SDL_Texture* minusButton;
+    SDL_Texture* backButton;
     SDL_Texture* defaultButton;
 };
 
