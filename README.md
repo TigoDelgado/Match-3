@@ -49,8 +49,7 @@ Player inputs are received by SDL and are handled before the update, activating 
 ## ECS
 
 To help me get a grip of how a simple ECS actually works, I based the main functionality of my ECS library on the example provided by [Austin Morlan](https://austinmorlan.com/posts/entity_component_system/).
-It is by no means the most complete implementation, but provides a well-structured, easy to understand, basis. This architecture allows for very efficient memory calls,
-since all components are stored in a compact array, which is iterated upon by systems.
+It is by no means the most complete implementation, but provides a well-structured, easy to understand, basis. This architecture allows for very efficient memory calls, since all components are stored in a compact array, which is iterated upon by systems -- instead of having to recal entire objects into memory for example.
 
 Our entities are simple int identifiers:
 
@@ -79,8 +78,15 @@ public:
 };
 ```
 
-Besides systems, we have some classes, such as Board, which act as pseudo-systems as they hold functionality. 
-The Board doesn't iterate upon every entity which has a set of components, but iterates only upon entities contained in its grid of tile objects -- when checking for matches, for example.
+Entity behaviour is (almost) entirely defined by their components. Any entity containing a Transform component (includes position, rotation and scale) and a Sprite component (includes an SDL_Texture and dimensions) will be rendered by the RenderSystem in the appropriate location. This approach allows us to create a lot of modular fucntionality through components, making it easy to iterate upon the current program.
+
+Our board has a grid of entities which are Tile Objects (meaning that they have a TileObject component) which are affected by different systems in the scene. 
+After implementing normal tiles, it was pretty straightforward to implement special tiles with different behaviour. Any transformation we want to apply to entities,
+like translate or scaling animations, can be done simply by adding a component to the entity, which will then be affected by the appropriate system. Now we can easily implement new tiles, such as colorless tiles (which can not be matched), or immovable tiles (similar to normal tiles but lacking the Swappable component).
+
+Besides systems, we can also have methods which function as pseude-systems. The Board, for example, has integrated functionality which is applied not to every
+entity with a set of components, but only to those entities held by the board's grid. The board will then add and remove components from its entities whenever
+they are required to change.
 
 
 
