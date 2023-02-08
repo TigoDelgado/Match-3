@@ -11,7 +11,7 @@ Our game loop is comprised of two main loops:
 - waiting for the player to select two valid tiles to swap (yellow)
 - clearing tile matches and spawning new tiles (blue)
 
-![](https://github.com/TigoDelgado/Match-3/blob/master/Core%20gameplay%20loop.jpg)
+![](https://github.com/TigoDelgado/Match-3/blob/master/Resources/Core%20gameplay%20loop.jpg)
 
 This diagram translates pretty closely to how our code works. The main function calls Game.Run(), which handles the setup and running of the main game loop --
 calculating delta time between frames for example. Game creates a game Scene, which will handle the actual gameplay functionality through three methods, according
@@ -109,6 +109,39 @@ they are required to change.
 - [x] Tiles disappear when matches are found
 - [x] Player can swap tiles -- by clicking both tiles or dragging from one to the other
 - [x] Dynamic grid -- 8x8 by default
+
+### Tile Objects
+
+**Basic Tiles** - Default tile objects with no special behaviour. They spawn randomly on the grid and are cleared when a match of three or more of the same colour is created.
+
+<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/all-tiles-normal.png" width="350"/>
+
+**Vertical Tiles** - Special tiles that spawn when the player completes a vertical match of 4 tiles. When cleared, they clear their column in its entirety.
+
+<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/all-tiles-vertical.gif" width="350"/>
+
+
+**Horizontal Tiles** - Special tiles that spawn when the player completes a horizontal match of 4 tiles. When cleared, they clear their row in its entirety.
+
+<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/all-tiles-horizontal.gif" width="350"/>
+
+
+
+**Vortex Tiles** - Special tiles that spawn when the player completes a vertical or horizontal match of 5 tiles or more. When cleared, they clear all tiles of their colour.
+
+<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/all-tiles-vortex.gif" width="350"/>
+
+
+**Exploding Tiles** - Special tiles that spawn when the player completes a mixed match - vertical and horizontal matches that meet. When cleared, they clear tiles in a 3x3 area around them.
+
+<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/all-tiles-explosion.gif" width="350"/>
+
+
+
+**Nuclear Tiles** - Bigger exploding tiles that spawn when the player completes a mixed match - vertical and horizontal matches that meet - of 7 or more tiles. When cleared, they clear tiles in a 5x5 area around them.
+
+<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/all-tiles-big-explosion.gif" width="350"/>
+
 
 
 ## Resources
