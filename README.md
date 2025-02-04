@@ -1,6 +1,6 @@
 # Match-3
 
-<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/match3gif.gif" width="400"/>
+<p align="center"> <img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/match3gif.gif" width="400"/> </p>
 
 ## The challenge
 
