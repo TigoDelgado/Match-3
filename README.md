@@ -1,5 +1,7 @@
 # Match-3
 
+<img src="https://github.com/TigoDelgado/Match-3/blob/master/Resources/match3gif.gif" width="400"/>
+
 ## The challenge
 
 I was challenged to develop a Match 3 game in C++ using the libSDL library. This is my first time actually working with SDL so it has been a great learning experience.
